@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RHF 시니어 주택 신청서 작성 가이드 | Senior World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F2E9; --paper-dim:#EDE7D8; --ink:#212B2A; --ink-soft:#5B6B67;
+    --teal:#1C6E64; --teal-deep:#0F4A44; --ochre:#C6862E; --ochre-soft:#F3E3C8;
+    --line:#D8D0BC; --card:#FFFFFF; --danger:#B4472F; --danger-soft:#FBEDE9;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; font-family:'Noto Sans KR', sans-serif;
+    background:var(--paper); color:var(--ink); font-size:17px; line-height:1.75;
+  }
+  .wrap{ max-width:840px; margin:0 auto; padding:0 20px 80px; }
+
+  header{ background:var(--teal-deep); color:#F3EFE4; border-bottom:4px solid var(--ochre); }
+  .header-inner{ max-width:840px; margin:0 auto; padding:26px 20px 30px; }
+  .eyebrow{ font-size:12.5px; letter-spacing:2.5px; text-transform:uppercase; color:#B7DAD4; font-weight:500; margin-bottom:8px; }
+  header h1{ font-family:'Noto Serif KR', serif; font-weight:900; font-size:30px; line-height:1.3; margin:0 0 6px; }
+  header .sub{ font-size:16px; color:#DCEFEB; margin:0; }
+  .print-btn{
+    display:inline-flex; align-items:center; gap:8px; margin-top:20px;
+    background:var(--ochre); color:#fff; border:none; font-weight:700; font-size:16px;
+    padding:12px 20px; border-radius:10px; cursor:pointer; font-family:inherit;
+  }
+  .print-btn:hover{ background:#B0741F; }
+
+  section{ margin-top:40px; }
+  h2{
+    font-family:'Noto Serif KR', serif; font-weight:700; font-size:23px; line-height:1.35;
+    margin:0 0 16px; display:flex; align-items:center; gap:12px;
+    padding-bottom:10px; border-bottom:2px solid var(--line);
+  }
+  .pg{
+    display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto;
+    background:var(--teal); color:#fff; font-size:12.5px; font-weight:700;
+    padding:4px 11px; border-radius:20px; font-family:'Noto Sans KR',sans-serif;
+  }
+  p{ margin:0 0 12px; }
+  strong{ color:var(--teal-deep); }
+
+  /* 항목 카드 */
+  .item{
+    background:var(--card); border:1.5px solid var(--line); border-radius:10px;
+    padding:14px 18px; margin-bottom:12px;
+  }
+  .item .q{ font-weight:700; font-size:16.5px; color:var(--ink); margin:0 0 4px; }
+  .item .q .en{ font-weight:500; color:var(--ink-soft); font-size:14px; }
+  .item .a{ margin:0; font-size:15.5px; }
+  .item .a b{ color:var(--teal-deep); }
+  .tip{ display:block; margin-top:6px; font-size:14px; color:#7A5518; background:var(--ochre-soft); border-radius:7px; padding:7px 11px; }
+  .warn{ display:block; margin-top:6px; font-size:14px; color:var(--danger); background:var(--danger-soft); border-radius:7px; padding:7px 11px; }
+
+  /* 체크리스트 */
+  .checklist{ background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:6px 6px; }
+  .checklist .row{ display:flex; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); align-items:flex-start; }
+  .checklist .row:last-child{ border-bottom:none; }
+  .checklist .box{ flex:0 0 auto; width:20px; height:20px; border:2px solid var(--teal); border-radius:4px; margin-top:2px; }
+  .checklist .row b{ color:var(--teal-deep); }
+  .checklist .row small{ display:block; color:var(--ink-soft); font-size:14px; margin-top:1px; }
+
+  .rules{ background:var(--teal-deep); color:#F3EFE4; border-radius:14px; padding:22px 26px; }
+  .rules h3{ color:#fff; margin:0 0 12px; font-size:19px; }
+  .rules ol{ margin:0; padding-left:22px; }
+  .rules li{ margin-bottom:8px; font-size:16px; color:#E4F1EE; }
+  .rules li b{ color:#FFDFAE; }
+
+  .lead{ font-size:18px; }
+  .callout-box{
+    background:var(--card); border:1.5px solid var(--line); border-left:6px solid var(--ochre);
+    border-radius:10px; padding:16px 20px; margin-top:8px;
+  }
+  .callout-box b{ color:var(--teal-deep); }
+
+  .disclaimer{
+    margin-top:36px; padding:16px 20px; background:var(--paper-dim);
+    border:1px dashed var(--line); border-radius:12px; font-size:14px; color:var(--ink-soft); line-height:1.7;
+  }
+  footer{ text-align:center; margin-top:34px; padding-top:20px; border-top:1px solid var(--line); color:var(--ink-soft); font-size:13px; }
+  footer .brand{ font-family:'Noto Serif KR', serif; font-weight:700; color:var(--teal-deep); font-size:15px; }
+
+  @media (max-width:600px){
+    body{ font-size:16px; } header h1{ font-size:25px; } h2{ font-size:20px; }
+  }
+  @media print{
+    body{ background:#fff; font-size:12px; line-height:1.5; }
+    header{ background:#fff; color:#000; border-bottom:2px solid #000; }
+    .eyebrow,header .sub{ color:#333; } header h1{ color:#000; } .print-btn{ display:none; }
+    .pg{ background:#333 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .rules{ background:#eee; color:#000; } .rules h3,.rules li{ color:#000; } .rules li b{ color:#7A5518; }
+    section{ margin-top:20px; } .item,.checklist,.rules,.callout-box{ page-break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Senior World · 신청서 작성 도움말</div>
+    <h1>RHF 시니어 주택 신청서 작성 가이드</h1>
+    <p class="sub">Application for Senior Facility — 어르신과 함께 한 칸씩 채우는 안내서</p>
+    <button class="print-btn" onclick="window.print()">🖨️ 인쇄 / PDF 저장</button>
+    <a class="print-btn" href="guide.html" style="text-decoration:none; background:transparent; border:2px solid #4C7C74;">← 신청 안내로 돌아가기</a>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <p class="lead" style="margin-top:34px;">
+    이 신청서는 <strong>RHF(Retirement Housing Foundation)</strong> 시니어 아파트 입주 신청서입니다.
+    Anaheim Memorial Manor, Donald Jordan Senior Manor, Klein Manor 같은 RHF 단지가 같은 양식을 씁니다.
+    작성한 뒤 서명하여 <strong>롱비치 본사로 우편 제출</strong>합니다.
+  </p>
+
+  <!-- 시작 전 준비물 -->
+  <section id="prepare">
+    <h2>시작 전 — 이것부터 챙기세요</h2>
+    <p>빈칸이 있으면 접수가 안 됩니다. 아래 자료를 미리 준비하면 한 번에 끝낼 수 있어요.</p>
+    <div class="checklist">
+      <div class="row"><div class="box"></div><div><b>신분증 · 생년월일</b><small>본인과 함께 살 모든 가구원의 이름·생년월일</small></div></div>
+      <div class="row"><div class="box"></div><div><b>소셜 번호(SSN)</b><small>가구원 전원의 SSN (합법 체류 자격을 주장하지 않는 사람은 예외)</small></div></div>
+      <div class="row"><div class="box"></div><div><b>소득 증빙</b><small>Social Security 수령액 통지서(award letter), 연금·SSI·SSDI 명세, 급여 등 모든 소득</small></div></div>
+      <div class="row"><div class="box"></div><div><b>자산 정보</b><small>은행 잔고(체킹·세이빙), CD·주식·채권, 부동산 등 — 계좌번호와 은행명 포함</small></div></div>
+      <div class="row"><div class="box"></div><div><b>현재 거주 정보</b><small>지금 세입자면 집주인 이름·전화·주소, 월세, 보증금</small></div></div>
+      <div class="row"><div class="box"></div><div><b>지난 5년 주소</b><small>과거 5년간 살았던 주소와 거주 기간, 살았던 모든 주(state)</small></div></div>
+      <div class="row"><div class="box"></div><div><b>차량 정보</b><small>보유 차량의 제조사·색·연식·번호판</small></div></div>
+    </div>
+  </section>
+
+  <!-- 작성 기본 원칙 -->
+  <section id="rules">
+    <h2>작성 기본 원칙 5가지</h2>
+    <div class="rules">
+      <ol>
+        <li><b>빈칸을 남기지 마세요.</b> 해당 없으면 <b>"None"</b> 또는 <b>"N/A"</b>라고 적습니다. 빈칸이 있으면 신청이 반려됩니다.</li>
+        <li><b>또박또박 정자로</b> 씁니다(PRINT). 흘림체는 피하세요.</li>
+        <li><b>모든 소득·자산은 빠짐없이.</b> RHF가 은행·기관에 직접 확인합니다. 누락은 나중에 문제가 됩니다.</li>
+        <li><b>사실대로 정직하게.</b> 허위 기재는 자격 상실 사유입니다.</li>
+        <li><b>성인 가구원은 전원 서명</b>합니다. HUD 동의서에도 별도 서명이 필요할 수 있습니다.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 1페이지 -->
+  <section id="p1">
+    <h2><span class="pg">1페이지</span>인적사항 · 가구원 · 소득 질문</h2>
+
+    <div class="item">
+      <p class="q">Name of Housing Facility <span class="en">(신청 단지명)</span></p>
+      <p class="a">신청하는 <b>RHF 단지 이름</b>을 적습니다. 예: Anaheim Memorial Manor.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">상단 인적사항 <span class="en">(Last/First name, Telephone, Date of birth, Current address)</span></p>
+      <p class="a">성·이름·전화·<b>생년월일</b>·현재 주소를 적습니다. Race/Ethnicity는 <b>선택(voluntary)</b>이라 안 적어도 됩니다.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">1. LIST YOURSELF <span class="en">(본인과 모든 동거 가구원)</span></p>
+      <p class="a">함께 살 <b>모든 사람</b>을 적습니다 — 이름, 관계(Relationship), 생년월일, <b>SSN</b>, 학생 여부(Student).</p>
+      <span class="tip">💡 혼자 사시면 본인만 적으면 됩니다. 관계 칸은 "Self"라고 씁니다.</span>
+    </div>
+
+    <div class="item">
+      <p class="q">1A. <span class="en">2010년 1월 31일 기준 62세 이상 & SSN 없음</span></p>
+      <p class="a">대부분 <b>해당 없음</b>입니다. 위 조건에 딱 맞는 아주 드문 경우만 Yes. 애매하면 <b>No</b>에 표시.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">2. <span class="en">가구원이 전부 학생인 경우</span></p>
+      <p class="a">시니어 어르신은 대개 <b>Not Applicable(해당 없음)</b>에 표시합니다.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">3. 소득 관련 Yes/No 질문들 <span class="en">(고용·현금소득·실업급여·양육비·위자료·복지·소셜/VA·연금 등)</span></p>
+      <p class="a">각 항목에 <b>Yes/No</b>로 답하고, Yes면 <b>연 금액(Annual Amount)</b>을 적습니다.</p>
+      <span class="tip">💡 어르신은 보통 "Social Security 또는 VA 수령" 항목이 Yes입니다. 여기에 월 수령액 × 12로 연액을 적으면 됩니다. 연금(pension/annuity)이 있으면 그 줄도 Yes.</span>
+      <span class="warn">⚠️ 마지막 줄(과거 보조주택에서 사기·미납·재인증 위반으로 퇴거된 적 있는지)은 신중히. 사실대로 답합니다.</span>
+    </div>
+  </section>
+
+  <!-- 2페이지 -->
+  <section id="p2">
+    <h2><span class="pg">2페이지</span>상세 질문 (4~18번)</h2>
+
+    <div class="item">
+      <p class="q">4. 강제 퇴거 경험 <span class="en">(evicted/involuntarily removed)</span></p>
+      <p class="a">임대주택에서 쫓겨난 적이 있는지. 없으면 <b>No</b>. 있으면 간단히 설명.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">5. 범죄 이력 <span class="en">(criminal activity)</span></p>
+      <p class="a">기소·유죄 경력 여부. 하위 항목(성범죄·성범죄자 등록·마약·알코올 남용)까지 답합니다.</p>
+      <span class="warn">⚠️ 민감한 항목입니다. <b>사실대로</b> 답해야 하며, 있다고 해서 무조건 탈락은 아닙니다. 어르신이 불안해하면 "정직이 원칙"임을 안내하세요.</span>
+    </div>
+
+    <div class="item">
+      <p class="q">6. 장애 여부 <span class="en">(disabled)</span> · 6A. 편의시설 필요</p>
+      <p class="a">공정주택법상 장애가 있는지, 휠체어 접근 등 <b>편의시설이 필요한지</b>. 필요하면 어떤 시설인지 적습니다.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">7. 반려동물 <span class="en">(pets)</span></p>
+      <p class="a">있으면 종류·무게·키를 적습니다. 없으면 <b>No</b>.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">8. 어떻게 알게 되었나 <span class="en">(how did you hear)</span></p>
+      <p class="a">알게 된 경로를 적습니다.</p>
+      <span class="tip">💡 여기에 소개자(본인)를 적어두면 나중에 연결 관리에 도움이 됩니다. 예: "Referred by Jaden Lee".</span>
+    </div>
+
+    <div class="item">
+      <p class="q">9. 향후 12개월 내 변동 <span class="en">(income/assets/expenses 변화)</span></p>
+      <p class="a">앞으로 1년 내 소득·자산·지출에 큰 변화가 예상되면 Yes + 설명. 없으면 <b>No</b>.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">10. 차량 대수 <span class="en">(vehicles)</span></p>
+      <p class="a">보유 대수와 각 차량의 제조사·색·연식·번호판·주(state)를 적습니다. 없으면 <b>None</b>.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">11. 상주 간병인 <span class="en">(live-in attendant)</span></p>
+      <p class="a">간병인이 필요한 경우만 이름과 필요성을 확인해줄 사람 정보를 적습니다. 아니면 <b>N/A</b>.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">12. 현재 가구 인원 <span class="en">(household now)</span></p>
+      <p class="a">지금 몇 명이 함께 사는지, 그중 신청 집에 안 살 사람이 있는지, 추가로 들어올 사람이 있는지 답합니다.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">13. 현재 임대 정보 <span class="en">(current landlord)</span></p>
+      <p class="a">지금 세입자면 집주인 이름·전화·주소, 월세, 보증금을 적습니다. 세입자가 아니면 현재 거주 형태를 설명.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">14. 지난 5년 주소 <span class="en">(previous addresses)</span></p>
+      <p class="a">과거 5년간 집주인 이름·주소·전화와 거주 기간(From~To), 그리고 살았던 모든 주(state)를 적습니다.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">15·16. 다른 이름 / 다른 SSN 사용 이력</p>
+      <p class="a">과거에 다른 이름이나 다른 SSN을 쓴 적이 있는지. 없으면 둘 다 <b>No</b>.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">17. 보조주택 거주 이력 <span class="en">(subsidized housing)</span></p>
+      <p class="a">전에 보조주택에 산 적이 있는지, 퇴거·미납 여부. 없으면 <b>No</b>.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">18. Section 8 바우처 보유</p>
+      <p class="a">Section 8 증서·바우처가 있으면 <b>Yes</b>, 없으면 <b>No</b>.</p>
+    </div>
+  </section>
+
+  <!-- 3페이지 -->
+  <section id="p3">
+    <h2><span class="pg">3페이지</span>재정 정보 (가장 꼼꼼히)</h2>
+    <p>소득이나 자산이 있는 <b>가구원 각자에 대해</b> 작성합니다. 상주 간병인은 제외. 자리가 모자라면 별지를 붙입니다.</p>
+
+    <div class="item">
+      <p class="q">자산 처분 내역 <span class="en">(assets disposed of in last 2 years)</span></p>
+      <p class="a">지난 2년간 <b>시가보다 싸게 처분·양도·증여</b>한 자산이 있으면 적습니다. 없으면 <b>None</b>.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">소득 <span class="en">(Income)</span></p>
+      <p class="a">모든 가구원의 <b>고용·비고용 소득 전부</b> — 급여, 소셜(Social Security), 연금, IRA, VA, 양육비, 복지(TANF) 등.
+      소득 종류와 지급처, 예상 총액(주/월), 지급처 주소, 확인 가능한 담당자를 적습니다.</p>
+      <span class="tip">💡 "확인해줄 사람/기관" 칸이 중요합니다 — 예: 고용주 주소, 소셜시큐리티 사무소. RHF가 여기로 확인 연락을 합니다.</span>
+    </div>
+
+    <div class="item">
+      <p class="q">자산 <span class="en">(Assets)</span></p>
+      <p class="a">모든 가구원의 세이빙·체킹·CD·주식·채권·뮤추얼펀드·크레딧유니온·부동산 등.
+      가구원 이름, 계좌번호, 자산 설명, 현재 가치, 이자율/연이자, 은행·기관명과 주소를 적습니다.</p>
+      <span class="warn">⚠️ 본인 소유 집도 자산에 포함됩니다. 누락하지 않도록 하세요.</span>
+    </div>
+  </section>
+
+  <!-- 4페이지 -->
+  <section id="p4">
+    <h2><span class="pg">4페이지</span>서명 · 제출</h2>
+
+    <div class="item">
+      <p class="q">동의 · 확인 <span class="en">(Certification & Authorization)</span></p>
+      <p class="a">기재 내용이 사실이며 RHF가 확인·조사하는 데 동의한다는 내용입니다. 읽고 이해한 뒤 서명합니다.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">금연 확인 <span class="en">(NON SMOKING)</span></p>
+      <p class="a">이 건물이 <b>금연 건물</b>임을 확인하는 문구입니다.</p>
+    </div>
+
+    <div class="item">
+      <p class="q">서명란 <span class="en">(Signatures)</span></p>
+      <p class="a"><b>성인 가구원 전원</b>이 각자 서명하고 날짜를 적습니다(본인, 배우자/공동세입자 등).</p>
+      <span class="warn">⚠️ HUD 보조 시설이면, 입주 전 성인 전원이 <b>별도 HUD 동의서(Authorization for Release of Information)</b>에도 서명해야 합니다.</span>
+    </div>
+
+    <div class="callout-box">
+      <b>제출처 (우편):</b><br>
+      Foundation Property Management<br>
+      911 N. Studebaker Road, Long Beach, CA 90815-4900<br>
+      <span style="font-size:14px;color:var(--ink-soft);">문의: (562) 257-5100 · TDD (800) 545-1833 Ext. 359</span>
+    </div>
+    <p style="margin-top:10px;font-size:15px;color:var(--ink-soft);">
+      ※ "Owner's Statement" 아래쪽 칸은 <b>관리사무소가 작성</b>하는 부분이니 비워둡니다.
+    </p>
+  </section>
+
+  <!-- 도울 때 주의사항 -->
+  <section id="helper">
+    <h2>어르신 도울 때 체크포인트</h2>
+    <div class="checklist">
+      <div class="row"><div class="box"></div><div><b>제출 전 빈칸 훑기</b><small>모든 칸이 채워졌는지, 빈 곳엔 None/N/A가 적혔는지 마지막에 한 번 더 확인</small></div></div>
+      <div class="row"><div class="box"></div><div><b>소득·자산 누락 확인</b><small>소셜·연금·예금·주택 등 빠진 항목이 없는지 — 확인 연락처까지 적혔는지</small></div></div>
+      <div class="row"><div class="box"></div><div><b>서명·날짜</b><small>성인 전원 서명했는지, 날짜가 모두 적혔는지</small></div></div>
+      <div class="row"><div class="box"></div><div><b>사본 보관</b><small>제출 전 사본을 한 부 남겨 어르신께 드리고, 상담 기록에도 남기기</small></div></div>
+      <div class="row"><div class="box"></div><div><b>민감 항목 안내</b><small>범죄·소득 항목은 "정직이 원칙"임을 부드럽게 설명 — 있다고 무조건 탈락 아님</small></div></div>
+    </div>
+  </section>
+
+  <div class="disclaimer">
+    ※ 본 가이드는 신청서 작성을 돕기 위한 일반 안내이며, RHF의 공식 문서가 아닙니다.
+    양식·자격 기준은 바뀔 수 있으니, 정확한 내용은 신청서 원본과 RHF((562) 257-5100)에 확인하세요.
+    작성·제출의 최종 책임은 신청 당사자에게 있습니다.
+  </div>
+
+  <footer>
+    <div class="brand">Senior World</div>
+    <div>미국 거주 한인 시니어를 위한 주거 · 재정 안내</div>
+  </footer>
+
+</div>
+</body>
+</html>
