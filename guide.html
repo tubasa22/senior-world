@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오렌지카운티 시니어 어포더블 하우징 안내 | Bridge One</title>
+<meta name="description" content="오렌지카운티 시니어 저소득 아파트 신청 조건·소득 한도·신청 방법 안내">
+
+<!-- ▼▼▼ 지도 페이지 파일명 — 같은 폴더에 두고, 파일명이 다르면 이 한 줄만 고치세요 ▼▼▼ -->
+<!-- 지도 페이지 링크는 아래 .map-btn 의 href="index.html" 에 있습니다. 지도 파일명이 다르면 그 부분만 고치세요. -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F2E9;
+    --paper-dim:#EDE7D8;
+    --ink:#212B2A;
+    --ink-soft:#5B6B67;
+    --teal:#1C6E64;
+    --teal-deep:#0F4A44;
+    --ochre:#C6862E;
+    --ochre-soft:#F3E3C8;
+    --line:#D8D0BC;
+    --card:#FFFFFF;
+    --danger:#B4472F;
+    --danger-soft:#FBEDE9;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    font-family:'Noto Sans KR', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    font-size:18px;
+    line-height:1.75;
+  }
+  .wrap{ max-width:860px; margin:0 auto; padding:0 20px 80px; }
+
+  /* ---------- Header ---------- */
+  header{
+    background:var(--teal-deep);
+    color:#F3EFE4;
+    border-bottom:4px solid var(--ochre);
+  }
+  .header-inner{
+    max-width:860px; margin:0 auto; padding:26px 20px 30px;
+  }
+  .eyebrow{
+    font-size:13px; letter-spacing:2.5px; text-transform:uppercase;
+    color:#B7DAD4; font-weight:500; margin-bottom:8px;
+  }
+  header h1{
+    font-family:'Noto Serif KR', serif; font-weight:900;
+    font-size:34px; line-height:1.3; margin:0 0 6px;
+  }
+  header .sub{ font-size:17px; color:#DCEFEB; margin:0; }
+  .header-actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:22px; }
+  .map-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--ochre); color:#fff; text-decoration:none;
+    font-weight:700; font-size:17px; padding:13px 22px; border-radius:10px;
+    border:2px solid var(--ochre);
+  }
+  .map-btn:hover{ background:#B0741F; border-color:#B0741F; }
+  .print-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:transparent; color:#F3EFE4; text-decoration:none;
+    font-weight:700; font-size:17px; padding:13px 22px; border-radius:10px;
+    border:2px solid #4C7C74; cursor:pointer; font-family:inherit;
+  }
+  .print-btn:hover{ background:#134C46; }
+
+  /* ---------- Section ---------- */
+  section{ margin-top:44px; }
+  .num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:34px; height:34px; border-radius:50%;
+    background:var(--teal); color:#fff; font-family:'Noto Serif KR', serif;
+    font-weight:700; font-size:18px; margin-right:12px; flex:0 0 auto;
+  }
+  h2{
+    font-family:'Noto Serif KR', serif; font-weight:700; font-size:26px;
+    line-height:1.35; margin:0 0 16px; display:flex; align-items:center;
+    padding-bottom:10px; border-bottom:2px solid var(--line);
+  }
+  h3{ font-size:20px; font-weight:700; margin:26px 0 8px; color:var(--teal-deep); }
+  p{ margin:0 0 14px; }
+  .lead{ font-size:20px; color:var(--ink); }
+  strong{ color:var(--teal-deep); }
+
+  /* ---------- Two condition cards ---------- */
+  .cond-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .cond{
+    background:var(--card); border:1.5px solid var(--line); border-radius:12px;
+    padding:20px 22px;
+  }
+  .cond .tag{
+    display:inline-block; background:#DCEEEB; color:var(--teal-deep);
+    font-size:14px; font-weight:700; padding:4px 12px; border-radius:20px; margin-bottom:10px;
+  }
+  .cond h3{ margin:0 0 6px; font-size:21px; }
+  .cond p{ margin:0; font-size:17px; color:var(--ink-soft); }
+
+  /* ---------- Table ---------- */
+  .table-title{ font-size:16px; color:var(--ink-soft); margin:0 0 8px; }
+  table{
+    width:100%; border-collapse:collapse; background:var(--card);
+    border:1.5px solid var(--line); border-radius:12px; overflow:hidden;
+    font-size:17px; margin-bottom:10px;
+  }
+  th, td{ padding:13px 14px; text-align:center; border-bottom:1px solid var(--line); }
+  th{ background:var(--teal-deep); color:#fff; font-weight:700; font-size:16px; }
+  td:first-child, th:first-child{ text-align:left; font-weight:700; }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr:nth-child(even){ background:#FBF9F3; }
+  .note{ font-size:15px; color:var(--ink-soft); margin:4px 0 0; }
+
+  /* ---------- Path cards ---------- */
+  .path{
+    background:var(--card); border:1.5px solid var(--line);
+    border-left:6px solid var(--teal); border-radius:12px;
+    padding:20px 24px; margin-bottom:16px;
+  }
+  .path.voucher{ border-left-color:var(--ochre); }
+  .path h3{ margin-top:0; display:flex; align-items:center; gap:10px; }
+  .path .pill{
+    font-size:13px; font-weight:700; padding:3px 10px; border-radius:20px;
+    background:var(--ochre-soft); color:#7A5518;
+  }
+  .path .pill.open{ background:#DCEEEB; color:var(--teal-deep); }
+  .path .pill.closed{ background:var(--danger-soft); color:var(--danger); }
+
+  /* ---------- Callout ---------- */
+  .callout{
+    background:var(--card); border:1.5px solid var(--line); border-radius:12px;
+    padding:8px 4px; margin-top:8px;
+  }
+  .callout .row{
+    display:flex; gap:14px; padding:14px 18px; border-bottom:1px solid var(--line);
+  }
+  .callout .row:last-child{ border-bottom:none; }
+  .callout .ic{ font-size:22px; flex:0 0 auto; line-height:1.4; }
+  .callout .row b{ color:var(--teal-deep); }
+  .callout .row.warn .ic{ color:var(--danger); }
+  .callout .row small{ display:block; color:var(--ink-soft); font-size:15px; margin-top:2px; }
+
+  /* ---------- Summary highlight ---------- */
+  .summary{
+    background:var(--teal-deep); color:#F3EFE4; border-radius:14px;
+    padding:26px 28px; margin-top:12px;
+  }
+  .summary h3{ color:#fff; margin:0 0 8px; font-size:22px; }
+  .summary p{ margin:0; font-size:18px; color:#E4F1EE; }
+  .summary .big{
+    font-family:'Noto Serif KR', serif; font-weight:700; font-size:21px; color:#FFDFAE;
+    display:block; margin-top:10px;
+  }
+
+  /* ---------- Contact ---------- */
+  .contact-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .contact{
+    background:var(--card); border:1.5px solid var(--line); border-radius:12px; padding:22px 24px;
+  }
+  .contact .label{ font-size:14px; letter-spacing:1px; text-transform:uppercase; color:var(--ink-soft); font-weight:700; margin-bottom:6px; }
+  .contact .name{ font-family:'Noto Serif KR', serif; font-weight:700; font-size:20px; margin-bottom:10px; }
+  .contact a{ color:var(--teal); text-decoration:none; font-weight:700; }
+  .contact a:hover{ text-decoration:underline; }
+  .contact .line{ margin:4px 0; font-size:17px; }
+  .contact .phone{ font-size:22px; font-weight:900; color:var(--teal-deep); }
+
+  /* ---------- Disclaimer / footer ---------- */
+  .disclaimer{
+    margin-top:40px; padding:18px 22px; background:var(--paper-dim);
+    border:1px dashed var(--line); border-radius:12px;
+    font-size:15px; color:var(--ink-soft); line-height:1.7;
+  }
+  footer{
+    text-align:center; margin-top:36px; padding-top:22px;
+    border-top:1px solid var(--line); color:var(--ink-soft); font-size:14px;
+  }
+  footer .brand{ font-family:'Noto Serif KR', serif; font-weight:700; color:var(--teal-deep); font-size:16px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:640px){
+    body{ font-size:17px; }
+    header h1{ font-size:27px; }
+    h2{ font-size:22px; }
+    .cond-grid, .contact-grid{ grid-template-columns:1fr; }
+    table{ font-size:15px; }
+    th, td{ padding:10px 8px; }
+    .header-actions{ flex-direction:column; }
+    .map-btn, .print-btn{ justify-content:center; }
+  }
+
+  /* ---------- Print ---------- */
+  @media print{
+    body{ background:#fff; font-size:13px; line-height:1.5; }
+    header{ background:#fff; color:#000; border-bottom:2px solid #000; }
+    .eyebrow{ color:#555; }
+    header h1{ color:#000; }
+    header .sub{ color:#333; }
+    .header-actions{ display:none; }
+    .num{ background:#000; }
+    th{ background:#333 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .summary{ background:#EEE; color:#000; }
+    .summary h3, .summary p{ color:#000; }
+    .summary .big{ color:#7A5518; }
+    section{ margin-top:22px; page-break-inside:avoid; }
+    .path, .cond, .callout, table{ page-break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Orange County · Senior Affordable Housing</div>
+    <h1>시니어 어포더블 하우징 신청 안내</h1>
+    <p class="sub">오렌지카운티 시니어 저소득 아파트 — 신청 조건 · 소득 한도 · 신청 방법</p>
+    <div class="header-actions">
+      <a class="map-btn" href="index.html">🗺️ 아파트 지도 보기</a>
+      <button class="print-btn" onclick="window.print()">🖨️ 인쇄 / PDF 저장</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <p class="lead" style="margin-top:36px;">
+    오렌지카운티 시니어 어포더블 하우징은 프로그램 종류에 따라 조건이 조금씩 다릅니다.
+    핵심은 <strong>나이</strong>와 <strong>소득</strong> 두 가지이고, 신청하는 경로는 크게 두 갈래로 나뉩니다.
+  </p>
+
+  <!-- 1. 기본 조건 -->
+  <section id="conditions">
+    <h2><span class="num">1</span>기본 두 가지 조건</h2>
+    <div class="cond-grid">
+      <div class="cond">
+        <span class="tag">조건 하나</span>
+        <h3>나이</h3>
+        <p>대부분 만 <b>55세 이상</b> 또는 <b>62세 이상</b>입니다. 단지마다 다르니 각 아파트 기준을 확인하세요.</p>
+      </div>
+      <div class="cond">
+        <span class="tag">조건 둘</span>
+        <h3>소득</h3>
+        <p>지역 중위소득(AMI) 대비 몇 %인지로 판단합니다. 가구 <b>총 연소득</b>이 해당 구간 한도를 넘지 않아야 합니다.</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top:14px;">
+      소득 한도는 캘리포니아 주택국(HCD)과 연방 주택도시개발부(HUD)가 오렌지카운티 기준으로 <b>매년</b> 갱신합니다.
+    </p>
+  </section>
+
+  <!-- 2. 소득 한도 -->
+  <section id="income">
+    <h2><span class="num">2</span>2026년 오렌지카운티 소득 한도</h2>
+
+    <p class="table-title">임대 보조(Section 8 등) 기준 · 2026년 5월 12일 발효 · 연 소득 상한</p>
+    <table>
+      <thead>
+        <tr><th>가구원 수</th><th>극저소득 (30%)</th><th>초저소득 (50%)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1인</td><td>$39,100</td><td>$65,150</td></tr>
+        <tr><td>2인</td><td>$44,700</td><td>$74,450</td></tr>
+        <tr><td>3인</td><td>$50,300</td><td>$83,750</td></tr>
+        <tr><td>4인</td><td>$55,850</td><td>$93,050</td></tr>
+        <tr><td>5인</td><td>$60,350</td><td>$100,500</td></tr>
+        <tr><td>6인</td><td>$64,800</td><td>$107,950</td></tr>
+      </tbody>
+    </table>
+    <p class="note">
+      · <b>저소득(80%)</b> 구간은 2026년 기준 1인 가구 연 <b>$104,200</b>까지입니다(작년 $94,750에서 인상).
+      시니어분들은 대개 소득이 낮아 <b>30~50% 구간</b>에 해당하는 경우가 많습니다.
+    </p>
+    <p class="note">
+      · 세금공제(LIHTC) 아파트는 별도로 30%·40%·50%·60% 구간 한도를 쓰며, 임대료는 각 구간 최대 소득의 약 30% 수준으로 정해집니다.
+      지도 목록에서 <b>** 표시가 없는 저가 단지</b>가 주로 여기에 해당합니다.
+    </p>
+  </section>
+
+  <!-- 3. 신청 경로 -->
+  <section id="paths">
+    <h2><span class="num">3</span>신청 경로 두 갈래</h2>
+
+    <div class="path">
+      <h3>① 프로젝트 기반 단지 <span class="pill">지도의 ** 표시</span></h3>
+      <p style="margin-bottom:0;">
+        보조금이 <b>그 건물에 붙어 있어서</b>, 해당 아파트에 <b>직접 신청</b>하고 그 단지의 대기자 명단에 이름을 올립니다.
+        빈 집이 나오면 순서대로 연락이 옵니다.
+      </p>
+    </div>
+
+    <div class="path voucher">
+      <h3>② 주택 바우처 (Section 8 / HCV) <span class="pill closed">현재 명단 마감</span></h3>
+      <p style="margin-bottom:0;">
+        세입자가 보조금을 받아 원하는 집에 쓰는 방식으로, 오렌지카운티 주택청(OCHA) 대기자 명단을 통해 신청합니다.
+        다만 <b>지금은 명단이 닫혀 있어</b> 신청을 받지 않으며, 열리면 OCHA 홈페이지에 공지가 뜹니다.
+        이 명단은 <b>10년 넘게 닫혀 있다가 2023년에 한 번 열렸을</b> 정도로 드물게 개방됩니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- 4. 꼭 알아둘 점 -->
+  <section id="notes">
+    <h2><span class="num">4</span>꼭 알아둘 점</h2>
+    <div class="callout">
+      <div class="row">
+        <div class="ic">🎲</div>
+        <div><b>선착순이 아닙니다.</b> 제출 순서나 시점은 대기 순번에 영향을 주지 않고, 우대 그룹별로 묶은 뒤 무작위로 배정합니다.
+          <small>다행히 재향군인 · 노인 · 장애인 · 근로 가정에 우선순위가 주어집니다 — 시니어는 우대 대상입니다.</small></div>
+      </div>
+      <div class="row warn">
+        <div class="ic">📍</div>
+        <div><b>관할 구역 주의.</b> OCHA 바우처 명단은 <b>애너하임 · 가든그로브 · 산타아나</b> 세 도시를 제외합니다.
+          <small>이 세 도시는 각자 별도의 바우처 프로그램을 운영합니다. 한인 어르신이 많은 지역이라 꼭 확인하세요.</small></div>
+      </div>
+      <div class="row">
+        <div class="ic">💵</div>
+        <div><b>소득 배수 요건.</b> 소득 자격이 되더라도, 많은 단지가 <b>월세의 2.5배</b> 소득을 별도로 요구합니다.</div>
+      </div>
+      <div class="row">
+        <div class="ic">⏳</div>
+        <div><b>대기 기간 조회.</b> 이미 명단에 올라 있다면 waitlistcheck.com 에서 확인할 수 있습니다.
+          <small>주의: 이 사이트는 지금까지 기다린 시간이 아니라 <b>앞으로 남은</b> 대기 시간을 보여줍니다.</small></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 실무 요약 -->
+  <section id="summary">
+    <h2><span class="num">5</span>지금 바로 할 수 있는 것</h2>
+    <div class="summary">
+      <h3>바우처 명단은 닫혀 있습니다.</h3>
+      <p>그러니 현실적인 방법은 마음에 드는 단지에 <b style="color:#FFDFAE;">직접 신청해 개별 대기자 명단에 올려두는 것</b>입니다.
+      아래 지도에서 조건에 맞는 단지를 찾아 전화·이메일로 바로 문의하세요.</p>
+      <a class="big" href="index.html" style="text-decoration:none;">🗺️ 아파트 지도에서 단지 찾기 →</a>
+    </div>
+  </section>
+
+  <!-- 6. 연락처 -->
+  <section id="contact">
+    <h2><span class="num">6</span>문의 · 상담</h2>
+    <div class="contact-grid">
+      <div class="contact">
+        <div class="label">공식 기관</div>
+        <div class="name">Orange County Housing Authority</div>
+        <div class="line phone"><a href="tel:7144802798">(714) 480-2798</a></div>
+        <div class="line">웹사이트: <a href="https://www.ochousing.org" target="_blank" rel="noopener">ochousing.org</a></div>
+        <div class="line">긴급 지원: <a href="tel:211">2-1-1</a> (오렌지카운티)</div>
+      </div>
+      <div class="contact">
+        <div class="label">한국어 상담</div>
+        <div class="name">Bridge One · Jaden Lee</div>
+        <div class="line phone"><a href="tel:7146943254">(714) 694-3254</a></div>
+        <div class="line">이메일: <a href="mailto:kincaredesk@gmail.com">kincaredesk@gmail.com</a></div>
+        <div class="line">웹사이트: <a href="https://worldwidefamilyassociates.com" target="_blank" rel="noopener">worldwidefamilyassociates.com</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    ※ 본 안내는 정보 제공을 목적으로 하며, 특정 단지의 추천이나 자격 보증이 아닙니다.
+    소득 한도와 신청 조건은 자주 바뀌므로, 실제 신청 전에는 반드시 OCHA 또는 각 단지에 최종 확인하시기 바랍니다.
+    아파트 목록은 Orange County Office on Aging 자료(2026년 1월 개정)를 기반으로 합니다.
+  </div>
+
+  <footer>
+    <div class="brand">Bridge One</div>
+    <div>오렌지카운티 한인 시니어를 위한 주거 · 재정 안내</div>
+  </footer>
+
+</div>
+</body>
+</html>

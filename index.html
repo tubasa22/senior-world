@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OC 시니어 아파트 지도 | Bridge One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css" />
+<style>
+  :root{
+    --paper:#F6F2E9;
+    --paper-dim:#EDE7D8;
+    --ink:#212B2A;
+    --ink-soft:#5B6B67;
+    --teal:#1C6E64;
+    --teal-deep:#0F4A44;
+    --ochre:#C6862E;
+    --line:#D8D0BC;
+    --card-bg:#FFFFFF;
+    --danger:#B4472F;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:'Noto Sans KR', sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    overflow:hidden;
+  }
+  .app{
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background:var(--teal-deep);
+    color:#F6F2E9;
+    padding:14px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+    border-bottom:3px solid var(--ochre);
+  }
+  .brand{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
+  .brand h1{
+    font-family:'Noto Serif KR', serif;
+    font-weight:700;
+    font-size:22px;
+    margin:0;
+    letter-spacing:-0.2px;
+  }
+  .brand .eyebrow{
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#C9E4DF;
+    font-weight:500;
+  }
+  .stats{
+    display:flex;
+    gap:18px;
+    font-size:13px;
+    color:#DDEFEC;
+  }
+  .stats b{ font-size:16px; color:#fff; font-family:'Noto Serif KR', serif;}
+
+  /* ---------- Controls ---------- */
+  .controls{
+    background:var(--card-bg);
+    border-bottom:1px solid var(--line);
+    padding:10px 20px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .controls input[type="text"]{
+    flex:1 1 220px;
+    padding:9px 12px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    font-size:14px;
+    font-family:inherit;
+    background:var(--paper);
+  }
+  .controls select{
+    padding:9px 10px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    font-size:14px;
+    font-family:inherit;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .toggle-chip{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+    padding:8px 12px;
+    border:1.5px solid var(--line);
+    border-radius:20px;
+    cursor:pointer;
+    user-select:none;
+    background:var(--paper);
+    white-space:nowrap;
+  }
+  .toggle-chip.active{
+    background:var(--ochre);
+    border-color:var(--ochre);
+    color:#fff;
+    font-weight:700;
+  }
+  .toggle-chip input{display:none;}
+
+  /* ---------- Progress bar (geocoding) ---------- */
+  .geo-progress{
+    background:#FFF6E6;
+    border-bottom:1px solid var(--line);
+    padding:6px 20px;
+    font-size:12.5px;
+    color:#7A5A18;
+    display:none;
+    align-items:center;
+    gap:10px;
+  }
+  .geo-progress.show{display:flex;}
+  .geo-bar-track{
+    flex:1;
+    height:6px;
+    background:#EEE0BE;
+    border-radius:4px;
+    overflow:hidden;
+    max-width:240px;
+  }
+  .geo-bar-fill{
+    height:100%;
+    background:var(--ochre);
+    width:0%;
+    transition:width .2s ease;
+  }
+
+  /* ---------- Main split ---------- */
+  .main{
+    flex:1;
+    display:flex;
+    min-height:0;
+  }
+  .list-pane{
+    width:420px;
+    min-width:320px;
+    max-width:46vw;
+    background:var(--paper-dim);
+    border-right:1px solid var(--line);
+    overflow-y:auto;
+    padding:12px;
+  }
+  .map-pane{
+    flex:1;
+    position:relative;
+  }
+  #map{ height:100%; width:100%; }
+
+  .result-count{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    padding:4px 6px 10px;
+  }
+
+  /* ---------- Card ---------- */
+  .card{
+    background:var(--card-bg);
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:14px 14px 12px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:border-color .15s ease, box-shadow .15s ease, transform .1s ease;
+    position:relative;
+  }
+  .card:hover{
+    border-color:var(--teal);
+    box-shadow:0 3px 10px rgba(28,110,100,0.12);
+  }
+  .card.selected{
+    border-color:var(--teal);
+    box-shadow:0 0 0 2px var(--teal) inset;
+    background:#F1F8F6;
+  }
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .card-name{
+    font-family:'Noto Serif KR', serif;
+    font-weight:700;
+    font-size:15.5px;
+    line-height:1.35;
+    margin:0 0 4px;
+  }
+  .card-addr{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:0 0 8px;
+  }
+  .badges{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;}
+  .badge{
+    font-size:10.5px;
+    font-weight:700;
+    padding:3px 8px;
+    border-radius:20px;
+    white-space:nowrap;
+  }
+  .badge-age{ background:#DCEEEB; color:var(--teal-deep); }
+  .badge-pb{ background:#F3E3C8; color:#7A5518; }
+  .badge-units{ background:#EDEAE0; color:var(--ink-soft); }
+  .badge-rating{ background:#FBEFD6; color:#9A6B12; }
+  .badge-rating small{ font-weight:500; opacity:.8; }
+  .card-actions{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-top:6px;
+  }
+  .btn{
+    flex:1 1 auto;
+    text-align:center;
+    font-size:12px;
+    font-weight:700;
+    padding:8px 6px;
+    border-radius:7px;
+    text-decoration:none;
+    border:1.5px solid transparent;
+    white-space:nowrap;
+  }
+  .btn-call{ background:var(--teal); color:#fff; }
+  .btn-call:hover{ background:var(--teal-deep); }
+  .btn-web{ background:#fff; color:var(--ink); border-color:var(--line); }
+  .btn-web:hover{ border-color:var(--teal); color:var(--teal-deep); }
+  .btn-dir{ background:#fff; color:var(--ink); border-color:var(--line); }
+  .btn-dir:hover{ border-color:var(--ochre); color:#7A5518; }
+  .btn-mail{ background:#fff; color:var(--ink); border-color:var(--line); }
+  .btn-review{ background:#FBEFD6; color:#9A6B12; border-color:#EAD3A0; }
+  .btn-review:hover{ background:#F5E3BE; }
+  .btn-disabled{ opacity:.35; pointer-events:none; }
+
+  /* ---------- 후기 모달 ---------- */
+  .modal-backdrop{
+    display:none; position:fixed; inset:0; z-index:2000;
+    background:rgba(15,74,68,0.45);
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-backdrop.show{ display:flex; }
+  .modal{
+    background:var(--card-bg); border-radius:14px; width:100%; max-width:440px;
+    max-height:90vh; overflow-y:auto; box-shadow:0 20px 50px rgba(0,0,0,.3);
+  }
+  .modal-head{
+    background:var(--teal-deep); color:#F3EFE4; padding:18px 22px;
+    border-radius:14px 14px 0 0; position:relative;
+  }
+  .modal-head h3{ font-family:'Noto Serif KR', serif; margin:0 0 2px; font-size:18px; }
+  .modal-head p{ margin:0; font-size:13px; color:#C9E4DF; }
+  .modal-close{
+    position:absolute; top:14px; right:16px; background:none; border:none;
+    color:#C9E4DF; font-size:22px; cursor:pointer; line-height:1;
+  }
+  .modal-body{ padding:20px 22px 24px; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:13.5px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .field input[type="text"], .field textarea{
+    width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:8px;
+    font-size:14px; font-family:inherit; background:var(--paper);
+  }
+  .field textarea{ resize:vertical; min-height:88px; }
+  .stars{ display:flex; gap:4px; }
+  .stars button{
+    background:none; border:none; font-size:30px; cursor:pointer; padding:0;
+    color:#D8D0BC; line-height:1; transition:color .1s;
+  }
+  .stars button.on{ color:#E8A72C; }
+  .modal-actions{ display:flex; gap:10px; margin-top:6px; }
+  .modal-actions button{
+    flex:1; padding:12px; border-radius:9px; font-size:14.5px; font-weight:700;
+    font-family:inherit; cursor:pointer; border:1.5px solid transparent;
+  }
+  .btn-submit{ background:var(--teal); color:#fff; }
+  .btn-submit:hover{ background:var(--teal-deep); }
+  .btn-submit:disabled{ opacity:.5; cursor:default; }
+  .btn-cancel{ background:#fff; color:var(--ink-soft); border-color:var(--line); }
+  .modal-msg{ font-size:13.5px; margin-top:12px; text-align:center; min-height:20px; }
+  .modal-msg.ok{ color:var(--teal); }
+  .modal-msg.err{ color:var(--danger); }
+  .modal-note{
+    background:var(--paper); border:1px dashed var(--line); border-radius:8px;
+    padding:10px 12px; font-size:12.5px; color:var(--ink-soft); margin-top:4px; line-height:1.6;
+  }
+
+  .no-results{
+    text-align:center;
+    padding:40px 10px;
+    color:var(--ink-soft);
+    font-size:13.5px;
+  }
+
+  /* Leaflet popup styling */
+  .leaflet-popup-content-wrapper{ border-radius:10px; }
+  .popup-name{ font-family:'Noto Serif KR', serif; font-weight:700; font-size:14px; margin:0 0 4px;}
+  .popup-addr{ font-size:12px; color:var(--ink-soft); margin:0 0 8px;}
+  .popup-actions{ display:flex; gap:6px; }
+  .popup-actions a{
+    font-size:11.5px; font-weight:700; padding:6px 8px; border-radius:6px; text-decoration:none;
+  }
+
+  /* custom marker */
+  .pin{
+    width:26px;height:26px;border-radius:50% 50% 50% 0;
+    background:var(--teal);
+    transform:rotate(-45deg);
+    border:2px solid #fff;
+    box-shadow:0 2px 5px rgba(0,0,0,.35);
+  }
+  .pin.pb{ background:var(--ochre); }
+  /* 우편번호 기준 대략 위치 — 정밀 좌표 확보 전 */
+  .pin.approx{
+    border-radius:50%;
+    transform:none;
+    background:transparent;
+    border:3px dashed var(--teal);
+    opacity:.75;
+    width:20px;height:20px;
+    box-shadow:none;
+  }
+  .pin.approx.pb{ border-color:var(--ochre); background:transparent; }
+
+  .btn-export{
+    padding:8px 14px;
+    border:1.5px solid var(--teal);
+    background:var(--teal);
+    color:#fff;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .btn-export:hover{ background:var(--teal-deep); }
+  .btn-export:disabled{ opacity:.4; cursor:default; }
+
+  .guide-link{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--ochre); color:#fff; text-decoration:none;
+    font-weight:700; font-size:13.5px; padding:8px 14px; border-radius:8px;
+    white-space:nowrap;
+  }
+  .guide-link:hover{ background:#B0741F; }
+
+  /* scrollbar */
+  .list-pane::-webkit-scrollbar{ width:8px; }
+  .list-pane::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
+
+  @media (max-width:760px){
+    .main{ flex-direction:column; }
+    .list-pane{ width:100%; max-width:100%; height:46%; order:2; }
+    .map-pane{ height:54%; order:1; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="brand">
+      <div>
+        <div class="eyebrow">Orange County · Office on Aging 자료 기반</div>
+        <h1>시니어 아파트 지도</h1>
+      </div>
+    </div>
+    <div class="stats">
+      <div><b id="statTotal">0</b> 개 단지</div>
+      <div><b id="statCities">0</b> 개 도시</div>
+      <div><b id="statUnits">0</b> 세대</div>
+      <a class="guide-link" href="guide.html">📋 신청 안내 보기</a>
+    </div>
+  </header>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="🔍 이름, 주소, 도시로 검색...">
+    <select id="cityFilter"><option value="">전체 도시</option></select>
+    <select id="ageFilter">
+      <option value="">전체 입주연령</option>
+      <option value="50+">50+</option>
+      <option value="55+">55+</option>
+      <option value="60+">60+</option>
+      <option value="62+">62+</option>
+      <option value="65+">65+</option>
+    </select>
+    <select id="sortSelect">
+      <option value="name">이름순</option>
+      <option value="city">도시순</option>
+      <option value="units_desc">세대수 많은순</option>
+      <option value="units_asc">세대수 적은순</option>
+    </select>
+    <label class="toggle-chip" id="pbToggle">
+      <input type="checkbox" id="pbCheckbox"> 저소득 전용(Project-Based)만
+    </label>
+  </div>
+
+  <div class="geo-progress show" id="geoProgress">
+    <span id="geoText">위치 정밀도를 높이는 중...</span>
+    <div class="geo-bar-track"><div class="geo-bar-fill" id="geoBarFill"></div></div>
+    <button class="btn-export" id="exportBtn" title="지금까지 확보한 정확한 좌표를 파일에 넣어 저장합니다. 팀원에게 보내면 바로 정확한 지도가 뜹니다.">📍 좌표 저장본 내려받기</button>
+  </div>
+
+  <div class="main">
+    <div class="list-pane" id="listPane">
+      <div class="result-count" id="resultCount"></div>
+      <div id="cardContainer"></div>
+    </div>
+    <div class="map-pane">
+      <div id="map"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 후기 작성 모달 -->
+<div class="modal-backdrop" id="reviewModal" onclick="if(event.target===this) closeReview()">
+  <div class="modal">
+    <div class="modal-head">
+      <button class="modal-close" onclick="closeReview()" aria-label="닫기">&times;</button>
+      <h3 id="rvAptName">후기 남기기</h3>
+      <p>실거주 경험을 짧게 남겨주세요</p>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>별점</label>
+        <div class="stars" id="rvStars">
+          <button type="button" data-v="1">★</button>
+          <button type="button" data-v="2">★</button>
+          <button type="button" data-v="3">★</button>
+          <button type="button" data-v="4">★</button>
+          <button type="button" data-v="5">★</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="rvText">후기 내용</label>
+        <textarea id="rvText" maxlength="1000" placeholder="관리 상태, 교통, 이웃 분위기 등 실제 경험을 적어주세요."></textarea>
+      </div>
+      <div class="field">
+        <label for="rvNick">닉네임 (선택)</label>
+        <input type="text" id="rvNick" maxlength="40" placeholder="비워두면 '익명'으로 표시됩니다">
+      </div>
+      <!-- 스팸 방지용 숨김 필드 (사람에게는 안 보임) -->
+      <input type="text" id="rvHp" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeReview()">취소</button>
+        <button class="btn-submit" id="rvSubmit" onclick="submitReview()">등록</button>
+      </div>
+      <div class="modal-msg" id="rvMsg"></div>
+      <div class="modal-note">
+        · 등록한 후기는 <b>확인 후 게시</b>되므로 바로 보이지 않을 수 있습니다.<br>
+        · 후기는 작성자 개인의 의견이며 본 사이트의 입장이 아닙니다. 사실과 다르거나 부적절한 내용은 게시되지 않습니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+<script>
+/* __DATA__ */
+const APARTMENTS = [{"id": 1, "name": "Liberty at Aliso", "address": "100 Fredom Ln.", "city": "Aliso Viejo", "zip": "92656", "age": "55+", "phone": "(949) 639-9904", "website": "libertyaliso.usamfm.com", "email": null, "units": 200, "projectBased": false, "fullAddress": "100 Fredom Ln., Aliso Viejo, CA 92656"}, {"id": 2, "name": "Vintage Aliso Apartments", "address": "2C Liberty", "city": "Aliso Viejo", "zip": "92656", "age": "55+", "phone": "(949) 715-8330", "website": "vintagealiso.usamfm.com", "email": null, "units": 202, "projectBased": false, "fullAddress": "2C Liberty, Aliso Viejo, CA 92656"}, {"id": 3, "name": "Acaciawood Village", "address": "1415 W. Ball Rd.", "city": "Anaheim", "zip": "92802", "age": "62+", "phone": "(714) 772-8989", "website": "acaciawoodvillage.com", "email": null, "units": 123, "projectBased": false, "fullAddress": "1415 W. Ball Rd., Anaheim, CA 92802"}, {"id": 4, "name": "Anaheim Memorial Manor", "address": "275 E. Center St.", "city": "Anaheim", "zip": "92805", "age": "62+", "phone": "(714) 758-3807", "website": "rhf.org/anaheim-memorial-manor", "email": null, "units": 75, "projectBased": false, "fullAddress": "275 E. Center St., Anaheim, CA 92805"}, {"id": 5, "name": "Bel'Age Manor", "address": "1660 W. Broadway", "city": "Anaheim", "zip": "92802", "age": "55+", "phone": "714-294-2253", "website": "belagemanorapts.com", "email": null, "units": 178, "projectBased": false, "fullAddress": "1660 W. Broadway, Anaheim, CA 92802"}, {"id": 6, "name": "Cypress Senior", "address": "127 W. Cypress St.", "city": "Anaheim", "zip": "92805", "age": "55+", "phone": "(714) 379-9900", "website": "cypressseniorapts.com", "email": null, "units": 20, "projectBased": false, "fullAddress": "127 W. Cypress St., Anaheim, CA 92805"}, {"id": 7, "name": "Fairhaven Heights Apartments", "address": "536 N. Fairhaven St.", "city": "Anaheim", "zip": "92801", "age": "55+", "phone": "(714) 765-4300", "website": "", "email": "affordablehousing@anaheim.net", "units": 17, "projectBased": false, "fullAddress": "536 N. Fairhaven St., Anaheim, CA 92801"}, {"id": 8, "name": "Gilbert Park Apartments", "address": "925 S. Gilbert St.", "city": "Anaheim", "zip": "92804", "age": "62+", "phone": "(714) 765-4300", "website": "", "email": "affordablehousing@anaheim.net", "units": 100, "projectBased": false, "fullAddress": "925 S. Gilbert St., Anaheim, CA 92804"}, {"id": 9, "name": "Heritage Park", "address": "950 S. Gilbert St.", "city": "Anaheim", "zip": "92804", "age": "55+", "phone": "(714) 758-8880", "website": "heritageparkanaheimseniorapts.com", "email": null, "units": 94, "projectBased": false, "fullAddress": "950 S. Gilbert St., Anaheim, CA 92804"}, {"id": 10, "name": "Heritage Village", "address": "707 W. Santa Ana St.", "city": "Anaheim", "zip": "92805", "age": "55+", "phone": "714-774-6800", "website": "thevillageanaheim.com", "email": null, "units": 190, "projectBased": false, "fullAddress": "707 W. Santa Ana St., Anaheim, CA 92805"}, {"id": 11, "name": "Hillcrest Village", "address": "1730 N. Community Dr.", "city": "Anaheim", "zip": "92806", "age": "55+", "phone": "(714) 524-8210", "website": "hillcrestvillage.mmpla.com", "email": null, "units": 391, "projectBased": false, "fullAddress": "1730 N. Community Dr., Anaheim, CA 92806"}, {"id": 12, "name": "Kathryn Apartments", "address": "121 N. Kathryn Dr.", "city": "Anaheim", "zip": "92801", "age": "62+", "phone": "(714) 765-4300 x4810", "website": "", "email": "affordablehousing@anaheim.net", "units": 11, "projectBased": false, "fullAddress": "121 N. Kathryn Dr., Anaheim, CA 92801"}, {"id": 13, "name": "Linbrook Court", "address": "2240 W. Lincoln Ave.", "city": "Anaheim", "zip": "92801", "age": "55+", "phone": "(714) 817-9068", "website": "mercyhousing.org/california/linbrook-court", "email": null, "units": 81, "projectBased": false, "fullAddress": "2240 W. Lincoln Ave., Anaheim, CA 92801"}, {"id": 14, "name": "Magnolia Acres", "address": "640 S. Magnolia Ave.", "city": "Anaheim", "zip": "92804", "age": "62+", "phone": "(714) 952-8590", "website": "lowincomehousing.us/det/magnolia", "email": null, "units": 40, "projectBased": false, "fullAddress": "640 S. Magnolia Ave., Anaheim, CA 92804"}, {"id": 15, "name": "Miracle Terrace", "address": "225 S. Western Ave.", "city": "Anaheim", "zip": "92804", "age": "62+", "phone": "(714) 761-4241", "website": "miracleterraceapts.com", "email": null, "units": 170, "projectBased": false, "fullAddress": "225 S. Western Ave., Anaheim, CA 92804"}, {"id": 16, "name": "New Horizons", "address": "835 S. Brookhurst St.", "city": "Anaheim", "zip": "92804", "age": "62+", "phone": "(714) 490-0466", "website": "newhorizonvillage.com", "email": null, "units": 85, "projectBased": false, "fullAddress": "835 S. Brookhurst St., Anaheim, CA 92804"}, {"id": 17, "name": "The Overlook at Anaheim Hills", "address": "225 S. Festival Dr.", "city": "Anaheim", "zip": "92808", "age": "55+", "phone": "(714) 282-2276", "website": "theoverlookatanaheimhills.com", "email": null, "units": 261, "projectBased": false, "fullAddress": "225 S. Festival Dr., Anaheim, CA 92808"}, {"id": 18, "name": "Palacio Senior Apts.", "address": "435 S. Anaheim Hills Rd.", "city": "Anaheim", "zip": "92807", "age": "55+", "phone": "(714) 637-7717", "website": "palacioseniorapartments.com", "email": null, "units": 117, "projectBased": false, "fullAddress": "435 S. Anaheim Hills Rd., Anaheim, CA 92807"}, {"id": 19, "name": "Sage Park", "address": "810 N. Loara St.", "city": "Anaheim", "zip": "92801", "age": "62+", "phone": "(714) 988-2710", "website": "sageparkapts.com", "email": null, "units": 100, "projectBased": false, "fullAddress": "810 N. Loara St., Anaheim, CA 92801"}, {"id": 20, "name": "Solara Court", "address": "3335 W. Lincoln Ave.", "city": "Anaheim", "zip": "92801", "age": "62+", "phone": "(714) 761-2400", "website": "solaracourtapartments.com", "email": null, "units": 132, "projectBased": false, "fullAddress": "3335 W. Lincoln Ave., Anaheim, CA 92801"}, {"id": 21, "name": "Sterling Court", "address": "935 S. Gilbert St.", "city": "Anaheim", "zip": "92804", "age": "62+", "phone": "(714) 229-0400", "website": "sterlingcourtseniorapts.com", "email": null, "units": 34, "projectBased": false, "fullAddress": "935 S. Gilbert St., Anaheim, CA 92804"}, {"id": 22, "name": "Tyrol Plaza", "address": "891 S. State College Blvd.", "city": "Anaheim", "zip": "92805", "age": "62+", "phone": "(714) 778-5479", "website": "", "email": null, "units": 60, "projectBased": false, "fullAddress": "891 S. State College Blvd., Anaheim, CA 92805"}, {"id": 23, "name": "Villa Anaheim", "address": "3305 W. Lincoln Ave.", "city": "Anaheim", "zip": "92801", "age": "62+", "phone": "(714) 952-3600", "website": "villaanaheimseniorapts.com", "email": null, "units": 47, "projectBased": false, "fullAddress": "3305 W. Lincoln Ave., Anaheim, CA 92801"}, {"id": 24, "name": "Village Center", "address": "200 E. Lincoln Ave.", "city": "Anaheim", "zip": "92805", "age": "62+", "phone": "(714) 956-3840", "website": "", "email": null, "units": 100, "projectBased": false, "fullAddress": "200 E. Lincoln Ave., Anaheim, CA 92805"}, {"id": 25, "name": "Vintage Apartments", "address": "200 S. Citron St.", "city": "Anaheim", "zip": "92805", "age": "55+", "phone": "(714) 535-8500", "website": "", "email": null, "units": 82, "projectBased": false, "fullAddress": "200 S. Citron St., Anaheim, CA 92805"}, {"id": 26, "name": "Brea Woods", "address": "195 W. Central Ave.", "city": "Brea", "zip": "92821", "age": "55+", "phone": "(714) 255-8011", "website": "", "email": null, "units": 151, "projectBased": false, "fullAddress": "195 W. Central Ave., Brea, CA 92821"}, {"id": 27, "name": "Breal Sr Apartments", "address": "111 N. Orange Ave.", "city": "Brea", "zip": "92821", "age": "65+", "phone": "(714) 990-1217", "website": "", "email": null, "units": 30, "projectBased": false, "fullAddress": "111 N. Orange Ave., Brea, CA 92821"}, {"id": 28, "name": "Heritage Plaza", "address": "220 W. Central Ave.", "city": "Brea", "zip": "92821", "age": "55+", "phone": "(714) 990-6567", "website": "heritageplazaapartmenthomes.com", "email": null, "units": 160, "projectBased": false, "fullAddress": "220 W. Central Ave., Brea, CA 92821"}, {"id": 29, "name": "Orange Villa", "address": "137 N. Orange Ave.", "city": "Brea", "zip": "92821", "age": "55+", "phone": "(714) 990-0334", "website": "", "email": null, "units": 36, "projectBased": true, "fullAddress": "137 N. Orange Ave., Brea, CA 92821"}, {"id": 30, "name": "Vintage Canyon", "address": "855 N. Brea Blvd.", "city": "Brea", "zip": "92821", "age": "62+", "phone": "(714) 529-4261", "website": "vintagecanyon.usamfm.com", "email": null, "units": 105, "projectBased": false, "fullAddress": "855 N. Brea Blvd., Brea, CA 92821"}, {"id": 31, "name": "Casa Santa Maria", "address": "7551 Orangethorpe Ave.", "city": "Buena Park", "zip": "90621", "age": "62+", "phone": "(714) 994-1404", "website": "falkenberg-gilliam.com", "email": null, "units": 100, "projectBased": false, "fullAddress": "7551 Orangethorpe Ave., Buena Park, CA 90621"}, {"id": 32, "name": "Dorado Sr Apartments", "address": "8622 Stanton Ave.", "city": "Buena Park", "zip": "90620", "age": "62+", "phone": "(714) 236-0007", "website": "doradoseniorapts.com", "email": null, "units": 150, "projectBased": false, "fullAddress": "8622 Stanton Ave., Buena Park, CA 90620"}, {"id": 33, "name": "Harmony Park", "address": "7252 Melrose St.", "city": "Buena Park", "zip": "90622", "age": "62+", "phone": "(714) 994-9633", "website": "liveatharmonypark.com", "email": null, "units": 58, "projectBased": false, "fullAddress": "7252 Melrose St., Buena Park, CA 90622"}, {"id": 34, "name": "Seaview Plaza", "address": "2800 Pacific View Dr.", "city": "Corona del Mar", "zip": "92625", "age": "62+", "phone": "(949) 720-0888", "website": "st-residential.com", "email": null, "units": 100, "projectBased": false, "fullAddress": "2800 Pacific View Dr., Corona del Mar, CA 92625"}, {"id": 35, "name": "Casa Bella", "address": "1840 Park Ave.", "city": "Costa Mesa", "zip": "92627", "age": "55+", "phone": "(949) 646-0960", "website": "", "email": null, "units": 75, "projectBased": false, "fullAddress": "1840 Park Ave., Costa Mesa, CA 92627"}, {"id": 36, "name": "Costa Mesa Senior 4 (신축 2026)", "address": "695 W. 19th St.", "city": "Costa Mesa", "zip": "92626", "age": "55+", "phone": "(714) 327-7550", "website": "", "email": null, "units": 21, "projectBased": false, "fullAddress": "695 W. 19th St., Costa Mesa, CA 92626"}, {"id": 37, "name": "St. John's Manor", "address": "2031 Orange Ave.", "city": "Costa Mesa", "zip": "92627", "age": "62+", "phone": "(949) 645-3728", "website": "stjohnsmanoravanath.com", "email": null, "units": 36, "projectBased": true, "fullAddress": "2031 Orange Ave., Costa Mesa, CA 92627"}, {"id": 38, "name": "The Tower on 19th", "address": "678 W. 19th St.", "city": "Costa Mesa", "zip": "92627", "age": "55+", "phone": "(949) 642-9941", "website": "reinercommunities.com", "email": null, "units": 204, "projectBased": true, "fullAddress": "678 W. 19th St., Costa Mesa, CA 92627"}, {"id": 39, "name": "Cypress Park Sr Community", "address": "9021 Grindlay St.", "city": "Cypress", "zip": "90630", "age": "62+", "phone": "(714) 995-5300", "website": "", "email": null, "units": 124, "projectBased": false, "fullAddress": "9021 Grindlay St., Cypress, CA 90630"}, {"id": 40, "name": "Cypress Pointe Sr. Community", "address": "5120 Lincoln Ave.", "city": "Cypress", "zip": "90630", "age": "55+", "phone": "(714) 229-8500", "website": "", "email": null, "units": 110, "projectBased": false, "fullAddress": "5120 Lincoln Ave., Cypress, CA 90630"}, {"id": 41, "name": "Cypress Sunrise Apts.", "address": "9151 Grindlay St.", "city": "Cypress", "zip": "90630", "age": "62+", "phone": "(714) 527-6237", "website": "nationalchurchresidences.org", "email": null, "units": 75, "projectBased": false, "fullAddress": "9151 Grindlay St., Cypress, CA 90630"}, {"id": 42, "name": "Westmont of Cypress", "address": "4889 Katella Ave.", "city": "Cypress", "zip": "90720", "age": "55+", "phone": "(714) 252-7144", "website": "westmontliving.com", "email": null, "units": 45, "projectBased": false, "fullAddress": "4889 Katella Ave., Cypress, CA 90720"}, {"id": 43, "name": "Guadalupe Manor", "address": "17103 Magnolia St.", "city": "Fountain Valley", "zip": "92708", "age": "62+", "phone": "(714) 843-1121", "website": "", "email": null, "units": 71, "projectBased": true, "fullAddress": "17103 Magnolia St., Fountain Valley, CA 92708"}, {"id": 44, "name": "The Jasmine at Founder's Village", "address": "17911 Bushard St.", "city": "Fountain Valley", "zip": "92708", "age": "55+", "phone": "(714) 963-9660", "website": "thejasmineseniorapts.com", "email": null, "units": 156, "projectBased": false, "fullAddress": "17911 Bushard St., Fountain Valley, CA 92708"}, {"id": 45, "name": "Palm Island Sr Apartments", "address": "11300 Warner Ave.", "city": "Fountain Valley", "zip": "92708", "age": "55+", "phone": "(714) 546-5404", "website": "palmislandseniorliving.com", "email": null, "units": 400, "projectBased": false, "fullAddress": "11300 Warner Ave., Fountain Valley, CA 92708"}, {"id": 46, "name": "Amerige Villa", "address": "343 W. Amerige Ave.", "city": "Fullerton", "zip": "92832", "age": "60+", "phone": "(714) 598-1634", "website": "amerigevilla.com", "email": null, "units": 100, "projectBased": false, "fullAddress": "343 W. Amerige Ave., Fullerton, CA 92832"}, {"id": 47, "name": "Fountain Glen Jacaranda", "address": "1900 Camino Loma", "city": "Fullerton", "zip": "92833", "age": "55+", "phone": "(714) 879-1500", "website": "fountainglenjacaranda.com", "email": null, "units": 131, "projectBased": false, "fullAddress": "1900 Camino Loma, Fullerton, CA 92833"}, {"id": 48, "name": "Klimpel Manor", "address": "229 E. Amerige Ave.", "city": "Fullerton", "zip": "92832", "age": "62+", "phone": "(714) 680-6300", "website": "klimpelmanor.com", "email": null, "units": 59, "projectBased": false, "fullAddress": "229 E. Amerige Ave., Fullerton, CA 92832"}, {"id": 49, "name": "Ventana", "address": "345 E. Commonwealth Ave.", "city": "Fullerton", "zip": "92832", "age": "62+", "phone": "(833) 564-5200", "website": "ventanafullerton.com", "email": null, "units": 95, "projectBased": false, "fullAddress": "345 E. Commonwealth Ave., Fullerton, CA 92832"}, {"id": 50, "name": "Garden Brook Senior Village", "address": "10080 Garden Grove Blvd.", "city": "Garden Grove", "zip": "92844", "age": "62+", "phone": "(714) 462-5810", "website": "conam.com/property/garden-brook-senior-village", "email": null, "units": 399, "projectBased": false, "fullAddress": "10080 Garden Grove Blvd., Garden Grove, CA 92844"}, {"id": 51, "name": "The Grove Senior Apartments", "address": "12721 Garden Grove Blvd.", "city": "Garden Grove", "zip": "92843", "age": "62+", "phone": "(714) 537-6606", "website": "thegrovesenior.com", "email": null, "units": 85, "projectBased": false, "fullAddress": "12721 Garden Grove Blvd., Garden Grove, CA 92843"}, {"id": 52, "name": "Harbor Grove Apts.", "address": "12777 Garden Grove Blvd.", "city": "Garden Grove", "zip": "92843", "age": "55+", "phone": "(714) 537-3460", "website": "", "email": null, "units": 94, "projectBased": false, "fullAddress": "12777 Garden Grove Blvd., Garden Grove, CA 92843"}, {"id": 53, "name": "Donald Jordan Senior Manor", "address": "11441 Acacia Pkwy.", "city": "Garden Grove", "zip": "92840", "age": "62+", "phone": "(714) 530-2072", "website": "rhf.org/donald-jordan-sr-manor", "email": null, "units": 65, "projectBased": false, "fullAddress": "11441 Acacia Pkwy., Garden Grove, CA 92840"}, {"id": 54, "name": "Sungrove Senior Apartment Homes", "address": "12811 Garden Grove Blvd.", "city": "Garden Grove", "zip": "92843", "age": "55+", "phone": "(714) 636-5708", "website": "sungrovesenior.wnpmapartments.com", "email": null, "units": 82, "projectBased": false, "fullAddress": "12811 Garden Grove Blvd., Garden Grove, CA 92843"}, {"id": 55, "name": "Valley View Senior Apartment Homes", "address": "12200 Valley View St.", "city": "Garden Grove", "zip": "92845", "age": "55+", "phone": "(714) 706-1208", "website": "livevalleyviewvillas.com", "email": null, "units": 178, "projectBased": false, "fullAddress": "12200 Valley View St., Garden Grove, CA 92845"}, {"id": 56, "name": "Bowen Court", "address": "1978 Lake St.", "city": "Huntington Beach", "zip": "92648", "age": "62+", "phone": "(714) 374-4045", "website": "related.com/our-company/properties/bowen-court-apartments", "email": null, "units": 20, "projectBased": true, "fullAddress": "1978 Lake St., Huntington Beach, CA 92648"}, {"id": 57, "name": "Emerald Cove", "address": "18191 Parktree Cir.", "city": "Huntington Beach", "zip": "92648", "age": "55+", "phone": "(714) 842-0802", "website": "", "email": null, "units": 164, "projectBased": false, "fullAddress": "18191 Parktree Cir., Huntington Beach, CA 92648"}, {"id": 58, "name": "Five Points", "address": "18561 Florida St.", "city": "Huntington Beach", "zip": "92648", "age": "55+", "phone": "(714) 848-3883", "website": "huntington-beach-apts.com", "email": null, "units": 166, "projectBased": false, "fullAddress": "18561 Florida St., Huntington Beach, CA 92648"}, {"id": 59, "name": "FountainGlen at Seacliff", "address": "7181 Garden Glen Ct.", "city": "Huntington Beach", "zip": "92648", "age": "55+", "phone": "(714) 960-1600", "website": "fountainglenseacliff.com", "email": null, "units": 271, "projectBased": false, "fullAddress": "7181 Garden Glen Ct., Huntington Beach, CA 92648"}, {"id": 60, "name": "Huntington Breeze", "address": "16171 Springdale St.", "city": "Huntington Beach", "zip": "92649", "age": "55+", "phone": "(714) 887-8024", "website": "huntingtonbreezeapts.com", "email": null, "units": 100, "projectBased": false, "fullAddress": "16171 Springdale St., Huntington Beach, CA 92649"}, {"id": 61, "name": "Huntington Gardens", "address": "4901 Heil Ave.", "city": "Huntington Beach", "zip": "92649", "age": "62+", "phone": "(714) 846-1323", "website": "allenproperties.net", "email": null, "units": 183, "projectBased": false, "fullAddress": "4901 Heil Ave., Huntington Beach, CA 92649"}, {"id": 62, "name": "Huntington Terrace North", "address": "18800 Florida St.", "city": "Huntington Beach", "zip": "92649", "age": "55+", "phone": "(714) 698-4706", "website": "mbkseniorliving.com/senior-living/ca/huntington-beach/huntington-terrace", "email": null, "units": 114, "projectBased": false, "fullAddress": "18800 Florida St., Huntington Beach, CA 92649"}, {"id": 63, "name": "The Inn at Woodbridge", "address": "11 Osborn St.", "city": "Irvine", "zip": "92604", "age": "62+", "phone": "(949) 651-8600", "website": "innatwoodbridge.com", "email": null, "units": 116, "projectBased": false, "fullAddress": "11 Osborn St., Irvine, CA 92604"}, {"id": 64, "name": "Luxaira", "address": "1105 Hamal", "city": "Irvine", "zip": "92618", "age": "55+", "phone": "(949) 346-5444", "website": "luxairaliving.com", "email": null, "units": 80, "projectBased": false, "fullAddress": "1105 Hamal, Irvine, CA 92618"}, {"id": 65, "name": "Montaira", "address": "1102 Hamal", "city": "Irvine", "zip": "92618", "age": "55+", "phone": "(949) 431-7007", "website": "montairaliving.com", "email": null, "units": 165, "projectBased": false, "fullAddress": "1102 Hamal, Irvine, CA 92618"}, {"id": 66, "name": "Regents Point", "address": "19191 Harvard", "city": "Irvine", "zip": "92618", "age": "62+", "phone": "(949) 273-4739", "website": "humangood.org/regents-point", "email": null, "units": 221, "projectBased": false, "fullAddress": "19191 Harvard, Irvine, CA 92618"}, {"id": 67, "name": "Solaira at Pavilion Park", "address": "100 Ridge Valley", "city": "Irvine", "zip": "92618", "age": "55+", "phone": "(949) 209-5025", "website": "solairaliving.com", "email": null, "units": 221, "projectBased": false, "fullAddress": "100 Ridge Valley, Irvine, CA 92618"}, {"id": 68, "name": "Woodbridge Manor", "address": "27 Lake Rd.", "city": "Irvine", "zip": "92604", "age": "62+", "phone": "(949) 552-6794", "website": "woodbridgemanorapts.com", "email": null, "units": 165, "projectBased": false, "fullAddress": "27 Lake Rd., Irvine, CA 92604"}, {"id": 69, "name": "Heritage Park", "address": "1 McGwire Rd.", "city": "Ladera Ranch", "zip": "92694", "age": "55+", "phone": "(949) 528-2804", "website": "heritageparkapts.info", "email": null, "units": 180, "projectBased": false, "fullAddress": "1 McGwire Rd., Ladera Ranch, CA 92694"}, {"id": 70, "name": "Heritage Square", "address": "50 Main St.", "city": "Ladera Ranch", "zip": "92694", "age": "55+", "phone": "(949) 208-7556", "website": "heritagesquareapts.com", "email": null, "units": 83, "projectBased": false, "fullAddress": "50 Main St., Ladera Ranch, CA 92694"}, {"id": 71, "name": "Remington", "address": "25501 Crown Valley Pkwy.", "city": "Ladera Ranch", "zip": "92694", "age": "55+", "phone": "(833) 222-7935", "website": "remingtonseniors.com", "email": null, "units": 154, "projectBased": false, "fullAddress": "25501 Crown Valley Pkwy., Ladera Ranch, CA 92694"}, {"id": 72, "name": "Hagan Place", "address": "393 Third St.", "city": "Laguna Beach", "zip": "92651", "age": "62+", "phone": "(949) 376-3033", "website": "", "email": null, "units": 24, "projectBased": true, "fullAddress": "393 Third St., Laguna Beach, CA 92651"}, {"id": 73, "name": "Vista Aliso", "address": "21544 Wesley Dr.", "city": "Laguna Beach", "zip": "92651", "age": "60+", "phone": "(949) 499-5581", "website": "", "email": null, "units": 71, "projectBased": true, "fullAddress": "21544 Wesley Dr., Laguna Beach, CA 92651"}, {"id": 74, "name": "Meridian at Laguna Hills", "address": "24552 Paseo De Valencia", "city": "Laguna Hills", "zip": "92653", "age": "55+", "phone": "(949) 998-6296", "website": "meridianatlagunahills.com", "email": null, "units": 100, "projectBased": false, "fullAddress": "24552 Paseo De Valencia, Laguna Hills, CA 92653"}, {"id": 75, "name": "Fountain Glen Laguna Niguel", "address": "25501 Camino Los Padres", "city": "Laguna Niguel", "zip": "92677", "age": "55+", "phone": "(949) 249-3155", "website": "fountainglenlagunaniguel.com", "email": null, "units": 190, "projectBased": false, "fullAddress": "25501 Camino Los Padres, Laguna Niguel, CA 92677"}, {"id": 76, "name": "Ivy Park of Wellington", "address": "24962 Calle Aragon", "city": "Laguna Woods", "zip": "92637", "age": "62+", "phone": "(949) 403-6343", "website": "ivyliving.com/ivyparkwellington", "email": null, "units": 190, "projectBased": false, "fullAddress": "24962 Calle Aragon, Laguna Woods, CA 92637"}, {"id": 77, "name": "Laguna Woods Village", "address": "24351 El Toro Rd.", "city": "Laguna Woods", "zip": "92637", "age": "55+", "phone": "(949) 597-4600", "website": "lagunawoodsvillage.com", "email": null, "units": 143, "projectBased": false, "fullAddress": "24351 El Toro Rd., Laguna Woods, CA 92637"}, {"id": 78, "name": "San Sebastian", "address": "24299 Paseo de Valencia", "city": "Laguna Woods", "zip": "92637", "age": "55+", "phone": "(949) 600-1883", "website": "livesansebastian.com", "email": null, "units": 70, "projectBased": false, "fullAddress": "24299 Paseo de Valencia, Laguna Woods, CA 92637"}, {"id": 79, "name": "Casa El Centro", "address": "101 N. Cypress St.", "city": "La Habra", "zip": "90631", "age": "60+", "phone": "(562) 691-4342", "website": "", "email": null, "units": 60, "projectBased": true, "fullAddress": "101 N. Cypress St., La Habra, CA 90631"}, {"id": 80, "name": "La Habra Inn Sr Apartments", "address": "700 N. Beach Blvd.", "city": "La Habra", "zip": "90631", "age": "62+", "phone": "(562) 694-1991", "website": "", "email": null, "units": 70, "projectBased": true, "fullAddress": "700 N. Beach Blvd., La Habra, CA 90631"}, {"id": 81, "name": "Meadows Senior Apartments", "address": "101 Lopala Lake", "city": "Lake Forest", "zip": "92630", "age": "62+", "phone": "(949) 978-4776", "website": "meadowsseniors.com", "email": null, "units": 65, "projectBased": false, "fullAddress": "101 Lopala Lake, Lake Forest, CA 92630"}, {"id": 82, "name": "Portola Senior Apartments", "address": "931 Portola Oaks Dr.", "city": "Lake Forest", "zip": "92679", "age": "62+", "phone": "(760) 623-0688", "website": "portolaseniorapt.com", "email": null, "units": 57, "projectBased": false, "fullAddress": "931 Portola Oaks Dr., Lake Forest, CA 92679"}, {"id": 83, "name": "Camden Place", "address": "4500 Montecito Dr.", "city": "La Palma", "zip": "90623", "age": "55+", "phone": "(562) 865-2511", "website": "jamboreehousing.com", "email": null, "units": 35, "projectBased": false, "fullAddress": "4500 Montecito Dr., La Palma, CA 90623"}, {"id": 84, "name": "Seasons La Palma", "address": "7051 Walker St.", "city": "La Palma", "zip": "90623", "age": "62+", "phone": "(714) 690-9830", "website": "linchousing.org/find-a-rental", "email": null, "units": 60, "projectBased": false, "fullAddress": "7051 Walker St., La Palma, CA 90623"}, {"id": 85, "name": "Klein Manor", "address": "4121 Katella Ave.", "city": "Los Alamitos", "zip": "90720", "age": "62+", "phone": "(714) 827-2553", "website": "rhf.org/klein-manor", "email": null, "units": 71, "projectBased": false, "fullAddress": "4121 Katella Ave., Los Alamitos, CA 90720"}, {"id": 86, "name": "Midway Meadows Apartment Homes", "address": "14852 Park Ln.", "city": "Midway City", "zip": "92655", "age": "55+", "phone": "714-894-8970", "website": "midwaymeadowsapartmenthomes.com", "email": null, "units": 91, "projectBased": false, "fullAddress": "14852 Park Ln., Midway City, CA 92655"}, {"id": 87, "name": "Pacific Terrace Apartment Homes", "address": "15000 Pacific St.", "city": "Midway City", "zip": "92655", "age": "62+", "phone": "(714) 893-8822", "website": "", "email": null, "units": 97, "projectBased": false, "fullAddress": "15000 Pacific St., Midway City, CA 92655"}, {"id": 88, "name": "Heritage Villas Senior Apartments", "address": "26836 Oso Pkwy.", "city": "Mission Viejo", "zip": "92691", "age": "62+", "phone": "(949) 348-1894", "website": "", "email": null, "units": 142, "projectBased": false, "fullAddress": "26836 Oso Pkwy., Mission Viejo, CA 92691"}, {"id": 89, "name": "Reata Glen", "address": "2 Las Estrellas Loop", "city": "Mission Viejo", "zip": "92694", "age": "55+", "phone": "(949) 541-9079", "website": "reataglen.com", "email": null, "units": 70, "projectBased": false, "fullAddress": "2 Las Estrellas Loop, Mission Viejo, CA 92694"}, {"id": 90, "name": "Bayview Landing", "address": "1121 Back Bay Dr.", "city": "Newport Beach", "zip": "92660", "age": "62+", "phone": "(949) 759-1238", "website": "laspalmashousing.com/bayview-landing-senior-apartments", "email": null, "units": 120, "projectBased": false, "fullAddress": "1121 Back Bay Dr., Newport Beach, CA 92660"}, {"id": 91, "name": "Cove Apartments", "address": "6001 Newport Shores Dr.", "city": "Newport Beach", "zip": "92663", "age": "62+", "phone": "(657) 250-4208", "website": "thecoveaptsliving.com", "email": null, "units": 110, "projectBased": false, "fullAddress": "6001 Newport Shores Dr., Newport Beach, CA 92663"}, {"id": 92, "name": "Newport Beach Plaza", "address": "1455 Superior Ave.", "city": "Newport Beach", "zip": "92663", "age": "55+", "phone": "(949) 645-6833", "website": "atriaseniorliving.com", "email": null, "units": 75, "projectBased": false, "fullAddress": "1455 Superior Ave., Newport Beach, CA 92663"}, {"id": 93, "name": "Alice Clark Orange Blossom", "address": "141 E. Walnut Ave.", "city": "Orange", "zip": "92866", "age": "55+", "phone": "(714) 771-1439", "website": "ohdcorp.com", "email": null, "units": 4, "projectBased": true, "fullAddress": "141 E. Walnut Ave., Orange, CA 92866"}, {"id": 94, "name": "Chestnut Place", "address": "1745 E. Fairway Dr.", "city": "Orange", "zip": "92866", "age": "62+", "phone": "(714) 633-5610", "website": "apsmanagement.biz/property/chestnutplace", "email": null, "units": 100, "projectBased": false, "fullAddress": "1745 E. Fairway Dr., Orange, CA 92866"}, {"id": 95, "name": "Community Garden Towers", "address": "3919 W. Garden Grove Blvd.", "city": "Orange", "zip": "92868", "age": "62+", "phone": "(714) 971-2522", "website": "lowincomehousing.us/det/chestnut", "email": null, "units": 120, "projectBased": true, "fullAddress": "3919 W. Garden Grove Blvd., Orange, CA 92868"}, {"id": 96, "name": "Creekview Senior Community", "address": "353 S. Tustin St.", "city": "Orange", "zip": "92866", "age": "62+", "phone": "(714) 532-9800", "website": "", "email": null, "units": 10, "projectBased": false, "fullAddress": "353 S. Tustin St., Orange, CA 92866"}, {"id": 97, "name": "Palmyra, Richlyn & Fern Garden Apts.", "address": "301 S. Glassell St.", "city": "Orange", "zip": "92869", "age": "62+", "phone": "(714) 639-2121", "website": "palmyra.wnpmapartments.com", "email": null, "units": 20, "projectBased": false, "fullAddress": "301 S. Glassell St., Orange, CA 92869"}, {"id": 98, "name": "Harmony Creek", "address": "1616 E. Rock Creek Dr.", "city": "Orange", "zip": "92866", "age": "55+", "phone": "(714) 516-1900", "website": "liveatharmonycreek.com", "email": null, "units": 82, "projectBased": false, "fullAddress": "1616 E. Rock Creek Dr., Orange, CA 92866"}, {"id": 99, "name": "Katella Terrace Apartments", "address": "1249 E. Katella Ave.", "city": "Orange", "zip": "92867", "age": "62+", "phone": "(213) 786-4118", "website": "", "email": null, "units": 73, "projectBased": false, "fullAddress": "1249 E. Katella Ave., Orange, CA 92867"}, {"id": 100, "name": "Orange Park Heights", "address": "340 N. Newport Blvd.", "city": "Orange", "zip": "92869", "age": "55+", "phone": "(714) 926-3203", "website": "", "email": null, "units": 90, "projectBased": false, "fullAddress": "340 N. Newport Blvd., Orange, CA 92869"}, {"id": 101, "name": "Park Plaza", "address": "620 S. Glassell St.", "city": "Orange", "zip": "92866", "age": "55+", "phone": "(714) 589-2287", "website": "kiscoseniorliving.com/senior-living/ca/orange/park-plaza", "email": null, "units": 30, "projectBased": false, "fullAddress": "620 S. Glassell St., Orange, CA 92866"}, {"id": 102, "name": "Stonegate Senior Villas", "address": "170 N. Prospect St.", "city": "Orange", "zip": "92869", "age": "55+", "phone": "(714) 538-7729", "website": "", "email": null, "units": 20, "projectBased": false, "fullAddress": "170 N. Prospect St., Orange, CA 92869"}, {"id": 103, "name": "Triangle Terrace", "address": "555 S. Shaffer St.", "city": "Orange", "zip": "92866", "age": "62+", "phone": "(714) 633-7344", "website": "conam.com/property/Triangle-Terrace", "email": null, "units": 75, "projectBased": false, "fullAddress": "555 S. Shaffer St., Orange, CA 92866"}, {"id": 104, "name": "The Orion (신축 2026)", "address": "1800 E. La Veta Ave.", "city": "Orange", "zip": "92866", "age": "55+", "phone": "(714) 639-9860", "website": "usapropfund.com", "email": null, "units": 166, "projectBased": false, "fullAddress": "1800 E. La Veta Ave., Orange, CA 92866"}, {"id": 105, "name": "Bradford Terrace", "address": "1112 N. Bradford Ave.", "city": "Placentia", "zip": "92870", "age": "55+", "phone": "(714) 223-1223", "website": "bradfordterraceseniorapartments.com", "email": null, "units": 175, "projectBased": false, "fullAddress": "1112 N. Bradford Ave., Placentia, CA 92870"}, {"id": 106, "name": "Emerald Isle", "address": "661 N. Rose Dr.", "city": "Placentia", "zip": "92870", "age": "55+", "phone": "(714) 572-2687", "website": "emeraldisleapartments.com", "email": null, "units": 50, "projectBased": false, "fullAddress": "661 N. Rose Dr., Placentia, CA 92870"}, {"id": 107, "name": "Sendero Bluffs Senior Apt Living", "address": "30472 Gateway Pl.", "city": "Rancho Mission Viejo", "zip": "92694", "age": "55+", "phone": "(949) 652-3901", "website": "senderobluffs.com", "email": null, "units": 45, "projectBased": false, "fullAddress": "30472 Gateway Pl., Rancho Mission Viejo, CA 92694"}, {"id": 108, "name": "Fountain Glen Rancho Santa Margarita", "address": "30751 El Corazon", "city": "Rancho Santa Margarita", "zip": "92688", "age": "55+", "phone": "(949) 766-1620", "website": "fountainglenranchosantamargarita.com", "email": null, "units": 166, "projectBased": false, "fullAddress": "30751 El Corazon, Rancho Santa Margarita, CA 92688"}, {"id": 109, "name": "Overture Rancho Santa Margarita", "address": "30824 La Miranda", "city": "Rancho Santa Margarita", "zip": "92688", "age": "55+", "phone": "(949) 558-3896", "website": "liveoverture.com", "email": null, "units": 115, "projectBased": false, "fullAddress": "30824 La Miranda, Rancho Santa Margarita, CA 92688"}, {"id": 110, "name": "Park Terrace", "address": "21952 Buena Suerte", "city": "Rancho Santa Margarita", "zip": "92688", "age": "55+", "phone": "(949) 888-2250", "website": "kiscoseniorliving.com", "email": null, "units": 180, "projectBased": false, "fullAddress": "21952 Buena Suerte, Rancho Santa Margarita, CA 92688"}, {"id": 111, "name": "Cottons Point", "address": "2358 S. El Camino Real", "city": "San Clemente", "zip": "92672", "age": "62+", "phone": "(949) 366-2600", "website": "cottonspointseniorapts.com", "email": null, "units": 78, "projectBased": true, "fullAddress": "2358 S. El Camino Real, San Clemente, CA 92672"}, {"id": 112, "name": "The Presidio A Senior Community", "address": "105 Avenida Presidio", "city": "San Clemente", "zip": "92672", "age": "62+", "phone": "(949) 492-2970", "website": "", "email": null, "units": 72, "projectBased": false, "fullAddress": "105 Avenida Presidio, San Clemente, CA 92672"}, {"id": 113, "name": "Vintage Shores", "address": "366 Camino De Estrella", "city": "San Clemente", "zip": "92672", "age": "55+", "phone": "(949) 661-6160", "website": "vintageshores.usamfm.com", "email": null, "units": 122, "projectBased": false, "fullAddress": "366 Camino De Estrella, San Clemente, CA 92672"}, {"id": 114, "name": "Seasons at San Juan Capistrano", "address": "31641 Rancho Viejo Rd.", "city": "San Juan Capistrano", "zip": "92675", "age": "55+", "phone": "(949) 487-0210", "website": "seasonssenior.com", "email": null, "units": 150, "projectBased": false, "fullAddress": "31641 Rancho Viejo Rd., San Juan Capistrano, CA 92675"}, {"id": 115, "name": "Villa Paloma", "address": "27221 Paseo Espada", "city": "San Juan Capistrano", "zip": "92675", "age": "55+", "phone": "(949) 443-9237", "website": "willowpartners.com/properties/villa-paloma-senior-apartments", "email": null, "units": 66, "projectBased": false, "fullAddress": "27221 Paseo Espada, San Juan Capistrano, CA 92675"}, {"id": 116, "name": "The Groves", "address": "30333 Camino Capistrano", "city": "San Juan Capistrano", "zip": "92675", "age": "62+", "phone": "(949) 210-3588", "website": "grovesseniors.com", "email": null, "units": 8, "projectBased": true, "fullAddress": "30333 Camino Capistrano, San Juan Capistrano, CA 92675"}, {"id": 117, "name": "Casa Pacifica", "address": "2201 S Pacific Ave.", "city": "Santa Ana", "zip": "92704", "age": "55+", "phone": "(714) 909-1987", "website": "rentcasapacifica.com", "email": null, "units": 82, "projectBased": false, "fullAddress": "2201 S Pacific Ave., Santa Ana, CA 92704"}, {"id": 118, "name": "Flower Park Plaza", "address": "901 W. First St.", "city": "Santa Ana", "zip": "92703", "age": "55+", "phone": "(714) 542-6002", "website": "wearecch.org", "email": null, "units": 199, "projectBased": false, "fullAddress": "901 W. First St., Santa Ana, CA 92703"}, {"id": 119, "name": "Flower Terrace", "address": "1401 N. Flower St.", "city": "Santa Ana", "zip": "92706", "age": "62+", "phone": "(714) 541-4451", "website": "", "email": null, "units": 140, "projectBased": true, "fullAddress": "1401 N. Flower St., Santa Ana, CA 92706"}, {"id": 120, "name": "Heninger Village", "address": "200 S. Sycamore", "city": "Santa Ana", "zip": "92701", "age": "62+", "phone": "(714) 541-9438", "website": "liveatheningervillageapts.com", "email": null, "units": 58, "projectBased": true, "fullAddress": "200 S. Sycamore, Santa Ana, CA 92701"}, {"id": 121, "name": "Metro East Senior Park", "address": "2222 E. First St.", "city": "Santa Ana", "zip": "92705", "age": "62+", "phone": "(714) 760-4983", "website": "metroeastsenior.com", "email": null, "units": 418, "projectBased": false, "fullAddress": "2222 E. First St., Santa Ana, CA 92705"}, {"id": 122, "name": "Rosswood Villa", "address": "100 N. Ross St.", "city": "Santa Ana", "zip": "92701", "age": "62+", "phone": "(714) 972-1319", "website": "lowincomehousing.us", "email": null, "units": 199, "projectBased": true, "fullAddress": "100 N. Ross St., Santa Ana, CA 92701"}, {"id": 123, "name": "Santa Ana Towers", "address": "401 W. 1st St.", "city": "Santa Ana", "zip": "92701", "age": "62+", "phone": "(714) 835-6905", "website": "tsahousing.com/property/santaanatowers", "email": null, "units": 200, "projectBased": false, "fullAddress": "401 W. 1st St., Santa Ana, CA 92701"}, {"id": 124, "name": "Santiago Villas", "address": "939 E. 17th St.", "city": "Santa Ana", "zip": "92701", "age": "55+", "phone": "(714) 667-8033", "website": "santiagovillasapartments.com", "email": null, "units": 89, "projectBased": false, "fullAddress": "939 E. 17th St., Santa Ana, CA 92701"}, {"id": 125, "name": "Eaves Seal Beach", "address": "333 1st St.", "city": "Seal Beach", "zip": "90740", "age": "50+", "phone": "(562) 742-2877", "website": "avaloncommunities.com/california/seal-beach-apartments/eaves-seal-beach", "email": null, "units": 549, "projectBased": false, "fullAddress": "333 1st St., Seal Beach, CA 90740"}, {"id": 126, "name": "Park Stanton", "address": "7622 Katella Ave.", "city": "Stanton", "zip": "90680", "age": "55+", "phone": "(714) 895-1340", "website": "", "email": null, "units": 334, "projectBased": false, "fullAddress": "7622 Katella Ave., Stanton, CA 90680"}, {"id": 127, "name": "Heritage Place", "address": "1101 Sycamore Ave.", "city": "Tustin", "zip": "92780", "age": "62+", "phone": "(714) 734-6752", "website": "heritageplaceattustin.com", "email": null, "units": 53, "projectBased": false, "fullAddress": "1101 Sycamore Ave., Tustin, CA 92780"}, {"id": 128, "name": "Coventry Court", "address": "16000 Cambridge Way", "city": "Tustin", "zip": "92782", "age": "55+", "phone": "(855) 971-0658", "website": "coventrycourtseniors.com", "email": null, "units": 150, "projectBased": false, "fullAddress": "16000 Cambridge Way, Tustin, CA 92782"}, {"id": 129, "name": "Tustin Gardens", "address": "275 E. Sixth St.", "city": "Tustin", "zip": "92780", "age": "62+", "phone": "(714) 709-4399", "website": "tustingardens.com", "email": null, "units": 100, "projectBased": false, "fullAddress": "275 E. Sixth St., Tustin, CA 92780"}, {"id": 130, "name": "Tustin Terrace", "address": "17432 Mitchell Ave.", "city": "Tustin", "zip": "92780", "age": "62+", "phone": "(714) 734-8959", "website": "", "email": null, "units": 48, "projectBased": true, "fullAddress": "17432 Mitchell Ave., Tustin, CA 92780"}, {"id": 131, "name": "Cambridge Heights", "address": "7541 Wyoming St.", "city": "Westminster", "zip": "92683", "age": "55+", "phone": "(714) 899-3022", "website": "cambridgeheightssenior.com", "email": null, "units": 21, "projectBased": true, "fullAddress": "7541 Wyoming St., Westminster, CA 92683"}, {"id": 132, "name": "Coventry Heights", "address": "7521 Wyoming St.", "city": "Westminster", "zip": "92683", "age": "55+", "phone": "(714) 379-0795", "website": "coventryheightsapartments.com", "email": null, "units": 76, "projectBased": false, "fullAddress": "7521 Wyoming St., Westminster, CA 92683"}, {"id": 133, "name": "HW Senior Living Apt Homes", "address": "13920 Hoover St.", "city": "Westminster", "zip": "92683", "age": "55+", "phone": "(844) 816-2652", "website": "fountainglengoldenwest.com", "email": null, "units": 305, "projectBased": false, "fullAddress": "13920 Hoover St., Westminster, CA 92683"}, {"id": 134, "name": "Rose Gardens", "address": "8190 13th St.", "city": "Westminster", "zip": "92683", "age": "55+", "phone": "(714) 628-1650", "website": "", "email": null, "units": 132, "projectBased": true, "fullAddress": "8190 13th St., Westminster, CA 92683"}, {"id": 135, "name": "Brookdale Brookhurst", "address": "15302 Brookhurst St.", "city": "Westminster", "zip": "92683", "age": "55+", "phone": "(714) 775-4253", "website": "brookdale.com/en/communities/brookdale-brookhurst.html", "email": null, "units": 117, "projectBased": false, "fullAddress": "15302 Brookhurst St., Westminster, CA 92683"}, {"id": 136, "name": "Sutton Place", "address": "7051 Natal Dr.", "city": "Westminster", "zip": "92683", "age": "55+", "phone": "(714) 897-0222", "website": "rentsuttonplace.com", "email": null, "units": 120, "projectBased": false, "fullAddress": "7051 Natal Dr., Westminster, CA 92683"}, {"id": 137, "name": "The Vintage", "address": "15515 Newland St.", "city": "Westminster", "zip": "92683", "age": "60+", "phone": "(714) 892-1230", "website": "", "email": null, "units": 53, "projectBased": false, "fullAddress": "15515 Newland St., Westminster, CA 92683"}, {"id": 138, "name": "Westminster Sr Apartments", "address": "7632 21st St.", "city": "Westminster", "zip": "92683", "age": "60+", "phone": "(714) 901-0498", "website": "", "email": null, "units": 91, "projectBased": true, "fullAddress": "7632 21st St., Westminster, CA 92683"}, {"id": 139, "name": "Windsor Court and Stratford Place", "address": "8140 13th St.", "city": "Westminster", "zip": "92683", "age": "55+", "phone": "(714) 891-3000", "website": "windsor-stratford.com", "email": null, "units": 85, "projectBased": false, "fullAddress": "8140 13th St., Westminster, CA 92683"}, {"id": 140, "name": "Evergreen Villas", "address": "5100 Avocado Cir.", "city": "Yorba Linda", "zip": "92886", "age": "55+", "phone": "714-282-2520 Ext. 201", "website": "lowincomehousing.us", "email": null, "units": 28, "projectBased": true, "fullAddress": "5100 Avocado Cir., Yorba Linda, CA 92886"}, {"id": 141, "name": "Parkwood", "address": "4075 Prospect Ave.", "city": "Yorba Linda", "zip": "92886", "age": "55+", "phone": "(714) 986-9505", "website": "americanhousingpm.com/parkwood-yorba-linda", "email": null, "units": 100, "projectBased": false, "fullAddress": "4075 Prospect Ave., Yorba Linda, CA 92886"}, {"id": 142, "name": "Victoria Woods", "address": "5303 Stonehaven Dr.", "city": "Yorba Linda", "zip": "92887", "age": "60+", "phone": "(714) 695-0500", "website": "publichousing.com/details/ca_victoria-woods-senior-apartments-yorba-linda", "email": null, "units": 125, "projectBased": true, "fullAddress": "5303 Stonehaven Dr., Yorba Linda, CA 92887"}, {"id": 143, "name": "Villa Pacifica", "address": "18421 Lemon Dr.", "city": "Yorba Linda", "zip": "92886", "age": "55+", "phone": "(657) 363-5758", "website": "villapacificaapartments.com", "email": null, "units": 84, "projectBased": false, "fullAddress": "18421 Lemon Dr., Yorba Linda, CA 92886"}];
+/* __END_DATA__ */
+
+/* 우편번호 중심 좌표 — 파일에 내장되어 있어 조회 없이 즉시 표시됩니다 */
+const ZIP_CENTROIDS = {"90620": [33.8439, -118.008], "90621": [33.8772, -117.9893], "90622": [33.8462, -118.0031], "90623": [33.8491, -118.0398], "90630": [33.8181, -118.0357], "90631": [33.9331, -117.9493], "90680": [33.7991, -117.9956], "90720": [33.7956, -118.0648], "90740": [33.7602, -118.0808], "92604": [33.6899, -117.7868], "92618": [33.7074, -117.7054], "92625": [33.6021, -117.8743], "92626": [33.6801, -117.9085], "92627": [33.6483, -117.9155], "92630": [33.6437, -117.6868], "92637": [33.6103, -117.7253], "92648": [33.6773, -118.0051], "92649": [33.718, -118.0505], "92651": [33.5429, -117.7813], "92653": [33.5916, -117.6985], "92655": [33.7446, -117.984], "92656": [33.5701, -117.7086], "92660": [33.6295, -117.8684], "92663": [33.621, -117.9321], "92672": [33.4361, -117.6231], "92675": [33.5085, -117.6565], "92677": [33.5145, -117.7084], "92679": [33.6625, -117.5903], "92683": [33.7524, -117.9939], "92688": [33.6512, -117.5938], "92691": [33.6128, -117.6622], "92694": [33.5472, -117.6238], "92701": [33.7523, -117.8541], "92703": [33.7489, -117.9072], "92704": [33.7249, -117.909], "92705": [33.754, -117.7919], "92706": [33.7691, -117.8855], "92708": [33.7102, -117.9503], "92780": [33.7364, -117.8229], "92782": [33.7346, -117.7869], "92801": [33.8428, -117.9546], "92802": [33.8085, -117.9228], "92804": [33.8186, -117.9729], "92805": [33.8359, -117.9086], "92806": [33.8356, -117.8681], "92807": [33.8544, -117.7858], "92808": [33.8579, -117.7513], "92821": [33.9291, -117.8845], "92832": [33.868, -117.9265], "92833": [33.8766, -117.9551], "92840": [33.7869, -117.9273], "92843": [33.7671, -117.929], "92844": [33.7661, -117.9738], "92845": [33.7787, -118.0267], "92866": [33.7877, -117.8423], "92867": [33.811, -117.8493], "92868": [33.7875, -117.8776], "92869": [33.7868, -117.7934], "92870": [33.8744, -117.8543], "92886": [33.9058, -117.7865], "92887": [33.8841, -117.7304]};
+
+/* 주소 단위 정밀 좌표 — "좌표 저장본 내려받기"로 이 자리에 채워집니다 */
+/* __PRECISE_START__ */
+const BAKED_PRECISE = {};
+/* __PRECISE_END__ */
+
+const CACHE_KEY = 'geocode-cache-v1';
+let geoCache = Object.assign({}, BAKED_PRECISE); // fullAddress -> {lat, lon}
+let markers = {};  // id -> leaflet marker
+let selectedId = null;
+let map, cluster;
+let renderTimer = null;
+
+/* ============================================================
+   실거주자 후기 설정
+   ↓ 아래 따옴표 안에 Apps Script 웹 앱 URL(.../exec)을 붙여넣으세요.
+   비워두면 후기 기능은 조용히 숨겨지고 지도는 그대로 동작합니다.
+   ============================================================ */
+const REVIEW_API = "";
+
+let reviewsByApt = {}; // aptId -> { avg, count }
+let mapReady = false;  // 지도 라이브러리 로드 성공 여부
+
+function initMap(){
+  if(typeof L === 'undefined'){
+    // 지도 라이브러리 로드 실패(네트워크/CDN 차단 등) — 목록은 정상 동작시킴
+    const el = document.getElementById('map');
+    if(el){
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.padding = '20px';
+      el.style.textAlign = 'center';
+      el.style.color = 'var(--ink-soft)';
+      el.innerHTML = '지도를 불러오지 못했습니다.<br>인터넷 연결을 확인해주세요.<br>목록과 검색은 정상적으로 사용할 수 있습니다.';
+    }
+    return;
+  }
+  map = L.map('map', {zoomControl:true}).setView([33.75, -117.85], 10.2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom:19,
+    attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  cluster = L.markerClusterGroup({
+    maxClusterRadius:42,
+    iconCreateFunction: function(c){
+      return L.divIcon({
+        html: '<div style="background:#0F4A44;color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);">'+c.getChildCount()+'</div>',
+        className:'', iconSize:[36,36]
+      });
+    }
+  });
+  map.addLayer(cluster);
+  mapReady = true;
+}
+
+function pinIcon(pb, approx){
+  return L.divIcon({
+    className:'',
+    html:'<div class="pin'+(pb?' pb':'')+(approx?' approx':'')+'"></div>',
+    iconSize: approx ? [20,20] : [26,26],
+    iconAnchor: approx ? [10,10] : [13,26],
+    popupAnchor: approx ? [0,-12] : [0,-24]
+  });
+}
+
+/* 정밀 좌표가 있으면 그것을, 없으면 우편번호 중심을 사용 */
+function locate(apt){
+  const p = geoCache[apt.fullAddress];
+  if(p) return { lat:p.lat, lon:p.lon, approx:false };
+  const z = ZIP_CENTROIDS[apt.zip];
+  if(z) return { lat:z[0], lon:z[1], approx:true };
+  return null;
+}
+
+function callHref(phone){
+  return 'tel:' + phone.replace(/[^\d+]/g,'');
+}
+function webHref(site){
+  if(!site) return null;
+  return site.startsWith('http') ? site : 'https://' + site;
+}
+function dirHref(addr){
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(addr);
+}
+
+function actionsHtml(apt, size){
+  const web = webHref(apt.website);
+  const mailHtml = apt.email ? `<a class="btn btn-mail" href="mailto:${apt.email}" onclick="event.stopPropagation()">✉ 이메일</a>` : '';
+  return `
+    <a class="btn btn-call" href="${callHref(apt.phone)}" onclick="event.stopPropagation()">📞 전화</a>
+    <a class="btn btn-dir" href="${dirHref(apt.fullAddress)}" target="_blank" onclick="event.stopPropagation()">🧭 길찾기</a>
+    ${web ? `<a class="btn btn-web" href="${web}" target="_blank" onclick="event.stopPropagation()">🔗 웹사이트</a>` : ''}
+    ${mailHtml}
+  `;
+}
+
+/* 별점 평균 + 개수 배지 (승인된 후기가 있을 때만) */
+function ratingBadge(aptId){
+  const r = reviewsByApt[aptId];
+  if(!r || !r.count) return '';
+  return `<span class="badge badge-rating">★ ${r.avg.toFixed(1)} <small>(${r.count})</small></span>`;
+}
+
+/* 후기 남기기 버튼 (API가 설정된 경우에만 노출) */
+function reviewBtn(apt){
+  if(!REVIEW_API) return '';
+  return `<a class="btn btn-review" href="#" onclick="event.stopPropagation(); openReview(${apt.id}); return false;">✍ 후기 남기기</a>`;
+}
+
+function cardHtml(apt){
+  return `
+  <div class="card" id="card-${apt.id}" onclick="selectApartment(${apt.id})">
+    <div class="card-top">
+      <h3 class="card-name">${apt.name}</h3>
+    </div>
+    <p class="card-addr">${apt.address}, ${apt.city} ${apt.zip}</p>
+    <div class="badges">
+      <span class="badge badge-age">${apt.age}</span>
+      ${apt.projectBased ? '<span class="badge badge-pb">저소득 전용**</span>' : ''}
+      <span class="badge badge-units">${apt.units}세대</span>
+      ${ratingBadge(apt.id)}
+    </div>
+    <div class="card-actions">${actionsHtml(apt)}${reviewBtn(apt)}</div>
+  </div>`;
+}
+
+function popupHtml(apt, approx){
+  return `
+    <div class="popup-name">${apt.name}</div>
+    <div class="popup-addr">${apt.address}, ${apt.city} ${apt.zip}<br>${apt.age}${apt.projectBased ? ' · 저소득 전용**' : ''} · ${apt.units}세대${reviewsByApt[apt.id] && reviewsByApt[apt.id].count ? ' · ★ ' + reviewsByApt[apt.id].avg.toFixed(1) + ' (' + reviewsByApt[apt.id].count + ')' : ''}${approx ? '<br><span style="color:#B4472F;">※ 우편번호 기준 대략 위치 — 정확한 위치는 길찾기로 확인</span>' : ''}</div>
+    <div class="popup-actions">${actionsHtml(apt)}${reviewBtn(apt)}</div>
+  `;
+}
+
+function populateCityFilter(){
+  const cities = [...new Set(APARTMENTS.map(a=>a.city))].sort((a,b)=>a.localeCompare(b,'ko'));
+  const sel = document.getElementById('cityFilter');
+  cities.forEach(c=>{
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    sel.appendChild(o);
+  });
+}
+
+function getFiltered(){
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const city = document.getElementById('cityFilter').value;
+  const age = document.getElementById('ageFilter').value;
+  const pbOnly = document.getElementById('pbCheckbox').checked;
+  const sortBy = document.getElementById('sortSelect').value;
+
+  let list = APARTMENTS.filter(a=>{
+    if(city && a.city !== city) return false;
+    if(age && a.age !== age) return false;
+    if(pbOnly && !a.projectBased) return false;
+    if(q){
+      const hay = (a.name+' '+a.address+' '+a.city+' '+a.zip).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  if(sortBy === 'name') list.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(sortBy === 'city') list.sort((a,b)=>a.city.localeCompare(b.city,'ko') || a.name.localeCompare(b.name));
+  else if(sortBy === 'units_desc') list.sort((a,b)=>b.units - a.units);
+  else if(sortBy === 'units_asc') list.sort((a,b)=>a.units - b.units);
+
+  return list;
+}
+
+function renderList(){
+  const list = getFiltered();
+  const container = document.getElementById('cardContainer');
+  document.getElementById('resultCount').textContent = `${list.length}개 결과 표시 중 (전체 ${APARTMENTS.length}개)`;
+  if(list.length === 0){
+    container.innerHTML = '<div class="no-results">조건에 맞는 아파트가 없습니다.<br>검색어나 필터를 조정해보세요.</div>';
+    return;
+  }
+  container.innerHTML = list.map(cardHtml).join('');
+}
+
+function renderMap(){
+  if(!mapReady) return;   // 지도 없으면 목록만 사용
+  cluster.clearLayers();
+  markers = {};
+  const list = getFiltered();
+  list.forEach(apt=>{
+    const geo = locate(apt);
+    if(!geo) return;
+    const m = L.marker([geo.lat, geo.lon], {icon: pinIcon(apt.projectBased, geo.approx)});
+    m.bindPopup(popupHtml(apt, geo.approx));
+    m.on('click', ()=> highlightCard(apt.id));
+    markers[apt.id] = m;
+    cluster.addLayer(m);
+  });
+}
+
+/* 지오코딩 중 지도를 매번 새로 그리면 버벅이므로 묶어서 처리 */
+function renderMapThrottled(){
+  if(renderTimer) return;
+  renderTimer = setTimeout(()=>{ renderTimer = null; renderMap(); }, 700);
+}
+
+function highlightCard(id){
+  document.querySelectorAll('.card.selected').forEach(c=>c.classList.remove('selected'));
+  const el = document.getElementById('card-'+id);
+  if(el){
+    el.classList.add('selected');
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+  selectedId = id;
+}
+
+function selectApartment(id){
+  const apt = APARTMENTS.find(a=>a.id===id);
+  if(!apt) return;
+  highlightCard(id);
+  if(!mapReady) return;   // 지도 없으면 카드 선택까지만
+  const geo = geoCache[apt.fullAddress];
+  if(geo){
+    map.flyTo([geo.lat, geo.lon], 15, {duration:0.6});
+    const m = markers[id];
+    if(m){
+      setTimeout(()=>{ cluster.zoomToShowLayer(m, ()=> m.openPopup()); }, 300);
+    }
+  }
+}
+
+function refreshAll(){
+  renderList();
+  renderMap();
+}
+
+['searchInput','cityFilter','ageFilter','sortSelect'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', refreshAll);
+  document.getElementById(id).addEventListener('change', refreshAll);
+});
+document.getElementById('pbCheckbox').addEventListener('change', function(){
+  document.getElementById('pbToggle').classList.toggle('active', this.checked);
+  refreshAll();
+});
+
+function updateStats(){
+  document.getElementById('statTotal').textContent = APARTMENTS.length;
+  document.getElementById('statCities').textContent = new Set(APARTMENTS.map(a=>a.city)).size;
+  document.getElementById('statUnits').textContent = APARTMENTS.reduce((s,a)=>s+a.units,0).toLocaleString();
+}
+
+/* ---------------- 위치 정밀화 (백그라운드) ----------------
+   전략:
+   1) 우편번호 중심 좌표로 143곳을 즉시 표시 (대기 시간 0초)
+   2) 그 뒤 백그라운드에서 주소 단위 정확한 좌표를 조회해 핀을 교체
+   3) 화면에 보이는(필터된) 항목을 먼저 처리 → 체감 속도 개선
+   4) 결과는 브라우저에 저장 + 파일로 구워서 팀 배포 가능
+------------------------------------------------------------ */
+async function loadCache(){
+  try{
+    const res = await window.storage.get(CACHE_KEY, false);
+    if(res && res.value){ geoCache = Object.assign({}, BAKED_PRECISE, JSON.parse(res.value)); }
+  }catch(e){ /* 저장소 미사용 환경이면 내장 좌표만 사용 */ }
+}
+async function saveCache(){
+  try{ await window.storage.set(CACHE_KEY, JSON.stringify(geoCache), false); }catch(e){}
+}
+
+/* 구조화 질의가 자유형 질의보다 정확도가 높음 */
+async function geocodeOne(apt){
+  const params = new URLSearchParams({
+    format:'json', limit:'1', countrycodes:'us',
+    street: apt.address, city: apt.city, state:'CA', postalcode: apt.zip
+  });
+  const resp = await fetch('https://nominatim.openstreetmap.org/search?' + params, {
+    headers:{ 'Accept-Language':'en' }
+  });
+  if(resp.status === 429) throw new Error('rate');
+  const arr = await resp.json();
+  if(arr && arr.length) return { lat: parseFloat(arr[0].lat), lon: parseFloat(arr[0].lon) };
+  return null;
+}
+
+function updateProgress(){
+  const total = APARTMENTS.length;
+  const done = APARTMENTS.filter(a => geoCache[a.fullAddress]).length;
+  document.getElementById('geoBarFill').style.width = Math.round(done/total*100) + '%';
+  const text = document.getElementById('geoText');
+  if(done >= total){
+    text.textContent = '\u2713 ' + total + '\uacf3 \ubaa8\ub450 \uc815\ud655\ud55c \uc704\uce58\ub85c \ud45c\uc2dc\ub428';
+    document.getElementById('geoProgress').style.background = '#EAF5F2';
+  }else{
+    text.textContent = '\uc704\uce58 \uc815\ubc00\ub3c4\ub97c \ub192\uc774\ub294 \uc911 ' + done + '/' + total
+      + ' \u2014 \uc9c0\ub3c4\ub294 \uc9c0\uae08 \ubc14\ub85c \uc0ac\uc6a9\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4';
+  }
+}
+
+/* 현재 필터에 걸린 항목을 앞으로 당겨 정렬 */
+function buildQueue(){
+  const visible = new Set(getFiltered().map(a=>a.id));
+  const pending = APARTMENTS.filter(a => !geoCache[a.fullAddress]);
+  return pending.sort((a,b)=>(visible.has(b.id)?1:0)-(visible.has(a.id)?1:0));
+}
+
+let refining = false;
+async function refineLocations(){
+  if(refining || !mapReady) return;   // 지도 없으면 위치 보정 생략
+  refining = true;
+  updateProgress();
+
+  let delay = 1100;   // Nominatim 공개 서버는 초당 1회 제한
+  let saveTick = 0;
+
+  while(true){
+    const queue = buildQueue();
+    if(queue.length === 0) break;
+    const apt = queue[0];
+    try{
+      const geo = await geocodeOne(apt);
+      if(geo){
+        geoCache[apt.fullAddress] = geo;
+      }else if(ZIP_CENTROIDS[apt.zip]){
+        // 주소를 못 찾으면 우편번호 좌표로 확정해 무한 재시도를 막음
+        geoCache[apt.fullAddress] = { lat: ZIP_CENTROIDS[apt.zip][0], lon: ZIP_CENTROIDS[apt.zip][1] };
+      }else{
+        break;
+      }
+      delay = 1100;
+    }catch(e){
+      delay = Math.min(delay * 2, 8000);   // 제한에 걸리면 간격을 늘려 재시도
+      await new Promise(r=>setTimeout(r, delay));
+      continue;
+    }
+    updateProgress();
+    renderMapThrottled();
+    if(++saveTick % 10 === 0) await saveCache();
+    await new Promise(r=>setTimeout(r, delay));
+  }
+
+  await saveCache();
+  renderMap();
+  updateProgress();
+  refining = false;
+}
+
+/* 확보한 좌표를 파일에 구워서 저장 — 팀원에게 보내면 즉시 정확한 지도 */
+document.getElementById('exportBtn').addEventListener('click', function(){
+  const html = document.documentElement.outerHTML;
+  const marker = /\/\* __PRECISE_START__ \*\/[\s\S]*?\/\* __PRECISE_END__ \*\//;
+  const baked = '/* __PRECISE_START__ */\nconst BAKED_PRECISE = '
+              + JSON.stringify(geoCache) + ';\n/* __PRECISE_END__ */';
+  const out = '<!DOCTYPE html>\n' + html.replace(marker, baked);
+  const blob = new Blob([out], {type:'text/html;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'senior_apartments_map_geocoded.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+/* ============================================================
+   실거주자 후기 — 로딩 / 집계 / 작성 모달
+   ============================================================ */
+
+/* 승인된 후기를 불러와 단지별 평균·개수로 집계 */
+async function loadReviews(){
+  if(!REVIEW_API) return;                 // 미설정이면 후기 기능 비활성
+  try{
+    const res = await fetch(REVIEW_API);
+    const list = await res.json();
+    const agg = {};
+    list.forEach(r=>{
+      const id = parseInt(r.apartmentId, 10);
+      const rating = parseFloat(r.rating);
+      if(!id || !rating) return;
+      if(!agg[id]) agg[id] = { sum:0, count:0 };
+      agg[id].sum += rating;
+      agg[id].count += 1;
+    });
+    reviewsByApt = {};
+    Object.keys(agg).forEach(id=>{
+      reviewsByApt[id] = { avg: agg[id].sum / agg[id].count, count: agg[id].count };
+    });
+    renderList();
+    renderMap();
+  }catch(e){ /* 후기 로딩 실패 시 지도는 그대로 동작 */ }
+}
+
+let rvAptId = null;
+let rvRating = 0;
+
+function openReview(aptId){
+  const apt = APARTMENTS.find(a=>a.id===aptId);
+  if(!apt) return;
+  rvAptId = aptId;
+  rvRating = 0;
+  document.getElementById('rvAptName').textContent = apt.name + ' 후기 남기기';
+  document.getElementById('rvText').value = '';
+  document.getElementById('rvNick').value = '';
+  document.getElementById('rvHp').value = '';
+  document.getElementById('rvMsg').textContent = '';
+  document.getElementById('rvMsg').className = 'modal-msg';
+  document.getElementById('rvSubmit').disabled = false;
+  paintStars(0);
+  document.getElementById('reviewModal').classList.add('show');
+}
+
+function closeReview(){
+  document.getElementById('reviewModal').classList.remove('show');
+}
+
+function paintStars(v){
+  document.querySelectorAll('#rvStars button').forEach(b=>{
+    b.classList.toggle('on', parseInt(b.dataset.v,10) <= v);
+  });
+}
+
+document.querySelectorAll('#rvStars button').forEach(b=>{
+  b.addEventListener('click', ()=>{ rvRating = parseInt(b.dataset.v,10); paintStars(rvRating); });
+});
+
+async function submitReview(){
+  const msg = document.getElementById('rvMsg');
+  const text = document.getElementById('rvText').value.trim();
+  if(!rvRating){ msg.className='modal-msg err'; msg.textContent='별점을 선택해주세요.'; return; }
+  if(!text){ msg.className='modal-msg err'; msg.textContent='후기 내용을 입력해주세요.'; return; }
+
+  const btn = document.getElementById('rvSubmit');
+  btn.disabled = true;
+  msg.className='modal-msg'; msg.textContent='등록 중...';
+
+  const payload = {
+    apartmentId: rvAptId,
+    rating: rvRating,
+    text: text,
+    nickname: document.getElementById('rvNick').value.trim(),
+    website: document.getElementById('rvHp').value   // honeypot
+  };
+
+  try{
+    // Content-Type을 text/plain으로 보내 Apps Script의 CORS preflight를 피함
+    const res = await fetch(REVIEW_API, {
+      method:'POST',
+      headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const out = await res.json();
+    if(out && out.ok){
+      msg.className='modal-msg ok';
+      msg.textContent='등록되었습니다. 확인 후 게시됩니다. 감사합니다!';
+      setTimeout(closeReview, 1800);
+    }else{
+      msg.className='modal-msg err';
+      msg.textContent = (out && out.error) ? out.error : '등록에 실패했습니다. 잠시 후 다시 시도해주세요.';
+      btn.disabled = false;
+    }
+  }catch(e){
+    msg.className='modal-msg err';
+    msg.textContent='등록에 실패했습니다. 인터넷 연결을 확인해주세요.';
+    btn.disabled = false;
+  }
+}
+
+(async function init(){
+  populateCityFilter();
+  updateStats();
+  renderList();         // 목록 먼저 — 지도 로드와 무관하게 항상 표시
+  initMap();
+  if(!mapReady){        // 지도 없으면 진행바 숨김
+    document.getElementById('geoProgress').style.display = 'none';
+  }
+  renderMap();          // 우편번호 좌표로 즉시 표시 (대기 없음)
+  await loadCache();
+  renderMap();          // 저장된 정밀 좌표 반영
+  updateProgress();
+  loadReviews();        // 승인된 후기 불러와 카드에 별점 표시
+  refineLocations();    // 나머지는 백그라운드 보정
+})();
+
+</script>
+</body>
+</html>
