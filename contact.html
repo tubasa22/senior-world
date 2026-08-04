@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문의하기 | Senior World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F2E9; --paper-dim:#EDE7D8; --ink:#212B2A; --ink-soft:#5B6B67;
+    --teal:#1C6E64; --teal-deep:#0F4A44; --ochre:#C6862E; --ochre-soft:#F3E3C8;
+    --line:#D8D0BC; --card:#FFFFFF; --danger:#B4472F;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; font-family:'Noto Sans KR', sans-serif;
+    background:var(--paper); color:var(--ink); font-size:17px; line-height:1.7;
+  }
+  .wrap{ max-width:640px; margin:0 auto; padding:0 20px 80px; }
+
+  header{ background:var(--teal-deep); color:#F3EFE4; border-bottom:4px solid var(--ochre); }
+  .header-inner{ max-width:640px; margin:0 auto; padding:26px 20px 30px; }
+  .eyebrow{ font-size:12.5px; letter-spacing:2.5px; text-transform:uppercase; color:#B7DAD4; font-weight:500; margin-bottom:8px; }
+  header h1{ font-family:'Noto Serif KR', serif; font-weight:900; font-size:30px; line-height:1.3; margin:0 0 6px; }
+  header .sub{ font-size:16px; color:#DCEFEB; margin:0; }
+  .nav{ display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; }
+  .nav a{
+    display:inline-flex; align-items:center; gap:6px; text-decoration:none;
+    color:#F3EFE4; font-weight:700; font-size:14.5px; padding:9px 16px;
+    border-radius:9px; border:2px solid #4C7C74;
+  }
+  .nav a:hover{ background:#134C46; }
+
+  .intro{ font-size:17.5px; margin:34px 0 24px; }
+  .intro b{ color:var(--teal-deep); }
+
+  .form-card{
+    background:var(--card); border:1.5px solid var(--line); border-radius:14px;
+    padding:26px 26px 28px;
+  }
+  .field{ margin-bottom:18px; }
+  .field label{ display:block; font-size:15px; font-weight:700; color:var(--ink); margin-bottom:7px; }
+  .field label .req{ color:var(--danger); font-size:13px; }
+  .field label .opt{ color:var(--ink-soft); font-size:13px; font-weight:500; }
+  .field input, .field textarea{
+    width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:9px;
+    font-size:15.5px; font-family:inherit; background:var(--paper);
+  }
+  .field input:focus, .field textarea:focus{ outline:none; border-color:var(--teal); background:#fff; }
+  .field textarea{ resize:vertical; min-height:120px; }
+  .contact-row{ display:flex; gap:12px; }
+  .contact-row .field{ flex:1; }
+  .hint{ font-size:13.5px; color:var(--ink-soft); margin:-8px 0 16px; }
+
+  .submit-btn{
+    width:100%; padding:15px; border:none; border-radius:10px;
+    background:var(--teal); color:#fff; font-size:17px; font-weight:700;
+    font-family:inherit; cursor:pointer;
+  }
+  .submit-btn:hover{ background:var(--teal-deep); }
+  .submit-btn:disabled{ opacity:.55; cursor:default; }
+  .msg{ text-align:center; font-size:15px; margin-top:14px; min-height:22px; }
+  .msg.ok{ color:var(--teal); font-weight:700; }
+  .msg.err{ color:var(--danger); }
+
+  .direct{
+    background:var(--card); border:1.5px solid var(--line); border-left:6px solid var(--ochre);
+    border-radius:12px; padding:18px 22px; margin-top:22px;
+  }
+  .direct h3{ margin:0 0 8px; font-family:'Noto Serif KR', serif; font-size:18px; }
+  .direct .line{ margin:4px 0; font-size:16px; }
+  .direct a{ color:var(--teal); text-decoration:none; font-weight:700; }
+  .direct a:hover{ text-decoration:underline; }
+  .direct .phone{ font-size:20px; font-weight:900; color:var(--teal-deep); }
+
+  .disclaimer{
+    margin-top:26px; padding:16px 20px; background:var(--paper-dim);
+    border:1px dashed var(--line); border-radius:12px; font-size:14px; color:var(--ink-soft); line-height:1.7;
+  }
+  footer{ text-align:center; margin-top:30px; padding-top:20px; border-top:1px solid var(--line); color:var(--ink-soft); font-size:13px; }
+  footer .brand{ font-family:'Noto Serif KR', serif; font-weight:700; color:var(--teal-deep); font-size:15px; }
+
+  @media (max-width:600px){
+    header h1{ font-size:25px; }
+    .contact-row{ flex-direction:column; gap:0; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">Senior World · 문의하기</div>
+    <h1>궁금한 점을 남겨주세요</h1>
+    <p class="sub">주거·재정 관련 문의를 남기시면 빠른 시일 내 연락드립니다</p>
+    <div class="nav">
+      <a href="index.html">🗺️ 지도</a>
+      <a href="guide.html">📋 신청 안내</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <p class="intro">
+    시니어 주택, 자격요건, 신청 방법 등 <b>궁금한 점을 편하게 남겨주세요.</b>
+    남겨주신 연락처로 안내드립니다. 전화나 이메일 중 <b>편하신 쪽</b>만 적으셔도 됩니다.
+  </p>
+
+  <div class="form-card">
+    <div class="field">
+      <label for="ctName">이름 <span class="req">*</span></label>
+      <input type="text" id="ctName" maxlength="60" placeholder="성함을 적어주세요">
+    </div>
+
+    <div class="contact-row">
+      <div class="field">
+        <label for="ctPhone">전화 <span class="opt">(전화·이메일 중 하나)</span></label>
+        <input type="tel" id="ctPhone" maxlength="40" placeholder="(714) 000-0000">
+      </div>
+      <div class="field">
+        <label for="ctEmail">이메일 <span class="opt">(전화·이메일 중 하나)</span></label>
+        <input type="email" id="ctEmail" maxlength="80" placeholder="you@example.com">
+      </div>
+    </div>
+    <p class="hint">※ 전화와 이메일 중 최소 하나는 적어주세요. 둘 다 적으시면 편하신 쪽으로 연락드립니다.</p>
+
+    <div class="field">
+      <label for="ctMsg">문의 내용 <span class="req">*</span></label>
+      <textarea id="ctMsg" maxlength="2000" placeholder="궁금하신 내용을 적어주세요."></textarea>
+    </div>
+
+    <!-- 스팸 방지용 숨김 필드 (사람에게는 안 보임) -->
+    <input type="text" id="ctHp" style="position:absolute;left:-9999px" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <button class="submit-btn" id="ctSubmit" onclick="submitInquiry()">문의 보내기</button>
+    <div class="msg" id="ctMsgBox"></div>
+  </div>
+
+  <div class="direct">
+    <h3>바로 연락하고 싶으세요?</h3>
+    <div class="line phone">📞 <a href="tel:7146943254">(714) 694-3254</a></div>
+    <div class="line">✉ <a href="mailto:kincaredesk@gmail.com">kincaredesk@gmail.com</a></div>
+    <div class="line" style="color:var(--ink-soft); font-size:14.5px; margin-top:6px;">Bridge One · Jaden Lee (한국어 상담)</div>
+  </div>
+
+  <div class="disclaimer">
+    ※ 남겨주신 정보는 문의 응대 목적으로만 사용되며, 그 외 용도로 제공되지 않습니다.
+    긴급한 도움이 필요하시면 오렌지카운티 2-1-1로 연락하세요.
+  </div>
+
+  <footer>
+    <div class="brand">Senior World</div>
+    <div>미국 거주 한인 시니어를 위한 주거 · 재정 안내</div>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================
+   문의 전송 설정
+   ↓ 아래 따옴표 안에 Apps Script 웹 앱 URL(.../exec)을 붙여넣으세요.
+   index.html 의 REVIEW_API 와 "같은 URL" 입니다 (하나가 후기·문의를 모두 처리).
+   비워두면 폼 대신 '전화/이메일로 연락' 안내만 표시됩니다.
+   ============================================================ */
+const CONTACT_API = "";
+
+async function submitInquiry(){
+  const box = document.getElementById('ctMsgBox');
+  const name = document.getElementById('ctName').value.trim();
+  const phone = document.getElementById('ctPhone').value.trim();
+  const email = document.getElementById('ctEmail').value.trim();
+  const message = document.getElementById('ctMsg').value.trim();
+
+  if(!name){ box.className='msg err'; box.textContent='이름을 적어주세요.'; return; }
+  if(!phone && !email){ box.className='msg err'; box.textContent='전화 또는 이메일 중 하나는 적어주세요.'; return; }
+  if(!message){ box.className='msg err'; box.textContent='문의 내용을 적어주세요.'; return; }
+
+  if(!CONTACT_API){
+    box.className='msg err';
+    box.textContent='문의 폼이 아직 준비 중입니다. 위 전화나 이메일로 연락해주세요.';
+    return;
+  }
+
+  const btn = document.getElementById('ctSubmit');
+  btn.disabled = true;
+  box.className='msg'; box.textContent='보내는 중...';
+
+  const payload = {
+    kind: 'inquiry',
+    name: name, phone: phone, email: email, message: message,
+    website: document.getElementById('ctHp').value   // honeypot
+  };
+
+  try{
+    // Apps Script CORS preflight를 피하기 위해 text/plain 으로 전송
+    const res = await fetch(CONTACT_API, {
+      method:'POST',
+      headers:{ 'Content-Type':'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const out = await res.json();
+    if(out && out.ok){
+      box.className='msg ok';
+      box.textContent='문의가 접수되었습니다. 빠른 시일 내 연락드리겠습니다. 감사합니다!';
+      document.getElementById('ctName').value='';
+      document.getElementById('ctPhone').value='';
+      document.getElementById('ctEmail').value='';
+      document.getElementById('ctMsg').value='';
+    }else{
+      box.className='msg err';
+      box.textContent = (out && out.error) ? out.error : '전송에 실패했습니다. 잠시 후 다시 시도해주세요.';
+      btn.disabled = false;
+    }
+  }catch(e){
+    box.className='msg err';
+    box.textContent='전송에 실패했습니다. 인터넷 연결을 확인해주세요.';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
