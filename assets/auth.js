@@ -40,7 +40,11 @@ export function safeReturnUrl(value) {
   if (!value) return 'index.html';
   try {
     const target = new URL(value, window.location.origin);
-    if (target.origin === window.location.origin) return target.pathname + target.search + target.hash;
+    const basePath = window.location.pathname.replace(/\/[^/]*$/, '/');
+    if (target.origin === window.location.origin && target.pathname.startsWith(basePath)) {
+      const relativePath = target.pathname.slice(basePath.length) || 'index.html';
+      return relativePath + target.search + target.hash;
+    }
   } catch (_) { /* 안전하지 않은 return URL은 무시 */ }
   return 'index.html';
 }
