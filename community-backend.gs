@@ -4,8 +4,8 @@ const POST_COLS=['id','postType','title','body','sourceName','sourceUrl','posted
 const LIKE_COLS=['postId','uid','likedAt'];
 const FIREBASE_PROJECT_ID='senior-compass-768f6';
 const FIREBASE_ISSUER='https://securetoken.google.com/'+FIREBASE_PROJECT_ID;
-const ADMIN_EMAILS=['REPLACE_WITH_ADMIN_EMAIL@example.com'];
-// TODO: 실제 관리자 Google 계정 이메일로 교체 필요 (여러 명이면 배열에 추가)
+const ADMIN_EMAILS=['tubasa22@gmail.com'];
+// 여러 명이면 배열에 추가한다. 이 목록은 서버에서만 검사한다.
 
 /** 최초 한 번 실행. 기존 공지 데이터는 삭제하지 않고 새 열을 추가한다. */
 function setup(){ensurePostsSheet();ensureSheet(LIKES_SHEET,LIKE_COLS);}
