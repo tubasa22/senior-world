@@ -8,6 +8,7 @@ const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, '..');
 const indexPath = path.join(projectRoot, 'index.html');
 const backupPath = path.join(projectRoot, 'index.html.bak');
+const laDataPath = path.join(projectRoot, 'data', 'la-apartments-2026-08.json');
 
 const dataBlockPattern =
   /\/\* __DATA__ \*\/([\s\S]*?)\/\* __END_DATA__ \*\//;
@@ -69,7 +70,9 @@ const apartmentsMatch = dataBlock[1].match(apartmentsPattern);
 if (!apartmentsMatch) throw new Error('__DATA__ 블록에서 APARTMENTS 배열을 찾지 못했습니다.');
 
 // TODO: APARTMENTS가 data/apartments.json으로 분리되면 이 파일을 직접 읽도록 변경한다.
-const apartments = JSON.parse(apartmentsMatch[1]);
+const ocApartments = JSON.parse(apartmentsMatch[1]);
+const laApartments = JSON.parse(await readFile(laDataPath, 'utf8'));
+const apartments = [...ocApartments, ...laApartments];
 const apartmentById = new Map(apartments.map((apt) => [String(apt.id), apt]));
 
 const preciseMatch = html.match(preciseDataPattern);
