@@ -384,3 +384,33 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
    테스트까지 엔드투엔드로 완주
 4. LICENSE 추가
 5. 헤더 통일 작업 진행
+
+### 🔲 진행 중 — 관리자 대시보드 활성화 (회원현황 + 뉴스레터)
+
+코드 구현은 완료됨 (newsletter-backend.gs, admin.html 회원현황/
+뉴스레터 탭, firestore.rules 관리자 읽기 권한 규칙).
+활성화하려면 사람이 직접 해야 하는 설정 4단계가 남아있고,
+아직 시작 전이거나 진행 중:
+
+| 순서 | 할 일 | 상태 |
+| -- | --- | --- |
+| 1 | `firestore.rules` 내용을 Firebase Console(console.firebase.google.com → Firestore Database → 규칙 탭)에 재배포 | 🔲 안내 진행 중, 완료 여부 미확인 |
+| 2 | Apps Script 프로젝트에 OAuth2 라이브러리 추가 (라이브러리 ID: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`) | 🔲 대기 |
+| 3 | Firebase 서비스 계정 JSON 키를 Apps Script "스크립트 속성"에 `FIREBASE_SERVICE_ACCOUNT_KEY`라는 이름으로 등록 | 🔲 대기 |
+| 4 | `newsletter-backend.gs`를 웹 앱으로 배포하고, 나온 `.../exec` URL을 `admin.html`의 `NEWSLETTER_API` 상수에 입력 | 🔲 대기 |
+
+**이 4가지는 전부 사람만 할 수 있는 작업이다** (Google 계정
+로그인, 민감한 키 등록이 필요해서 Codex/Claude가 대신 할 수 없음).
+다음 세션은 이 표의 상태를 사용자에게 먼저 물어보고 이어서
+안내할 것.
+
+또한 별도로 확인 필요한 관련 이슈:
+
+- `community-backend.gs`, `member-backend.gs`의 idToken 검증
+  방식을 `oauth2.googleapis.com/tokeninfo`에서
+  Identity Toolkit API(`identitytoolkit.googleapis.com/v1/accounts:lookup`)
+  방식으로 교체하는 수정이 지시됐음 — 실제 반영 여부 다음
+  세션에서 grep으로 재확인 필요 (`grep -n "identitytoolkit"`
+  두 파일에서 나와야 정상).
+- `admin.html`의 라디오버튼 라벨 구조 수정, 제출 중 상태 표시
+  추가도 함께 지시됨 — 반영 여부 미확인.
