@@ -272,10 +272,18 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
 
 ### Census 배치 지오코딩 스크립트
 
-새 아파트를 추가한 뒤 `node scripts/geocode-batch.mjs`를 실행하면 US Census Bureau Batch Geocoder로 전체 주소를 한 번에 조회한다. 실행 전 `index.html.bak`을 만들고, 기존 좌표를 유지한 채 새로 매칭된 좌표를 `index.html`의 `BAKED_PRECISE` 블록에 병합한다. 실패한 주소는 콘솔에서 확인해 수동으로 보정한다.
+새 아파트를 추가한 뒤 `node scripts/geocode-batch.mjs`를 실행하면 US Census Bureau Batch Geocoder로 전체 주소를 한 번에 조회한다. 실행 전 `map.html.bak`을 만들고, 기존 좌표를 유지한 채 새로 매칭된 좌표를 `map.html`의 `BAKED_PRECISE` 블록에 병합한다. 실패한 주소는 콘솔에서 확인해 수동으로 보정한다.
 
 **남은 과제 (미해결)**
 
 - [ ] 데이터/스타일/로직을 `data/`, `assets/`로 분리 (7장 마이그레이션 — 아직 미착수)
 - [ ] `backend.gs`와 `review-backend.gs`의 역할 구분을 README에 명시 (파일명도 `contact-backend.gs` 등으로 명확화 검토)
 - [ ] `guide.html`과 `rhf-application-guide.html`의 관계/연결 여부 확인
+
+---
+
+## 12. AI 세션 간 인수인계 노트
+
+### 🔄 진행 중
+
+- 사이트 리브랜딩 및 랜딩 페이지 신설 — 사이트 공식 이름을 '시니어 나침반(Senior Compass)'으로 확정. 기존 index.html(지도)을 map.html로 이동하고, index.html을 창업 스토리 중심 랜딩 페이지로 신설함. 창업 스토리 이미지는 ChatGPT로 별도 생성해 assets/img/에 추가 예정 — 아직 미반영 상태이니 다음 세션은 placeholder 이미지 태그가 실제 이미지로 교체됐는지 확인할 것.
