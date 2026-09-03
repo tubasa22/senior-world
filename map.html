@@ -25,17 +25,18 @@
     --la-soft:#ECEAF7;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;height:100%;}
+  html,body{margin:0;padding:0;min-height:100%;}
   body{
     font-family:'Noto Sans KR', sans-serif;
     background:var(--paper);
     color:var(--ink);
-    overflow:hidden;
+    overflow-x:hidden;
+    overflow-y:auto;
   }
   .app{
     display:flex;
     flex-direction:column;
-    height:100vh;
+    min-height:100vh;
   }
 
   /* ---------- Header ---------- */
@@ -74,6 +75,21 @@
     color:#DDEFEC;
   }
   .stats b{ font-size:16px; color:#fff; font-family:'Noto Serif KR', serif;}
+  body .page-context{
+    padding:16px 20px;
+    background:var(--teal-deep);
+    color:#F7F9FB;
+    border-bottom:1px solid var(--line);
+  }
+  body .page-context .brand{justify-content:space-between;}
+  body .page-context .brand h1{font-size:20px;color:#F7F9FB;}
+  body .page-context .brand .eyebrow{color:#C9E4DF;}
+  body .page-context .stats{margin-top:8px;gap:16px;}
+  /* 지도 화면에서는 메뉴가 요약 통계를 밀어내지 않도록 더 조밀하게 배치한다. */
+  body .site-header{gap:14px;padding:12px max(20px,calc((100% - 1240px)/2));}
+  body .nav-logo img{height:88px;}
+  body .site-nav{gap:4px;}
+  body .site-nav>a,body .nav-dropdown-btn{padding:10px 11px;font-size:15px;}
 
   /* ---------- Controls ---------- */
   .controls{
@@ -154,9 +170,10 @@
 
   /* ---------- Main split ---------- */
   .main{
-    flex:1;
+    flex:none;
     display:flex;
-    min-height:0;
+    height:min(72vh,780px);
+    min-height:580px;
   }
   .list-pane{
     width:420px;
@@ -165,6 +182,7 @@
     background:var(--paper-dim);
     border-right:1px solid var(--line);
     overflow-y:auto;
+    overscroll-behavior:contain;
     padding:12px;
   }
   .map-pane{
@@ -172,6 +190,13 @@
     position:relative;
   }
   #map{ height:100%; width:100%; }
+  .map-footer{
+    padding:26px 20px;
+    background:var(--teal-deep);
+    color:#F7F9FB;
+    font-size:14px;
+  }
+  .map-footer-inner{width:min(1240px,100%);margin:0 auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
 
   .result-count{
     font-size:12.5px;
@@ -382,8 +407,10 @@
 
   @media (max-width:760px){
     .main{ flex-direction:column; }
-    .list-pane{ width:100%; max-width:100%; height:46%; order:2; }
-    .map-pane{ height:54%; order:1; }
+    .main{ height:auto; min-height:0; }
+    .list-pane{ width:100%; max-width:100%; max-height:55vh; height:auto; order:2; }
+    .map-pane{ height:420px; min-height:420px; order:1; }
+    .map-footer-inner{ flex-direction:column; }
   }
   @media print{
     html,body,.app{ height:auto; overflow:visible; background:#fff; }
@@ -398,7 +425,7 @@
 <div class="app">
 
   <header class="site-header"><a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="시니어 나침반"></a><nav class="site-nav" aria-label="주요 메뉴"><a href="index.html">🏠 홈</a><div class="nav-dropdown"><button class="nav-dropdown-btn" aria-expanded="false" aria-haspopup="true">시니어 아파트 ▾</button><div class="nav-dropdown-menu"><a href="map.html">아파트/지도</a><a href="guide.html">신청 안내</a><a href="rhf-application-guide.html">RHF 신청 안내</a></div></div><div class="nav-dropdown"><button class="nav-dropdown-btn" aria-expanded="false" aria-haspopup="true">양로시설 ▾</button><div class="nav-dropdown-menu"><a href="ltc-facilities.html">시설 소개</a><a href="ltc-guide.html">종류 검색</a></div></div><a href="ihss-guide.html">IHSS 케어기버</a><a href="funeral-guide.html">장례 정보</a><a href="community.html">커뮤니티</a><a href="contact.html">문의하기</a><span id="authStatusSlot" data-auth-ui></span></nav></header>
-  <section class="page-context"><div class="brand"><div><div class="eyebrow">Orange County &amp; LA 카운티 · 공공기관 자료 기반</div><h1>시니어 아파트 지도</h1></div></div><div class="stats"><div><b id="statTotal">0</b> 개 단지</div><div><b id="statCities">0</b> 개 도시</div><div><b id="statUnits">0</b> 세대</div><a class="guide-link" href="guide.html">📋 신청 안내 보기</a></div></section>
+  <section class="page-context"><div class="brand"><div><div class="eyebrow">Orange County &amp; LA 카운티 · 공공기관 자료 기반</div><h1>시니어 아파트 지도</h1></div></div><div class="stats"><div><b id="statTotal">0</b> 개 단지</div><div><b id="statCities">0</b> 개 도시</div><div><b id="statUnits">0</b> 세대</div></div></section>
 
   <div class="controls">
     <input type="text" id="searchInput" placeholder="🔍 이름, 주소, 도시로 검색...">
@@ -442,6 +469,7 @@
       <div id="map"></div>
     </div>
   </div>
+  <footer class="map-footer"><div class="map-footer-inner"><strong>시니어 나침반</strong><span>오렌지카운티·LA 카운티 시니어 주거 안내</span></div></footer>
 </div>
 
 <!-- 후기 작성 모달 -->
@@ -552,7 +580,7 @@ function initMap(){
     }
     return;
   }
-  map = L.map('map', {zoomControl:true}).setView([33.75, -117.85], 10.2);
+  map = L.map('map', {zoomControl:true, scrollWheelZoom:true}).setView([33.75, -117.85], 10.2);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom:19,
     attribution:'&copy; OpenStreetMap contributors'
