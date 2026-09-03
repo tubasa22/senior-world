@@ -6,8 +6,8 @@ const CENSUS_BATCH_URL =
   'https://geocoding.geo.census.gov/geocoder/locations/addressbatch';
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(scriptDir, '..');
-const indexPath = path.join(projectRoot, 'index.html');
-const backupPath = path.join(projectRoot, 'index.html.bak');
+const indexPath = path.join(projectRoot, 'map.html');
+const backupPath = path.join(projectRoot, 'map.html.bak');
 const laDataPath = path.join(projectRoot, 'data', 'la-apartments-2026-08.json');
 
 const dataBlockPattern =
