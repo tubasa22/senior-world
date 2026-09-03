@@ -55,20 +55,11 @@
   @media(max-width:580px){ .facility-grid{ grid-template-columns:1fr; } .footer-inner{ flex-direction:column; } }
   @media print{ header,.notice,.member-actions,.list-status,footer,.actions{ display:none !important; } body{ background:#fff; } .wrap{ width:100%; padding:0; } .facility-grid{ grid-template-columns:repeat(2,1fr); } .facility-card{ break-inside:avoid; box-shadow:none; } }
 </style>
+<link rel="stylesheet" href="assets/site-nav.css">
 </head>
 <body>
-<header>
-  <div class="header-inner">
-    <div class="eyebrow">시니어 나침반 · 장기요양 안내</div>
-    <h1>한인 운영 시설 소개</h1>
-    <p class="sub">확인된 시설 정보를 차례로 정리해 소개합니다</p>
-    <nav class="nav" aria-label="주요 메뉴">
-      <a href="index.html">🏠 홈으로 가기</a>
-      <a href="ltc-guide.html">양로시설 안내</a>
-      <a class="primary" href="ltc-facilities.html">🏡 시설 소개</a>
-    </nav>
-  </div>
-</header>
+<header class="site-header"><a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="시니어 나침반"></a><nav class="site-nav" aria-label="주요 메뉴"><a href="index.html">🏠 홈</a><div class="nav-dropdown"><button class="nav-dropdown-btn" aria-expanded="false" aria-haspopup="true">시니어 아파트 ▾</button><div class="nav-dropdown-menu"><a href="map.html">아파트/지도</a><a href="guide.html">신청 안내</a><a href="rhf-application-guide.html">RHF 신청 안내</a></div></div><div class="nav-dropdown"><button class="nav-dropdown-btn" aria-expanded="false" aria-haspopup="true">양로시설 ▾</button><div class="nav-dropdown-menu"><a href="ltc-facilities.html">시설 소개</a><a href="ltc-guide.html">종류 검색</a></div></div><a href="ihss-guide.html">🧑‍⚕️ IHSS 케어기버</a><a href="funeral-guide.html">🕊 장례 정보</a><a href="community.html">🗞 커뮤니티</a><a href="contact.html">문의하기</a><span id="authStatusSlot" data-auth-ui></span></nav></header>
+<section class="page-context"><div class="header-inner"><div class="eyebrow">시니어 나침반 · 장기요양 안내</div><h1>한인 운영 시설 소개</h1><p class="sub">확인된 시설 정보를 차례로 정리해 소개합니다</p></div></section>
 
 <main class="wrap">
   <p class="notice">아래 목록은 한인 커뮤니티에서 운영하는 시설을 소개하며, 시설 소개는 운영진이 직접 작성한 내용입니다. 정확한 정보와 최신 이용 가능 여부는 시설에 직접 문의하시기 바랍니다.</p>
@@ -152,5 +143,6 @@ document.getElementById('emailResultsBtn').addEventListener('click',async()=>{
   try{ const response=await fetch(MEMBER_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({idToken:await getIdToken(),resultsHtml:resultsHtml()})}); const result=await response.json(); alert(result && result.ok ? '검색 결과를 이메일로 보냈습니다.' : (result.error || '이메일 발송에 실패했습니다.')); }catch(_){ alert('이메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.'); }
 });
 </script>
+<script type="module" src="assets/auth.js"></script><script src="assets/site-nav.js"></script>
 </body>
 </html>
