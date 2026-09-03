@@ -745,12 +745,12 @@ function updateStats(){
 ------------------------------------------------------------ */
 async function loadCache(){
   try{
-    const res = await window.storage.get(CACHE_KEY, false);
-    if(res && res.value){ geoCache = Object.assign({}, BAKED_PRECISE, JSON.parse(res.value)); }
+    const res = localStorage.getItem(CACHE_KEY);
+    if(res){ geoCache = Object.assign({}, BAKED_PRECISE, JSON.parse(res)); }
   }catch(e){ /* 저장소 미사용 환경이면 내장 좌표만 사용 */ }
 }
 async function saveCache(){
-  try{ await window.storage.set(CACHE_KEY, JSON.stringify(geoCache), false); }catch(e){}
+  try{ localStorage.setItem(CACHE_KEY, JSON.stringify(geoCache)); }catch(e){}
 }
 
 /* 구조화 질의가 자유형 질의보다 정확도가 높음 */
