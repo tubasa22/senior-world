@@ -27,3 +27,22 @@
 - `createdAt`: Firestore 서버 시간으로 기록한 가입 시각
 
 회원 정보는 `firestore.rules`에서 인증된 본인이 자신의 문서에만 읽기·쓰기를 할 수 있도록 제한한다. 실제 보호를 위해서는 이 규칙을 Firebase Console에 수동 배포해야 한다.
+
+## 커뮤니티 Google Sheets 스키마
+
+### `community_posts`
+
+- `id`: 게시글 번호
+- `title`: 제목
+- `body`: HTML을 허용하지 않는 일반 텍스트 본문. 줄바꿈만 유지한다.
+- `postedAt`: 등록 일시
+- `status`: `노출` 또는 `숨김`. 클라이언트에는 `노출` 상태의 글만 제공한다.
+- `likeCount`: `community_likes` 행 수를 기준으로 서버가 갱신하는 좋아요 수
+
+### `community_likes`
+
+- `postId`: 좋아요를 누른 게시글 번호
+- `uid`: Firebase ID 토큰에서 검증한 회원 UID
+- `likedAt`: 좋아요를 누른 시각
+
+관리자가 `community_posts`를 직접 작성하고, 공개 글쓰기 API는 제공하지 않는다. 좋아요 API는 Firebase ID 토큰의 프로젝트·발급자·UID를 확인한 요청만 처리한다.
