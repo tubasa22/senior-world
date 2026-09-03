@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>장기요양 입소 절차 안내 | 시니어 나침반</title>
+<meta name="description" content="캘리포니아 RCFE의 의미와 일반적인 입소 절차, 시설 라이선스 확인 방법 안내">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F9FB; --paper-dim:#EAF0F5; --ink:#22303A; --ink-soft:#5C7080;
+    --teal:#2D6FA3; --teal-deep:#1B4A70; --ochre:#E8873D; --ochre-soft:#FBE4CE;
+    --line:#DCE4E8; --danger:#C0392B; --danger-soft:#FBEAE7; --card:#FFFFFF;
+  }
+  *{ box-sizing:border-box; }
+  body{ margin:0; color:var(--ink); background:var(--paper); font-family:'Noto Sans KR',sans-serif; line-height:1.75; }
+  a{ color:var(--teal); }
+  header{ padding:48px 24px; background:var(--teal-deep); color:#fff; }
+  .header-inner,.wrap{ width:min(960px,100%); margin:0 auto; }
+  .eyebrow{ margin-bottom:8px; color:#CFE3F2; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+  h1,h2,h3{ font-family:'Noto Serif KR',serif; line-height:1.4; }
+  h1{ margin:0 0 10px; font-size:clamp(34px,5vw,50px); }
+  .sub{ margin:0; color:#E7F0F6; font-size:17px; }
+  .nav{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+  .nav a{ padding:9px 14px; border:1px solid rgba(255,255,255,.45); border-radius:8px; color:#fff; font-weight:700; text-decoration:none; }
+  .nav a.primary{ border-color:var(--ochre); background:var(--ochre); }
+  .wrap{ padding:42px 24px 64px; }
+  .lead{ margin:0 0 38px; font-size:18px; }
+  section{ margin-top:52px; }
+  h2{ display:flex; align-items:center; gap:12px; margin:0 0 20px; color:var(--teal-deep); font-size:29px; }
+  .num{ width:40px; height:40px; display:inline-grid; flex:0 0 auto; place-items:center; border-radius:50%; background:var(--ochre); color:#fff; font:700 19px 'Noto Sans KR',sans-serif; }
+  .info-card,.license-card{ padding:24px; border:1px solid var(--line); border-radius:14px; background:var(--card); box-shadow:0 8px 22px rgba(27,74,112,.06); }
+  .info-card p,.license-card p{ margin:0; }
+  .steps{ display:grid; gap:14px; }
+  .step_card{ display:grid; grid-template-columns:54px 1fr; gap:16px; align-items:start; padding:20px; border:1px solid var(--line); border-radius:13px; background:var(--card); }
+  .step-number{ width:48px; height:48px; display:grid; place-items:center; border-radius:12px; background:var(--paper-dim); color:var(--teal-deep); font-size:20px; font-weight:900; }
+  .step_card h3{ margin:1px 0 5px; font-size:20px; }
+  .step_card p{ margin:0; color:var(--ink-soft); }
+  .license-card{ border-left:6px solid var(--ochre); }
+  .license-link{ display:inline-flex; margin-top:17px; padding:11px 17px; border-radius:9px; background:var(--teal); color:#fff; font-weight:800; text-decoration:none; }
+  .modal-note{ margin-top:46px; padding:20px 22px; border:1px solid #E8BBB2; border-radius:12px; background:var(--danger-soft); color:#7C2C20; font-size:15px; }
+  footer{ padding:28px 24px; background:var(--teal-deep); color:#D7E8F4; }
+  .footer-inner{ width:min(960px,100%); margin:0 auto; display:flex; justify-content:space-between; gap:20px; }
+  .brand{ color:#fff; font-family:'Noto Serif KR',serif; font-size:19px; font-weight:700; }
+  @media(max-width:640px){
+    header{ padding-top:34px; }
+    .step_card{ grid-template-columns:44px 1fr; padding:17px; }
+    .step-number{ width:40px; height:40px; }
+    .footer-inner{ flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="eyebrow">시니어 나침반 · 장기요양 안내</div>
+    <h1>RCFE 입소 절차 안내</h1>
+    <p class="sub">생활에 도움이 필요할 때, 시설을 알아보는 일반적인 순서를 안내합니다</p>
+    <nav class="nav" aria-label="주요 메뉴">
+      <a href="index.html">🏠 홈</a>
+      <a href="map.html">🗺️ 아파트 지도</a>
+      <a href="guide.html">📋 주택 신청 안내</a>
+      <a class="primary" href="ltc-facilities.html">🏡 시설 소개</a>
+      <a href="contact.html">✉ 문의하기</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <p class="lead">RCFE를 처음 알아보는 분을 위해 시설의 역할, 일반적인 입소 순서, 라이선스 확인 방법을 정리했습니다. 제공하는 서비스와 입소 조건, 비용은 시설마다 다르므로 반드시 해당 시설에 직접 문의하세요.</p>
+
+  <section>
+    <h2><span class="num">1</span>RCFE란 무엇인가요?</h2>
+    <div class="info-card">
+      <p><strong>RCFE(Residential Care Facility for the Elderly)</strong>는 식사, 이동, 목욕, 옷 입기 등 일상생활에 도움이 필요한 시니어가 생활하는 주거형 돌봄 시설입니다. 한인 커뮤니티에서는 흔히 “양로원” 또는 “요양원”이라고 부르기도 합니다.</p>
+      <p style="margin-top:12px;">캘리포니아주의 RCFE는 <strong>California Department of Social Services</strong> 산하 <strong>Community Care Licensing Division(CCLD)</strong>의 허가와 감독을 받습니다.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span>일반적인 입소 절차</h2>
+    <div class="steps">
+      <article class="step_card"><div class="step-number">1</div><div><h3>상담</h3><p>필요한 생활 도움과 희망 지역을 설명하고, 제공 서비스·입소 조건·비용·현재 입소 가능 여부를 시설에 직접 문의합니다.</p></div></article>
+      <article class="step_card"><div class="step-number">2</div><div><h3>시설 방문</h3><p>생활 공간과 공용 공간을 직접 보고, 식사·일상 지원·직원 배치·방문 규칙 등 궁금한 점을 확인합니다.</p></div></article>
+      <article class="step_card"><div class="step-number">3</div><div><h3>건강평가</h3><p>시설이 필요한 돌봄 수준을 확인합니다. 평가 방식과 제출 서류는 시설마다 다르므로 안내받은 내용을 따르세요.</p></div></article>
+      <article class="step_card"><div class="step-number">4</div><div><h3>계약</h3><p>제공 서비스, 비용, 추가 비용, 환불·퇴소 조건을 확인하고 이해되지 않는 부분은 서명 전에 시설에 질문합니다.</p></div></article>
+      <article class="step_card"><div class="step-number">5</div><div><h3>입주</h3><p>시설에서 안내한 준비물과 복용 중인 약, 비상 연락처 등 필요한 정보를 준비합니다. 구체적인 준비 사항은 시설마다 다릅니다.</p></div></article>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span>라이선스를 꼭 확인하세요</h2>
+    <div class="license-card">
+      <p>California Community Care Licensing Division 홈페이지(<a href="https://www.ccld.dss.ca.gov/carefacilitysearch/" target="_blank" rel="noopener">https://www.ccld.dss.ca.gov/carefacilitysearch/</a>)에서 시설명이나 라이선스 번호로 검색하면 위반 이력 등을 확인할 수 있습니다.</p>
+      <a class="license-link" href="https://www.ccld.dss.ca.gov/carefacilitysearch/" target="_blank" rel="noopener">CCLD 시설 검색 열기 →</a>
+    </div>
+  </section>
+
+  <div class="modal-note"><strong>안내:</strong> 이 페이지는 일반적인 절차 안내이며, 개별 시설의 정확한 조건은 반드시 해당 시설에 직접 확인하시기 바랍니다.</div>
+</main>
+
+<footer>
+  <div class="footer-inner"><div class="brand">시니어 나침반</div><div>오렌지카운티·LA 카운티 시니어를 위한 주거 안내</div></div>
+</footer>
+</body>
+</html>
