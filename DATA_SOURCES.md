@@ -16,3 +16,13 @@
 - `licenseNumber`, `licenseVerifyUrl`: 방문자가 직접 라이선스 상태를 확인할 수 있게 하는 필드로 반드시 채워야 한다. CCLD 공개 검색에서 확인되지 않은 시설은 사이트에 게시하지 않는 것을 원칙으로 한다.
 - `photo`: 실제 사진을 추가하기 전에는 `assets/img/ltc/PLACEHOLDER.jpg`를 참조하며, 파일이 없으면 카드에 기본 안내가 표시된다.
 - `intro`: **AI가 채우지 않는다. 사람이 직접 작성한다.** 비어 있으면 카드에 “소개 준비 중입니다”가 표시된다.
+
+## Firestore `users` 컬렉션 스키마
+
+- 문서 ID: Firebase Authentication의 사용자 UID
+- `name`: 가입자가 입력한 이름
+- `email`: Firebase Authentication 계정 이메일
+- `newsletterOptIn`: 뉴스레터 수신 동의 여부(Boolean). 실제 발송 시스템은 아직 연결하지 않았다.
+- `createdAt`: Firestore 서버 시간으로 기록한 가입 시각
+
+회원 정보는 `firestore.rules`에서 인증된 본인이 자신의 문서에만 읽기·쓰기를 할 수 있도록 제한한다. 실제 보호를 위해서는 이 규칙을 Firebase Console에 수동 배포해야 한다.

@@ -287,6 +287,7 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
 ### ✅ 완료
 
 - 사이트 리브랜딩 및 랜딩 페이지 신설 — 사이트 공식 이름을 '시니어 나침반(Senior Compass)'으로 확정. 기존 index.html(지도)을 map.html로 이동하고, index.html을 창업 스토리 중심 랜딩 페이지로 신설함. ChatGPT로 생성한 실사형 히어로·창업 스토리 이미지를 assets/img/에 반영함.
+- Firebase Authentication 기반 회원 시스템 구축 — 이메일/비밀번호 회원가입·로그인·비밀번호 재설정, 회원 전용 검색 결과 이메일/인쇄 UI, `member-backend.gs`, `firestore.rules`를 추가함. **Firestore 보안 규칙은 저장소에만 있으며 Firebase Console에 아직 수동 배포되지 않았으므로 반드시 적용 상태를 확인할 것.** Apps Script를 웹 앱으로 배포한 뒤 `assets/auth.js`의 `MEMBER_API`에 `/exec` URL을 입력해야 이메일 발송이 활성화된다.
 
 ### 📋 계획됨
 
