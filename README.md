@@ -111,7 +111,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>페이지 제목 | Bridge One</title>
+  <title>페이지 제목 | 시니어 나침반</title>
   <link rel="stylesheet" href="assets/theme.css">
 </head>
 <body>
