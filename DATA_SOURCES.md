@@ -33,8 +33,10 @@
 ### `community_posts`
 
 - `id`: 게시글 번호
+- `postType`: `공지` 또는 `뉴스`
 - `title`: 제목
 - `body`: HTML을 허용하지 않는 일반 텍스트 본문. 줄바꿈만 유지한다.
+- `sourceName`, `sourceUrl`: 뉴스 게시글일 때의 언론사명과 원문 링크. 뉴스는 두 필드를 반드시 채운다.
 - `postedAt`: 등록 일시
 - `status`: `노출` 또는 `숨김`. 클라이언트에는 `노출` 상태의 글만 제공한다.
 - `likeCount`: `community_likes` 행 수를 기준으로 서버가 갱신하는 좋아요 수
@@ -45,7 +47,7 @@
 - `uid`: Firebase ID 토큰에서 검증한 회원 UID
 - `likedAt`: 좋아요를 누른 시각
 
-관리자가 `community_posts`를 직접 작성하고, 공개 글쓰기 API는 제공하지 않는다. 좋아요 API는 Firebase ID 토큰의 프로젝트·발급자·UID를 확인한 요청만 처리한다.
+관리자가 `community_posts`를 직접 작성하고, 공개 글쓰기 API는 제공하지 않는다. 좋아요 API는 Firebase ID 토큰의 프로젝트·발급자·UID를 확인한 요청만 처리한다. 뉴스 게시글은 2차 가공 콘텐츠이며 원 저작권은 각 언론사에 있다. 원문 링크로 반드시 안내하고, 원문을 그대로 복사해 게시하지 않는다.
 
 ## IHSS Google Sheets 스키마
 
