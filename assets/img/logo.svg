@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 160" role="img">
+  <title>시니어 나침반 로고</title>
+  <defs><linearGradient id="badgeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#EAF0F5"/><stop offset="100%" stop-color="#DCE9F5"/></linearGradient></defs>
+  <circle cx="70" cy="80" r="62" fill="url(#badgeGrad)" stroke="#2D6FA3" stroke-width="2"/><circle cx="70" cy="80" r="50" fill="none" stroke="#2D6FA3" stroke-width="1" stroke-dasharray="1.5 4" opacity="0.5"/><circle cx="70" cy="80" r="36" fill="none" stroke="#2D6FA3" stroke-width="4"/><circle cx="70" cy="80" r="4" fill="#1B4A70"/>
+  <path d="M70 80 L80 65 L70 50 L60 65 Z" fill="#E8873D"/><path d="M70 80 L60 95 L70 110 L80 95 Z" fill="#2D6FA3"/><path d="M70 80 L80 95 L95 80 L80 65 Z" fill="#B7CBDA"/><path d="M70 80 L60 65 L45 80 L60 95 Z" fill="#B7CBDA"/>
+  <text x="150" y="70" font-family="'Noto Sans KR', sans-serif" font-size="22" font-weight="700" fill="#1B4A70">시니어 나침반</text><text x="150" y="92" font-family="'Noto Sans KR', sans-serif" font-size="10" fill="#5C7080" letter-spacing="1.5">SENIOR COMPASS</text><text x="150" y="112" font-family="'Noto Sans KR', sans-serif" font-size="9" fill="#8A96A3">함께 길을 찾아드립니다</text>
+</svg>

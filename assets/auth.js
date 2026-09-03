@@ -74,6 +74,11 @@ export function updateAuthUI() {
       login.textContent = '🔐 로그인';
       login.className = 'auth-link';
       root.appendChild(login);
+      const signup = document.createElement('a');
+      signup.href = 'signup.html?return=' + encodeURIComponent(safeReturnUrl(window.location.href));
+      signup.textContent = '회원가입';
+      signup.className = 'auth-link';
+      root.appendChild(signup);
       return;
     }
 

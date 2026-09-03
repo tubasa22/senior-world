@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img">
+  <title>시니어 나침반</title><defs><linearGradient id="favBadgeGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#EAF0F5"/><stop offset="100%" stop-color="#DCE9F5"/></linearGradient></defs>
+  <circle cx="80" cy="80" r="72" fill="url(#favBadgeGrad)" stroke="#2D6FA3" stroke-width="3"/><circle cx="80" cy="80" r="58" fill="none" stroke="#2D6FA3" stroke-width="1.5" stroke-dasharray="2 5" opacity="0.5"/><circle cx="80" cy="80" r="42" fill="none" stroke="#2D6FA3" stroke-width="5"/><circle cx="80" cy="80" r="5" fill="#1B4A70"/>
+  <path d="M80 80 L92 62 L80 44 L68 62 Z" fill="#E8873D"/><path d="M80 80 L68 98 L80 116 L92 98 Z" fill="#2D6FA3"/><path d="M80 80 L92 98 L110 80 L92 62 Z" fill="#B7CBDA"/><path d="M80 80 L68 62 L50 80 L68 98 Z" fill="#B7CBDA"/>
+</svg>
