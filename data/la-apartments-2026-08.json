@@ -1,0 +1,78 @@
+[
+  {
+    "id": 144, "name": "Beverly Hills Senior Housing",
+    "address": "225 N. Crescent Dr", "city": "Beverly Hills", "zip": "90210",
+    "age": "62+", "phone": "(310) 205-2125",
+    "website": "mhfla.org/properties/beverly-hills-senior-housing",
+    "email": null, "units": null, "projectBased": true,
+    "fullAddress": "225 N. Crescent Dr, Beverly Hills, CA 90210",
+    "inKoreatown": false, "note": "우편 신청만 가능, 세대수 확인 필요"
+  },
+  {
+    "id": 145, "name": "Long Beach Senior Housing",
+    "address": "575 E Vernon St", "city": "Long Beach", "zip": "90806",
+    "age": "62+ (18+ 장애인 겸용)", "phone": "(310) 281-2837",
+    "website": "mhfla.org/properties/long-beach-senior-housing",
+    "email": null, "units": null, "projectBased": true,
+    "fullAddress": "575 E Vernon St, Long Beach, CA 90806",
+    "inKoreatown": false, "note": "전화로 신청서 요청, 세대수 확인 필요"
+  },
+  {
+    "id": 146, "name": "New Hope Senior Villa",
+    "address": "5140 S. Central Ave #201", "city": "Los Angeles", "zip": "90011",
+    "age": "62+", "phone": "(323) 231-1107", "website": "",
+    "email": null, "units": null, "projectBased": true,
+    "fullAddress": "5140 S. Central Ave #201, Los Angeles, CA 90011",
+    "inKoreatown": false, "note": "스튜디오만 신청 가능, 세대수 확인 필요"
+  },
+  {
+    "id": 147, "name": "Centennial Place Apt",
+    "address": "235 E. Holly St", "city": "Pasadena", "zip": "91101",
+    "age": "55+ (18+ 장애인 겸용)", "phone": "(626) 585-0009",
+    "website": "abodecommunities.org/communities/centennial-place",
+    "email": null, "units": null, "projectBased": null,
+    "fullAddress": "235 E. Holly St, Pasadena, CA 91101",
+    "inKoreatown": false, "note": "이메일/방문/온라인 신청, projectBased·세대수 확인 필요"
+  },
+  {
+    "id": 148, "name": "Cedros Rayen Apt",
+    "address": "9009 Cedros Ave", "city": "Panorama City", "zip": "91402",
+    "age": "62+ (18+ 장애인 겸용)", "phone": "(323) 231-1107", "website": "",
+    "email": null, "units": null, "projectBased": null,
+    "fullAddress": "9009 Cedros Ave, Panorama City, CA 91402",
+    "inKoreatown": false, "note": "방문 신청만 가능, projectBased·세대수 확인 필요"
+  },
+  {
+    "id": 149, "name": "Lotus Garden Apt",
+    "address": "719 N. Yale St", "city": "Los Angeles", "zip": "90012",
+    "age": "62+ 시니어·가족 겸용", "phone": "(213) 278-0416", "website": "",
+    "email": null, "units": null, "projectBased": null,
+    "fullAddress": "719 N. Yale St, Los Angeles, CA 90012",
+    "inKoreatown": false, "note": "1/2/3베드룸, 소득별 렌트, 코리아타운 인접"
+  },
+  {
+    "id": 150, "name": "Ingram Preservation Apt",
+    "address": "2120 2nd Ave", "city": "Los Angeles", "zip": "90018",
+    "age": "62+/55+ 시니어·가족 겸용", "phone": "(323) 733-2603", "website": "",
+    "email": null, "units": null, "projectBased": null,
+    "fullAddress": "2120 2nd Ave, Los Angeles, CA 90018",
+    "inKoreatown": false, "note": "방문 신청만 가능, projectBased·세대수 확인 필요"
+  },
+  {
+    "id": 151, "name": "Camino Al Oro",
+    "address": "330 W. Ave 26", "city": "Los Angeles", "zip": "90031",
+    "age": "55+ 시니어·가족 겸용", "phone": "(323) 225-1725",
+    "website": "caminoaloapliving.com",
+    "email": null, "units": null, "projectBased": false,
+    "fullAddress": "330 W. Ave 26, Los Angeles, CA 90031",
+    "inKoreatown": false, "note": "택스크레딧, 1bd $1,350 / 2bd 전화문의"
+  },
+  {
+    "id": 152, "name": "The Salvation Army Senior Housing",
+    "address": "947 S. Hoover St", "city": "Los Angeles", "zip": "90006",
+    "age": "62+/55+", "phone": "(213) 387-7278", "website": "salvationarmy.org",
+    "email": null, "units": null, "projectBased": false,
+    "fullAddress": "947 S. Hoover St, Los Angeles, CA 90006",
+    "inKoreatown": true, "note": "택스크레딧, 스튜디오 $1,100 / 1bd $1,650, 코리아타운 소재"
+  }
+]
