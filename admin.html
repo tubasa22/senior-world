@@ -1,41 +1,82 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>관리자 게시 | 시니어 나침반</title><link rel="icon" href="assets/img/favicon.svg"><style>body{margin:0;
-background:#F7F9FB;
-color:#22303A;
-font:16px/1.7 system-ui}.wrap{width:min(720px,100%);
-margin:auto;
-padding:36px 24px}header{background:#1B4A70}header a{color:#fff;
-font-weight:bold;
-text-decoration:none}.card{padding:24px;
-border:1px solid #DCE4E8;
-border-radius:12px;
-background:#fff}label{display:block;
-margin-top:14px;
-font-weight:bold}input,textarea{box-sizing:border-box;
-width:100%;
-padding:10px;
-border:1px solid #DCE4E8;
-border-radius:7px;
-font:inherit}textarea{min-height:160px}button{margin-top:18px;
-padding:12px 18px;
-border:0;
-border-radius:8px;
-background:#E8873D;
-color:#fff;
-font-weight:bold}.hidden{display:none}.message{color:#A22}a{color:#2D6FA3}</style></head><body><header><div class="wrap"><a href="index.html">시니어 나침반</a></div></header><main class="wrap"><h1>커뮤니티 게시</h1><section id="loginNotice" class="card hidden">관리자 로그인이 필요합니다. <a href="login.html?return=admin.html">로그인하기</a></section><form id="postForm" class="card hidden"><label><input type="radio" name="postType" value="공지" checked> 공지 <input type="radio" name="postType" value="뉴스"> 뉴스</label><label>제목<input id="postTitle" required maxlength="200"></label><label>본문<textarea id="postBody" required maxlength="5000"></textarea></label><div id="sourceFields" class="hidden"><label>출처 언론사명<input id="sourceName" maxlength="100"></label><label>출처 링크<input id="sourceUrl" type="url" maxlength="1000"></label></div><button>게시하기</button><p id="message" class="message"></p><a id="communityLink" class="hidden" href="community.html">커뮤니티로 이동</a></form><p>이 화면은 관리자 전용입니다. 뉴스를 게시할 때는 원문을 그대로 복사하지 말고, 자기 말로 재구성한 내용만 입력하세요.</p></main><script type="module">import{authReady,currentUser,getIdToken}from'./assets/auth.js';
-const COMMUNITY_API='https://script.google.com/macros/s/AKfycbxpFfpCazh15auxmUgqh18bxArDoTqNifHMehkQ8jKqGCOHeoG5uxFdxlk2-e1baZ2K/exec';
-const form=document.querySelector('#postForm'),notice=document.querySelector('#loginNotice'),message=document.querySelector('#message'),sourceFields=document.querySelector('#sourceFields');
-await authReady;
-if(currentUser)form.classList.remove('hidden');
-else notice.classList.remove('hidden');
-document.querySelectorAll('[name=postType]').forEach(r=>r.onchange=()=>sourceFields.classList.toggle('hidden',document.querySelector('[name=postType]:checked').value!=='뉴스'));
-form.onsubmit=async e=>{e.preventDefault();
-if(!COMMUNITY_API){message.textContent='게시 기능이 아직 준비 중입니다.';
-return}const payload={action:'createPost',idToken:await getIdToken(),postType:document.querySelector('[name=postType]:checked').value,title:document.querySelector('#postTitle').value,body:document.querySelector('#postBody').value,sourceName:document.querySelector('#sourceName').value,sourceUrl:document.querySelector('#sourceUrl').value};
-try{const res=await fetch(COMMUNITY_API,{method:'POST',headers:{'Content-Type':'text/plain;
-charset=utf-8'},body:JSON.stringify(payload)}),out=await res.json();
-if(!out.ok)throw new Error(out.error);
-message.textContent='게시되었습니다.';
-form.reset();
-sourceFields.classList.add('hidden');
-document.querySelector('#communityLink').classList.remove('hidden')}catch(error){message.textContent=error.message||'게시하지 못했습니다.'}};
-</script></body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>관리자 | 시니어 나침반</title>
+  <link rel="icon" href="assets/img/favicon.svg">
+  <style>
+    :root{--paper:#F7F9FB;--ink:#22303A;--soft:#5C7080;--teal:#2D6FA3;--deep:#1B4A70;--ochre:#E8873D;--line:#DCE4E8;--danger:#C0392B}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 system-ui,sans-serif}.wrap{width:min(900px,100%);margin:auto;padding:32px 24px}header{background:var(--deep)}header a{color:#fff;font-weight:700;text-decoration:none}.card{padding:24px;border:1px solid var(--line);border-radius:12px;background:#fff}.hidden{display:none!important}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 16px}.tab{margin:0;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-weight:700;cursor:pointer}.tab[aria-selected="true"]{border-color:var(--teal);background:var(--teal);color:#fff}label{display:block;margin-top:14px;font-weight:700}input,textarea{display:block;width:100%;margin-top:5px;padding:10px;border:1px solid var(--line);border-radius:7px;font:inherit}textarea{min-height:160px}button.primary{margin-top:18px;padding:12px 18px;border:0;border-radius:8px;background:var(--ochre);color:#fff;font-weight:700;cursor:pointer}.message{min-height:24px;color:var(--danger)}.message.ok{color:#26724A}.summary{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}.stat{min-width:170px;padding:16px;border-radius:10px;background:#EAF0F5}.stat strong{display:block;font-size:26px;color:var(--deep)}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--soft);font-size:14px}.modal-backdrop{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:rgba(34,48,58,.55)}.modal{width:min(440px,100%);padding:24px;border-radius:12px;background:#fff}.modal-actions{display:flex;justify-content:flex-end;gap:10px}.modal-actions button{margin:0}.muted{color:var(--soft);font-size:14px}a{color:var(--teal)}
+  </style>
+</head>
+<body>
+  <header><div class="wrap"><a href="index.html">시니어 나침반</a></div></header>
+  <main class="wrap">
+    <h1>관리자</h1>
+    <section id="loginNotice" class="card hidden">관리자 로그인이 필요합니다. <a href="login.html?return=admin.html">로그인하기</a></section>
+    <section id="adminPanel" class="hidden">
+      <div class="tabs" role="tablist" aria-label="관리자 기능">
+        <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="writePanel" data-tab="writePanel">글쓰기</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="membersPanel" data-tab="membersPanel">회원 현황</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="newsletterPanel" data-tab="newsletterPanel">뉴스레터 발송</button>
+      </div>
+
+      <section id="writePanel" class="card" role="tabpanel">
+        <h2>커뮤니티 게시</h2>
+        <form id="postForm">
+          <label><input type="radio" name="postType" value="공지" checked> 공지 <input type="radio" name="postType" value="뉴스"> 뉴스</label>
+          <label>제목<input id="postTitle" required maxlength="200"></label>
+          <label>본문<textarea id="postBody" required maxlength="5000"></textarea></label>
+          <div id="sourceFields" class="hidden"><label>출처 언론사명<input id="sourceName" maxlength="100"></label><label>출처 링크<input id="sourceUrl" type="url" maxlength="1000"></label></div>
+          <button class="primary" type="submit">게시하기</button>
+          <p id="postMessage" class="message" aria-live="polite"></p>
+          <a id="communityLink" class="hidden" href="community.html">커뮤니티로 이동</a>
+        </form>
+      </section>
+
+      <section id="membersPanel" class="card hidden" role="tabpanel">
+        <h2>회원 현황</h2>
+        <p id="memberMessage" class="message" aria-live="polite"></p>
+        <div class="summary"><div class="stat">전체 회원<strong id="totalCount">-</strong></div><div class="stat">뉴스레터 동의<strong id="newsletterCount">-</strong></div></div>
+        <h3>최근 가입자</h3>
+        <table><thead><tr><th>이름</th><th>가입일</th><th>뉴스레터 동의</th></tr></thead><tbody id="memberRows"></tbody></table>
+        <p class="muted">이메일 주소와 수신자 목록은 이 화면 및 브라우저에 제공하지 않습니다.</p>
+      </section>
+
+      <section id="newsletterPanel" class="card hidden" role="tabpanel">
+        <h2>뉴스레터 발송</h2>
+        <p id="recipientNotice" class="muted">회원 현황을 불러오는 중입니다.</p>
+        <form id="newsletterForm"><label>제목<input id="newsletterSubject" required maxlength="200"></label><label>본문<textarea id="newsletterBody" required maxlength="10000"></textarea></label><button class="primary" type="submit">발송 확인</button></form>
+        <p id="newsletterMessage" class="message" aria-live="polite"></p>
+      </section>
+    </section>
+    <p>이 화면은 관리자 전용입니다. 뉴스를 게시할 때는 원문을 그대로 복사하지 말고, 자기 말로 재구성한 내용만 입력하세요.</p>
+  </main>
+
+  <div id="confirmModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="confirmTitle"><div class="modal"><h2 id="confirmTitle">뉴스레터 발송 확인</h2><p id="confirmText"></p><div class="modal-actions"><button id="cancelSend" type="button">취소</button><button id="confirmSend" class="primary" type="button">발송하기</button></div></div></div>
+
+  <script type="module">
+    import { authReady, currentUser, getIdToken } from './assets/auth.js';
+    const COMMUNITY_API = 'https://script.google.com/macros/s/AKfycbxpFfpCazh15auxmUgqh18bxArDoTqNifHMehkQ8jKqGCOHeoG5uxFdxlk2-e1baZ2K/exec';
+    const NEWSLETTER_API = ''; // TODO: newsletter-backend.gs를 웹 앱으로 배포한 뒤 /exec URL을 입력하세요.
+    let memberStats = { totalCount: 0, newsletterCount: 0, recentMembers: [] };
+    const $ = selector => document.querySelector(selector);
+
+    function showMessage(selector, text, okay = false) { const element = $(selector); element.textContent = text; element.classList.toggle('ok', okay); }
+    function switchTab(panelId) { document.querySelectorAll('[role=tabpanel]').forEach(panel => panel.classList.toggle('hidden', panel.id !== panelId)); document.querySelectorAll('[role=tab]').forEach(tab => tab.setAttribute('aria-selected', String(tab.dataset.tab === panelId))); }
+    async function apiRequest(api, payload) { const response = await fetch(api, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) }); const data = await response.json(); if (!data.ok) throw new Error(data.error || '요청 처리에 실패했습니다'); return data; }
+    function renderMembers() { $('#totalCount').textContent = memberStats.totalCount; $('#newsletterCount').textContent = memberStats.newsletterCount; $('#recipientNotice').textContent = `뉴스레터 동의자 ${memberStats.newsletterCount}명에게 발송됩니다.`; const rows = $('#memberRows'); rows.replaceChildren(); if (!memberStats.recentMembers.length) { const row = document.createElement('tr'); row.innerHTML = '<td colspan="3">가입자가 없습니다.</td>'; rows.appendChild(row); return; } memberStats.recentMembers.forEach(member => { const row = document.createElement('tr'); [member.name || '이름 미입력', member.createdAt ? new Date(member.createdAt).toLocaleDateString('ko-KR') : '확인 필요', member.newsletterOptIn ? '동의' : '미동의'].forEach(value => { const cell = document.createElement('td'); cell.textContent = value; row.appendChild(cell); }); rows.appendChild(row); }); }
+    async function loadMemberStats() { if (!NEWSLETTER_API) { showMessage('#memberMessage', '회원 현황 기능은 서버 설정 후 사용할 수 있습니다.'); $('#recipientNotice').textContent = '뉴스레터 서버 설정 후 수신자 수가 표시됩니다.'; return; } try { memberStats = await apiRequest(NEWSLETTER_API, { action: 'getMemberStats', idToken: await getIdToken() }); renderMembers(); } catch (error) { showMessage('#memberMessage', error.message === '관리자 권한이 없습니다' ? '권한이 없습니다.' : '회원 현황을 불러오지 못했습니다.'); } }
+
+    await authReady;
+    if (!currentUser) { $('#loginNotice').classList.remove('hidden'); } else { $('#adminPanel').classList.remove('hidden'); loadMemberStats(); }
+    document.querySelectorAll('[role=tab]').forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
+    document.querySelectorAll('[name=postType]').forEach(radio => radio.addEventListener('change', () => $('#sourceFields').classList.toggle('hidden', $('[name=postType]:checked').value !== '뉴스')));
+    $('#postForm').addEventListener('submit', async event => { event.preventDefault(); if (!COMMUNITY_API) return showMessage('#postMessage', '게시 기능이 아직 준비 중입니다.'); try { await apiRequest(COMMUNITY_API, { action: 'createPost', idToken: await getIdToken(), postType: $('[name=postType]:checked').value, title: $('#postTitle').value, body: $('#postBody').value, sourceName: $('#sourceName').value, sourceUrl: $('#sourceUrl').value }); showMessage('#postMessage', '게시되었습니다.', true); event.target.reset(); $('#sourceFields').classList.add('hidden'); $('#communityLink').classList.remove('hidden'); } catch (error) { showMessage('#postMessage', error.message); } });
+    $('#newsletterForm').addEventListener('submit', event => { event.preventDefault(); if (!NEWSLETTER_API) return showMessage('#newsletterMessage', '뉴스레터 발송 기능은 서버 설정 후 사용할 수 있습니다.'); $('#confirmText').textContent = `정말 ${memberStats.newsletterCount}명에게 발송하시겠습니까?`; $('#confirmModal').classList.remove('hidden'); });
+    $('#cancelSend').addEventListener('click', () => $('#confirmModal').classList.add('hidden'));
+    $('#confirmSend').addEventListener('click', async () => { $('#confirmModal').classList.add('hidden'); try { const result = await apiRequest(NEWSLETTER_API, { action: 'sendNewsletter', idToken: await getIdToken(), subject: $('#newsletterSubject').value, body: $('#newsletterBody').value }); showMessage('#newsletterMessage', `발송 완료: 성공 ${result.sent}건, 실패 ${result.failed}건`, true); $('#newsletterForm').reset(); } catch (error) { showMessage('#newsletterMessage', error.message); } });
+  </script>
+</body>
+</html>
