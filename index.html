@@ -11,16 +11,16 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css" />
 <style>
   :root{
-    --paper:#F6F2E9;
-    --paper-dim:#EDE7D8;
-    --ink:#212B2A;
-    --ink-soft:#5B6B67;
-    --teal:#1C6E64;
-    --teal-deep:#0F4A44;
-    --ochre:#C6862E;
-    --line:#D8D0BC;
+    --paper:#F7F9FB;
+    --paper-dim:#EAF0F5;
+    --ink:#22303A;
+    --ink-soft:#5C7080;
+    --teal:#2D6FA3;
+    --teal-deep:#1B4A70;
+    --ochre:#E8873D;
+    --line:#DCE4E8;
     --card-bg:#FFFFFF;
-    --danger:#B4472F;
+    --danger:#C0392B;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
@@ -39,7 +39,7 @@
   /* ---------- Header ---------- */
   header{
     background:var(--teal-deep);
-    color:#F6F2E9;
+    color:#F7F9FB;
     padding:14px 20px;
     display:flex;
     align-items:center;
@@ -187,7 +187,7 @@
   }
   .card:hover{
     border-color:var(--teal);
-    box-shadow:0 3px 10px rgba(28,110,100,0.12);
+    box-shadow:0 3px 10px rgba(45,111,163,0.12);
   }
   .card.selected{
     border-color:var(--teal);
@@ -221,7 +221,7 @@
     white-space:nowrap;
   }
   .badge-age{ background:#DCEEEB; color:var(--teal-deep); }
-  .badge-pb{ background:#F3E3C8; color:#7A5518; }
+  .badge-pb{ background:#FBE4CE; color:#7A5518; }
   .badge-units{ background:#EDEAE0; color:var(--ink-soft); }
   .badge-rating{ background:#FBEFD6; color:#9A6B12; }
   .badge-rating small{ font-weight:500; opacity:.8; }
@@ -256,7 +256,7 @@
   /* ---------- 후기 모달 ---------- */
   .modal-backdrop{
     display:none; position:fixed; inset:0; z-index:2000;
-    background:rgba(15,74,68,0.45);
+    background:rgba(27,74,112,0.45);
     align-items:center; justify-content:center; padding:20px;
   }
   .modal-backdrop.show{ display:flex; }
@@ -285,7 +285,7 @@
   .stars{ display:flex; gap:4px; }
   .stars button{
     background:none; border:none; font-size:30px; cursor:pointer; padding:0;
-    color:#D8D0BC; line-height:1; transition:color .1s;
+    color:#DCE4E8; line-height:1; transition:color .1s;
   }
   .stars button.on{ color:#E8A72C; }
   .modal-actions{ display:flex; gap:10px; margin-top:6px; }
@@ -534,7 +534,7 @@ function initMap(){
     maxClusterRadius:42,
     iconCreateFunction: function(c){
       return L.divIcon({
-        html: '<div style="background:#0F4A44;color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);">'+c.getChildCount()+'</div>',
+        html: '<div style="background:#1B4A70;color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);">'+c.getChildCount()+'</div>',
         className:'', iconSize:[36,36]
       });
     }
@@ -619,7 +619,7 @@ function cardHtml(apt){
 function popupHtml(apt, approx){
   return `
     <div class="popup-name">${apt.name}</div>
-    <div class="popup-addr">${apt.address}, ${apt.city} ${apt.zip}<br>${apt.age}${apt.projectBased ? ' · 저소득 전용**' : ''} · ${apt.units}세대${reviewsByApt[apt.id] && reviewsByApt[apt.id].count ? ' · ★ ' + reviewsByApt[apt.id].avg.toFixed(1) + ' (' + reviewsByApt[apt.id].count + ')' : ''}${approx ? '<br><span style="color:#B4472F;">※ 우편번호 기준 대략 위치 — 정확한 위치는 길찾기로 확인</span>' : ''}</div>
+    <div class="popup-addr">${apt.address}, ${apt.city} ${apt.zip}<br>${apt.age}${apt.projectBased ? ' · 저소득 전용**' : ''} · ${apt.units}세대${reviewsByApt[apt.id] && reviewsByApt[apt.id].count ? ' · ★ ' + reviewsByApt[apt.id].avg.toFixed(1) + ' (' + reviewsByApt[apt.id].count + ')' : ''}${approx ? '<br><span style="color:#C0392B;">※ 우편번호 기준 대략 위치 — 정확한 위치는 길찾기로 확인</span>' : ''}</div>
     <div class="popup-actions">${actionsHtml(apt)}${reviewBtn(apt)}</div>
   `;
 }
