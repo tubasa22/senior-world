@@ -369,7 +369,8 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
   연락 안 한 것으로 보임.
 - Firestore 보안 규칙(firestore.rules)이 저장소에 파일로는
   있지만, 실제 Firebase Console에 수동 배포됐는지 미확인.
-  다음 세션은 Firebase Console에서 직접 확인 요망.
+  관리자 회원 현황 읽기 권한도 추가됐으므로, 규칙을 갱신한 뒤
+  Firebase Console에서 반드시 수동 재배포해야 함.
 - 회원가입 시 실제로 signup.html에서 tubasa22@gmail.com 계정
   생성을 시도했으나, 위 리다이렉트 버그 때문에 가입 완료
   여부 자체가 불확실함 — 버그 수정 후 재시도 필요.

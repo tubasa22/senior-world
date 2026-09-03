@@ -4,6 +4,9 @@ service cloud.firestore {
     match /users/{userId} {
       // 본인 문서만 읽기/쓰기 가능, 타인 정보는 접근 불가
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      // 관리자 화면의 회원 현황 조회용. Firebase Console에도 수동 배포가 필요하다.
+      allow read: if request.auth != null &&
+        request.auth.token.email in ["tubasa22@gmail.com"];
     }
   }
 }
