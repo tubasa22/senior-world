@@ -23,6 +23,7 @@
 - `name`: 가입자가 입력한 이름
 - `email`: Firebase Authentication 계정 이메일
 - `newsletterOptIn`: 뉴스레터 수신 동의 여부(Boolean). 실제 발송 시스템은 아직 연결하지 않았다.
+- `newsletterUnsubscribedAt`: 회원이 수신 해지를 선택한 시각(Firestore 서버 시간). 수신 해지 시 `newsletterOptIn`은 `false`로 변경한다.
 - `createdAt`: Firestore 서버 시간으로 기록한 가입 시각
 
 회원 정보는 `firestore.rules`에서 인증된 본인이 자신의 문서에만 읽기·쓰기를 할 수 있도록 제한한다. 실제 보호를 위해서는 이 규칙을 Firebase Console에 수동 배포해야 한다.
