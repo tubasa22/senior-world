@@ -339,25 +339,28 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
   존재 확인됨(파일 존재만 확인, 내용 상세 검증은 안 함).
 - **문서**: privacy.html, unsubscribe.html, DATA_SOURCES.md,
   AGENTS.md 존재 확인됨.
+- **회원가입/로그인 리다이렉트**: `location.href`의 `/파일명` 절대경로
+  패턴을 로컬 grep으로 재검사한 결과가 없음. GitHub Pages 프로젝트
+  하위 경로에서도 상대경로로 이동하도록 반영된 상태임.
+- **헤더/네비게이션 통일**: 10개 페이지(index, map, guide, contact,
+  rhf-application-guide, ltc-guide, ltc-facilities, community, admin,
+  funeral-guide) 전부 동일한 `nav-dropdown` 헤더 구조 확인됨. IHSS와
+  커뮤니티가 형제 관계로 모든 페이지에 노출됨.
+- **idToken 검증 방식 개선**: community-backend.gs, member-backend.gs
+  양쪽 모두 `identitytoolkit.googleapis.com` 방식으로 교체 확인됨
+  (각 파일에서 `identitytoolkit` grep 결과 1 이상).
+- **funeral-guide.html 신설 및 이해충돌 방지**: 사전 장례 준비 교육
+  페이지 신설. `NGL|Jaden Lee|LIC#` 대소문자 무시 grep 결과 없음 확인 —
+  특정 보험상품·상담사 정보 없이 순수 교육 콘텐츠로만 구성됨.
+- **HUMAN-TASKS.md 신설**: 사람만 처리 가능한 작업 체크리스트 통합.
+  현재 미완료 항목은 관리자 대시보드 활성화 4단계, KIWA 재게시 허락,
+  LTC 시설 데이터 수집, LICENSE 저작권자 확정.
 
 ### 🔴 오늘 발견된 미해결 버그 (우선순위 높음)
 
-1. **회원가입/로그인 후 리다이렉트 404 버그** — GitHub Pages가
-   `/senior-world/` 하위 경로에서 서빙되는데, 코드에서 절대경로
-   (`/index.html` 등 맨 앞 슬래시)로 리다이렉트하는 부분이 있어서
-   실제로는 `tubasa22.github.io/index.html`(하위 경로 없이)로
-   이동해 404 발생. 스크린샷으로 실제 재현 확인됨.
-   수정 지시는 전달했으나, 완료·검증 여부 미확인 —
-   다음 세션 최우선 확인 사항.
 2. **admin.html 제출 스크립트 변수명 충돌 버그** — Codex가
    발견해서 수정 중이라고 보고함. 수정 완료 여부와 커밋 여부
    미확인.
-3. **7개 페이지 헤더 불일치** — 로고(logo.svg)와 드롭다운 메뉴
-   (nav-dropdown)가 index.html 한 곳에만 적용되고, map.html,
-   guide.html, contact.html, rhf-application-guide.html,
-   ltc-guide.html, ltc-facilities.html 6개 페이지는 전부
-   서로 다른 헤더 구조를 쓰고 있음(로컬 <header> 원문 직접
-   확인함). 통일 지시를 전달했으나 실행 여부 미확인.
 4. **LICENSE 파일 여전히 없음**.
 
 ### 📋 계획됐으나 미착수 / 확인 필요
@@ -373,18 +376,15 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
   관리자 회원 현황 읽기 권한도 추가됐으므로, 규칙을 갱신한 뒤
   Firebase Console에서 반드시 수동 재배포해야 함.
 - 회원가입 시 실제로 signup.html에서 tubasa22@gmail.com 계정
-  생성을 시도했으나, 위 리다이렉트 버그 때문에 가입 완료
-  여부 자체가 불확실함 — 버그 수정 후 재시도 필요.
+  생성을 시도했으나, 가입 완료 여부 자체는 아직 재확인 필요.
 
 ### 다음 세션 시작 시 권장 순서
 
 1. 로컬 git status/log로 origin/main과 완전히 동기화됐는지 확인
-2. 위 "🔴 오늘 발견된 미해결 버그" 4가지를 로컬 파일 직접 grep으로
+2. 위 "🔴 오늘 발견된 미해결 버그" 2가지를 로컬 파일 직접 grep으로
    재확인 (네트워크 캐시 거치지 말 것)
-3. 리다이렉트 버그부터 수정 → 회원가입 재시도 → 커뮤니티 글쓰기
-   테스트까지 엔드투엔드로 완주
+3. 회원가입 재시도 → 커뮤니티 글쓰기 테스트까지 엔드투엔드로 완주
 4. LICENSE 추가
-5. 헤더 통일 작업 진행
 
 ### 🔲 진행 중 — 관리자 대시보드 활성화 (회원현황 + 뉴스레터)
 
@@ -407,11 +407,5 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
 
 또한 별도로 확인 필요한 관련 이슈:
 
-- `community-backend.gs`, `member-backend.gs`의 idToken 검증
-  방식을 `oauth2.googleapis.com/tokeninfo`에서
-  Identity Toolkit API(`identitytoolkit.googleapis.com/v1/accounts:lookup`)
-  방식으로 교체하는 수정이 지시됐음 — 실제 반영 여부 다음
-  세션에서 grep으로 재확인 필요 (`grep -n "identitytoolkit"`
-  두 파일에서 나와야 정상).
 - `admin.html`의 라디오버튼 라벨 구조 수정, 제출 중 상태 표시
   추가도 함께 지시됨 — 반영 여부 미확인.
