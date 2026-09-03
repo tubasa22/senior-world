@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "",
+    "nameKorean": "",
+    "address": "",
+    "city": "",
+    "zip": "",
+    "phone": "",
+    "licenseNumber": "",
+    "licenseType": "RCFE",
+    "licenseVerifyUrl": "https://www.ccld.dss.ca.gov/carefacilitysearch/",
+    "photo": "assets/img/ltc/PLACEHOLDER.jpg",
+    "intro": "",
+    "website": "",
+    "fullAddress": ""
+  }
+]
