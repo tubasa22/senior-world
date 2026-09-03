@@ -103,6 +103,7 @@
     background:var(--paper);
     color:var(--ink);
   }
+  .member-action{ padding:9px 12px; border:1.5px solid var(--teal); border-radius:8px; background:var(--teal); color:#fff; font:700 14px inherit; cursor:pointer; white-space:nowrap; }
   .toggle-chip{
     display:flex;
     align-items:center;
@@ -384,6 +385,12 @@
     .list-pane{ width:100%; max-width:100%; height:46%; order:2; }
     .map-pane{ height:54%; order:1; }
   }
+  @media print{
+    html,body,.app{ height:auto; overflow:visible; background:#fff; }
+    header,.controls,.geo-progress,.map-pane,.card-actions,.member-action,.btn-export{ display:none !important; }
+    .main,.list-pane{ display:block; width:100%; max-width:none; overflow:visible; background:#fff; border:0; padding:0; }
+    .card{ break-inside:avoid; box-shadow:none; }
+  }
 </style>
 </head>
 <body>
@@ -405,6 +412,7 @@
       <a class="guide-link alt" href="ltc-guide.html">🧭 입소 절차</a>
       <a class="guide-link alt" href="ltc-facilities.html">🏡 시설 소개</a>
       <a class="guide-link alt" href="contact.html">✉ 문의하기</a>
+      <span data-auth-ui></span>
     </div>
   </header>
 
@@ -431,6 +439,8 @@
     <label class="toggle-chip" id="laToggle">
       <input type="checkbox" id="laCheckbox"> LA 카운티 포함
     </label>
+    <button class="member-action" id="emailResultsBtn" type="button">📧 이 목록 이메일로 받기</button>
+    <button class="member-action" id="printResultsBtn" type="button">🖨️ 인쇄하기</button>
   </div>
 
   <div class="geo-progress show" id="geoProgress">
@@ -1013,6 +1023,24 @@ async function submitReview(){
   refineLocations();    // 나머지는 백그라운드 보정
 })();
 
+</script>
+<script type="module">
+import { MEMBER_API, requireMemberOrRedirect, getIdToken } from './assets/auth.js';
+function resultsHtml(){
+  const cards=[...document.querySelectorAll('#cardContainer .card')].map(card=>card.outerHTML).join('');
+  return `<h1>시니어 나침반 - 아파트 검색 결과</h1><p>${document.getElementById('resultCount').textContent}</p>${cards || '<p>표시할 결과가 없습니다.</p>'}`;
+}
+async function requireMember(){ return requireMemberOrRedirect(window.location.href); }
+document.getElementById('printResultsBtn').addEventListener('click',async()=>{ if(await requireMember()) window.print(); });
+document.getElementById('emailResultsBtn').addEventListener('click',async()=>{
+  if(!await requireMember()) return;
+  if(!MEMBER_API){ alert('이메일 발송 기능이 아직 준비 중입니다'); return; }
+  try{
+    const response=await fetch(MEMBER_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({idToken:await getIdToken(),resultsHtml:resultsHtml()})});
+    const result=await response.json();
+    alert(result && result.ok ? '검색 결과를 이메일로 보냈습니다.' : (result.error || '이메일 발송에 실패했습니다.'));
+  }catch(_){ alert('이메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.'); }
+});
 </script>
 </body>
 </html>

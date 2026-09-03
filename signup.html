@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원가입 | 시니어 나침반</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F7F9FB;--ink:#22303A;--soft:#5C7080;--teal:#2D6FA3;--deep:#1B4A70;--ochre:#E8873D;--line:#DCE4E8}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'Noto Sans KR',sans-serif;line-height:1.6}header{padding:22px;background:var(--deep)}header a{color:#fff;font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;text-decoration:none}.page{width:min(100% - 40px,520px);margin:58px auto}.card{padding:34px;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 12px 28px rgba(27,74,112,.09)}h1{margin:0 0 8px;font-family:'Noto Serif KR',serif;color:var(--deep);font-size:34px}.lead{margin:0 0 26px;color:var(--soft)}label{display:block;margin:15px 0 6px;font-weight:700}input{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px;font:inherit}.check{display:flex;gap:9px;align-items:flex-start;margin:18px 0}.check input{width:auto;margin-top:6px}button{width:100%;padding:13px;border:0;border-radius:9px;background:var(--ochre);color:#fff;font:700 16px inherit;cursor:pointer}button:disabled{opacity:.65}.message{min-height:24px;margin:16px 0 0;color:#A22D23;font-size:14px}.message.ok{color:#26724A}.bottom{margin:22px 0 0;text-align:center;color:var(--soft)}a{color:var(--teal)}
+</style>
+</head><body>
+<header><a href="index.html">시니어 나침반</a></header>
+<main class="page"><section class="card"><h1>회원가입</h1><p class="lead">검색 결과를 이메일로 받아보고, 필요한 정보를 저장하세요.</p>
+<form id="signupForm"><label for="name">이름</label><input id="name" required maxlength="80" autocomplete="name"><label for="email">이메일</label><input id="email" type="email" required autocomplete="email"><label for="password">비밀번호</label><input id="password" type="password" required minlength="6" autocomplete="new-password"><label for="passwordConfirm">비밀번호 확인</label><input id="passwordConfirm" type="password" required minlength="6" autocomplete="new-password"><label class="check"><input id="newsletter" type="checkbox"><span>시니어 나침반 뉴스레터를 받겠습니다. (선택)</span></label><button id="submitBtn" type="submit">회원가입</button></form>
+<p id="message" class="message" aria-live="polite"></p><p class="bottom">이미 계정이 있으신가요? <a id="loginLink" href="login.html">로그인</a></p></section></main>
+<script type="module">
+import { auth, db, safeReturnUrl } from './assets/auth.js';
+import { createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+const params=new URLSearchParams(location.search); const returnUrl=safeReturnUrl(params.get('return')); document.getElementById('loginLink').href='login.html?return='+encodeURIComponent(returnUrl);
+const message=document.getElementById('message'); const button=document.getElementById('submitBtn');
+const errors={'auth/email-already-in-use':'이미 사용 중인 이메일입니다.','auth/invalid-email':'이메일 주소를 확인해주세요.','auth/weak-password':'비밀번호는 6자 이상으로 입력해주세요.','auth/network-request-failed':'네트워크 상태를 확인해주세요.'};
+document.getElementById('signupForm').addEventListener('submit',async event=>{event.preventDefault();message.textContent='';const name=document.getElementById('name').value.trim(),email=document.getElementById('email').value.trim(),password=document.getElementById('password').value,confirm=document.getElementById('passwordConfirm').value;if(password!==confirm){message.textContent='비밀번호가 서로 다릅니다.';return}button.disabled=true;try{const result=await createUserWithEmailAndPassword(auth,email,password);await setDoc(doc(db,'users',result.user.uid),{name,email,newsletterOptIn:document.getElementById('newsletter').checked,createdAt:serverTimestamp()});location.href=returnUrl}catch(error){message.textContent=errors[error.code]||'회원가입에 실패했습니다. 잠시 후 다시 시도해주세요.';button.disabled=false}});
+</script></body></html>

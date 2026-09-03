@@ -27,6 +27,8 @@
   .nav a.primary{ border-color:var(--ochre); background:var(--ochre); }
   .wrap{ padding:38px 24px 70px; }
   .notice{ margin:0 0 30px; padding:20px 22px; border-left:6px solid var(--ochre); border-radius:12px; background:var(--ochre-soft); font-size:16px; }
+  .member-actions{ display:flex; flex-wrap:wrap; gap:9px; margin:0 0 18px; }
+  .member-action{ padding:9px 13px; border:0; border-radius:8px; background:var(--teal); color:#fff; font:800 14px inherit; cursor:pointer; }
   .list-status{ margin:0 0 16px; color:var(--ink-soft); font-size:14px; }
   .facility-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
   .facility-card{ overflow:hidden; border:1px solid var(--line); border-radius:15px; background:var(--card); box-shadow:0 9px 24px rgba(27,74,112,.07); }
@@ -51,6 +53,7 @@
   .brand{ color:#fff; font-family:'Noto Serif KR',serif; font-size:19px; font-weight:700; }
   @media(max-width:850px){ .facility-grid{ grid-template-columns:repeat(2,1fr); } }
   @media(max-width:580px){ .facility-grid{ grid-template-columns:1fr; } .footer-inner{ flex-direction:column; } }
+  @media print{ header,.notice,.member-actions,.list-status,footer,.actions{ display:none !important; } body{ background:#fff; } .wrap{ width:100%; padding:0; } .facility-grid{ grid-template-columns:repeat(2,1fr); } .facility-card{ break-inside:avoid; box-shadow:none; } }
 </style>
 </head>
 <body>
@@ -65,12 +68,14 @@
       <a href="guide.html">📋 주택 신청 안내</a>
       <a class="primary" href="ltc-guide.html">🧭 입소 절차</a>
       <a href="contact.html">✉ 문의하기</a>
+      <span data-auth-ui></span>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
   <p class="notice">아래 목록은 한인 커뮤니티에서 운영하는 시설을 소개하며, 시설 소개는 운영진이 직접 작성한 내용입니다. 정확한 정보와 최신 이용 가능 여부는 시설에 직접 문의하시기 바랍니다.</p>
+  <div class="member-actions"><button class="member-action" id="emailResultsBtn" type="button">📧 이 목록 이메일로 받기</button><button class="member-action" id="printResultsBtn" type="button">🖨️ 인쇄하기</button></div>
   <p class="list-status" id="listStatus" aria-live="polite">시설 정보를 불러오는 중입니다.</p>
   <div class="facility-grid" id="facilityGrid"></div>
 </main>
@@ -139,6 +144,16 @@ async function loadLtcFacilities(){
 }
 
 loadLtcFacilities();
+</script>
+<script type="module">
+import { MEMBER_API, requireMemberOrRedirect, getIdToken } from './assets/auth.js';
+function resultsHtml(){ return `<h1>시니어 나침반 - 시설 검색 결과</h1>${[...document.querySelectorAll('.facility-card')].map(card=>card.outerHTML).join('') || '<p>표시할 시설이 없습니다.</p>'}`; }
+document.getElementById('printResultsBtn').addEventListener('click',async()=>{ if(await requireMemberOrRedirect(window.location.href)) window.print(); });
+document.getElementById('emailResultsBtn').addEventListener('click',async()=>{
+  if(!await requireMemberOrRedirect(window.location.href)) return;
+  if(!MEMBER_API){ alert('이메일 발송 기능이 아직 준비 중입니다'); return; }
+  try{ const response=await fetch(MEMBER_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({idToken:await getIdToken(),resultsHtml:resultsHtml()})}); const result=await response.json(); alert(result && result.ok ? '검색 결과를 이메일로 보냈습니다.' : (result.error || '이메일 발송에 실패했습니다.')); }catch(_){ alert('이메일 발송에 실패했습니다. 잠시 후 다시 시도해주세요.'); }
+});
 </script>
 </body>
 </html>
