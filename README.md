@@ -313,12 +313,73 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
 
 ## 12. AI 세션 간 인수인계 노트
 
-### ✅ 완료
+⚠️ 이 저장소는 GitHub Pages CDN 캐시가 심하게 걸려서, raw.githubusercontent.com이나
+실제 배포 사이트를 확인할 때 캐시 때문에 옛날 버전이 보이는 경우가 잦았다.
+파일 존재/내용을 확인할 때는 로컬 git 저장소를 직접 grep하는 것이
+가장 정확하다 (네트워크 캐시를 거치지 않으므로).
 
-- 사이트 리브랜딩 및 랜딩 페이지 신설 — 사이트 공식 이름을 '시니어 나침반(Senior Compass)'으로 확정. 기존 index.html(지도)을 map.html로 이동하고, index.html을 창업 스토리 중심 랜딩 페이지로 신설함. ChatGPT로 생성한 실사형 히어로·창업 스토리 이미지를 assets/img/에 반영함.
-- Firebase Authentication 기반 회원 시스템 구축 — 이메일/비밀번호 회원가입·로그인·비밀번호 재설정, 회원 전용 검색 결과 이메일/인쇄 UI, `member-backend.gs`, `firestore.rules`를 추가함. 뉴스레터 수신 해지는 `unsubscribe.html`에서 본인이 직접 철회할 수 있다. **Firestore 보안 규칙은 저장소에만 있으며 Firebase Console에 아직 수동 배포되지 않았으므로 반드시 적용 상태를 확인할 것.** Apps Script를 웹 앱으로 배포한 뒤 `assets/auth.js`의 `MEMBER_API`에 `/exec` URL을 입력해야 이메일 발송이 활성화된다.
+### ✅ 실제 코드로 검증 완료 (2026-09 세션 기준)
 
-### 📋 계획됨
+- **기본 페이지 구조**: index.html(랜딩), map.html(지도, OC 143건+LA 9건),
+  guide.html, contact.html, rhf-application-guide.html, ltc-guide.html,
+  ltc-facilities.html — 전부 존재 확인됨(로컬 grep 기준)
+- **회원 시스템**: signup.html, login.html, assets/auth.js,
+  member-backend.gs, firestore.rules 파일 존재 확인됨. Firebase
+  프로젝트(senior-compass-768f6)의 firebaseConfig 실제 값 반영됨.
+- **커뮤니티 게시판**: community.html, community-backend.gs, admin.html
+  존재. Apps Script 실제 배포 완료, 배포 URL:
+  https://script.google.com/macros/s/AKfycbxpFfpCazh15auxmUgqh18bxArDoTqNifHMehkQ8jKqGCOHeoG5uxFdxlk2-e1baZ2K/exec
+  → 실제 GET 요청 테스트 결과 {"ok":true,"posts":[]} 정상 응답 확인됨.
+  ADMIN_EMAILS에 tubasa22@gmail.com 등록 확인됨.
+  COMMUNITY_API 연결 작업을 Codex가 수행했다고 보고했으나,
+  diff로 최종 재검증은 아직 안 됨 — 다음 세션에서
+  grep -rn "COMMUNITY_API" 로 실제 반영 여부 재확인 필요.
+- **IHSS 페이지**: ihss-guide.html, ihss-board.html, ihss-backend.gs
+  존재 확인됨(파일 존재만 확인, 내용 상세 검증은 안 함).
+- **문서**: privacy.html, unsubscribe.html, DATA_SOURCES.md,
+  AGENTS.md 존재 확인됨.
 
-- 장기요양(RCFE) 안내 페이지 신설 — ltc-guide.html(절차 안내), ltc-facilities.html(시설 목록) 뼈대 생성 완료. 실제 시설 데이터는 아직 0건(샘플 1개 placeholder만 존재) — 사람이 직접 시설 정보와 소개글, 사진을 수집해서 data/ltc-facilities.json에 채워 넣어야 함. AI가 시설 소개 문구를 대신 작성하지 않는다는 원칙을 지킬 것.
-- IHSS 게시판을 '매칭 서비스'가 아닌 '개인 간 정보 교환 게시판'으로 설계함 — 사이트가 신원을 검증하지 않는다는 점을 명시적으로 고지하고, 공식 IHSS Public Authority Registry(배경조회 완료된 케어기버 명단)로 안내하는 것을 우선 경로로 제시함. 이는 California 직업소개소 라이선스 관련 리스크와 검증되지 않은 인력이 시니어 가정에 접근하는 안전 리스크를 줄이기 위한 설계 결정임.
+### 🔴 오늘 발견된 미해결 버그 (우선순위 높음)
+
+1. **회원가입/로그인 후 리다이렉트 404 버그** — GitHub Pages가
+   `/senior-world/` 하위 경로에서 서빙되는데, 코드에서 절대경로
+   (`/index.html` 등 맨 앞 슬래시)로 리다이렉트하는 부분이 있어서
+   실제로는 `tubasa22.github.io/index.html`(하위 경로 없이)로
+   이동해 404 발생. 스크린샷으로 실제 재현 확인됨.
+   수정 지시는 전달했으나, 완료·검증 여부 미확인 —
+   다음 세션 최우선 확인 사항.
+2. **admin.html 제출 스크립트 변수명 충돌 버그** — Codex가
+   발견해서 수정 중이라고 보고함. 수정 완료 여부와 커밋 여부
+   미확인.
+3. **7개 페이지 헤더 불일치** — 로고(logo.svg)와 드롭다운 메뉴
+   (nav-dropdown)가 index.html 한 곳에만 적용되고, map.html,
+   guide.html, contact.html, rhf-application-guide.html,
+   ltc-guide.html, ltc-facilities.html 6개 페이지는 전부
+   서로 다른 헤더 구조를 쓰고 있음(로컬 <header> 원문 직접
+   확인함). 통일 지시를 전달했으나 실행 여부 미확인.
+4. **LICENSE 파일 여전히 없음**.
+
+### 📋 계획됐으나 미착수 / 확인 필요
+
+- 장기요양(LTC) 시설 데이터: data/ltc-facilities.json에 실제
+  시설 0건, placeholder 1개만 존재. 사람이 직접 시설 정보·
+  소개글·사진을 모아서 채워야 함(AI가 소개글 대필 금지 원칙 유지).
+- KIWA 2026년 8월 저소득 아파트 목록(LA 9건) 데이터를 사이트에
+  정식 게시하기 전에 KIWA에 재게시 허락을 받아야 함 — 아직
+  연락 안 한 것으로 보임.
+- Firestore 보안 규칙(firestore.rules)이 저장소에 파일로는
+  있지만, 실제 Firebase Console에 수동 배포됐는지 미확인.
+  다음 세션은 Firebase Console에서 직접 확인 요망.
+- 회원가입 시 실제로 signup.html에서 tubasa22@gmail.com 계정
+  생성을 시도했으나, 위 리다이렉트 버그 때문에 가입 완료
+  여부 자체가 불확실함 — 버그 수정 후 재시도 필요.
+
+### 다음 세션 시작 시 권장 순서
+
+1. 로컬 git status/log로 origin/main과 완전히 동기화됐는지 확인
+2. 위 "🔴 오늘 발견된 미해결 버그" 4가지를 로컬 파일 직접 grep으로
+   재확인 (네트워크 캐시 거치지 말 것)
+3. 리다이렉트 버그부터 수정 → 회원가입 재시도 → 커뮤니티 글쓰기
+   테스트까지 엔드투엔드로 완주
+4. LICENSE 추가
+5. 헤더 통일 작업 진행
