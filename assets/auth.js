@@ -19,6 +19,15 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export let currentUser = null;
+const CLIENT_ADMIN_EMAILS = ['tubasa22@gmail.com'];
+// 이 값은 관리자 메뉴의 화면 표시 여부만 결정합니다.
+// 실제 권한 검증은 서버(.gs 파일)의 ADMIN_EMAILS가 담당하며,
+// 이 배열을 수정해도 서버 권한은 바뀌지 않습니다.
+
+export function isAdminUser() {
+  return Boolean(currentUser && CLIENT_ADMIN_EMAILS.includes(currentUser.email));
+}
+
 const authStyle = document.createElement('style');
 authStyle.textContent = `
   [data-auth-ui]{position:relative;display:inline-flex;align-items:center}
@@ -103,6 +112,13 @@ export function updateAuthUI() {
     });
     menu.appendChild(logout);
     toggle.addEventListener('click', () => { menu.hidden = !menu.hidden; });
+    if (isAdminUser()) {
+      const adminLink = document.createElement('a');
+      adminLink.href = 'admin.html';
+      adminLink.textContent = '🔧 관리자';
+      adminLink.className = 'auth-link';
+      root.appendChild(adminLink);
+    }
     root.append(toggle, menu);
   });
 }
