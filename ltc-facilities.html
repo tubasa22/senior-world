@@ -32,9 +32,10 @@
   .list-status{ margin:0 0 16px; color:var(--ink-soft); font-size:14px; }
   .facility-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
   .facility-card{ overflow:hidden; border:1px solid var(--line); border-radius:15px; background:var(--card); box-shadow:0 9px 24px rgba(27,74,112,.07); }
-  .photo-wrap{ height:210px; display:grid; place-items:center; background:#E2E7EA; color:var(--ink-soft); font-weight:700; }
-  .photo-wrap img{ width:100%; height:100%; display:block; object-fit:cover; }
-  .photo-wrap img[hidden]{ display:none; }
+  .photo-wrap{ min-height:210px; display:grid; place-items:center; background:#E2E7EA; color:var(--ink-soft); font-weight:700; }
+  .photo-gallery{ width:100%; display:grid; grid-auto-flow:column; grid-auto-columns:minmax(82%,1fr); gap:8px; overflow-x:auto; scroll-snap-type:x mandatory; }
+  .photo-gallery img{ width:100%; height:210px; display:block; object-fit:cover; scroll-snap-align:start; }
+  .photo-gallery[hidden],.photo-gallery img[hidden],.gallery-fallback[hidden]{ display:none; }
   .card-body{ padding:22px; }
   .facility-card h2{ margin:0; color:var(--teal-deep); font-size:23px; }
   .name-ko{ margin:2px 0 13px; color:var(--ink-soft); font-size:15px; }
@@ -44,6 +45,15 @@
   .badge.warning{ background:var(--danger-soft); color:var(--danger); }
   .intro{ min-height:52px; margin:0 0 17px; color:var(--ink-soft); font-size:15px; }
   .intro.pending{ font-style:italic; }
+  .detail-section{ margin:18px 0; }
+  .detail-section h3{ margin:0 0 10px; color:var(--teal-deep); font-size:17px; }
+  .amenity-group + .amenity-group{ margin-top:13px; }
+  .amenity-group h4{ margin:0 0 7px; color:var(--ink-soft); font-size:14px; }
+  .faq-list{ display:grid; gap:8px; }
+  .faq-item{ padding:0 13px; border:1px solid var(--line); border-radius:9px; background:var(--paper); }
+  .faq-item summary{ padding:10px 0; color:var(--teal-deep); font-weight:800; cursor:pointer; }
+  .faq-item p{ margin:0; padding:0 0 12px; color:var(--ink-soft); font-size:14px; }
+  .license-section{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:18px 0 12px; }
   .actions{ display:flex; flex-wrap:wrap; gap:8px; }
   .btn{ display:inline-flex; padding:9px 12px; border-radius:8px; background:var(--teal); color:#fff; font-size:14px; font-weight:800; text-decoration:none; }
   .btn.verify{ background:var(--ochre); }
@@ -85,6 +95,14 @@ function facilityCard(facility){
   const koreanName = facility.name && facility.nameKorean ? `<p class="name-ko">${escapeHtml(facility.nameKorean)}</p>` : '';
   const address = facility.fullAddress || [facility.address, facility.city, facility.zip].filter(Boolean).join(', ');
   const addressHtml = address ? `<p class="address">📍 ${escapeHtml(address)}</p>` : '';
+  const photos = Array.isArray(facility.photos) ? facility.photos.filter(Boolean) : [];
+  const photoHtml = photos.length
+    ? `<div class="photo-gallery">${photos.map((photo, index) => `<img src="${escapeHtml(photo)}" alt="${escapeHtml(name)} 시설 사진 ${index + 1}" loading="lazy">`).join('')}</div><span class="gallery-fallback" hidden>사진 준비 중</span>`
+    : '<span class="gallery-fallback">사진 준비 중</span>';
+  const highlights = Array.isArray(facility.highlights) ? facility.highlights.filter(Boolean) : [];
+  const highlightsHtml = highlights.length
+    ? `<div class="badges" aria-label="시설 특징">${highlights.map(item => `<span class="badge">${escapeHtml(item)}</span>`).join('')}</div>`
+    : '';
   const phoneHtml = facility.phone ? `<a class="btn" href="${callHref(facility.phone)}">📞 ${escapeHtml(facility.phone)}</a>` : '';
   const licenseHtml = facility.licenseNumber
     ? `<span class="badge">면허번호: ${escapeHtml(facility.licenseNumber)}</span>`
@@ -95,16 +113,31 @@ function facilityCard(facility){
   const intro = facility.intro
     ? `<p class="intro">${escapeHtml(facility.intro)}</p>`
     : '<p class="intro pending">소개 준비 중입니다</p>';
-  const photo = facility.photo
-    ? `<img src="${escapeHtml(facility.photo)}" alt="${escapeHtml(name)} 시설 사진" loading="lazy">`
+  const amenityCategories = [
+    ['dining', '식사'], ['languages', '사용 언어'], ['transportation', '교통'],
+    ['housekeeping', '생활 관리'], ['pets', '반려동물'], ['staff', '직원'], ['onSite', '시설 내 서비스']
+  ];
+  const amenityGroups = amenityCategories.map(([key, label]) => {
+    const items = Array.isArray(facility.amenities?.[key]) ? facility.amenities[key].filter(Boolean) : [];
+    return items.length ? `<div class="amenity-group"><h4>${label}</h4><div class="badges">${items.map(item => `<span class="badge">${escapeHtml(item)}</span>`).join('')}</div></div>` : '';
+  }).filter(Boolean);
+  const amenitiesHtml = amenityGroups.length
+    ? `<section class="detail-section"><h3>편의시설</h3>${amenityGroups.join('')}</section>`
+    : '';
+  const faqItems = Array.isArray(facility.faq)
+    ? facility.faq.filter(item => item && item.question && item.answer)
+    : [];
+  const faqHtml = faqItems.length
+    ? `<section class="detail-section"><h3>자주 묻는 질문</h3><div class="faq-list">${faqItems.map(item => `<details class="faq-item"><summary>${escapeHtml(item.question)}</summary><p>${escapeHtml(item.answer)}</p></details>`).join('')}</div></section>`
     : '';
 
   return `<article class="facility-card">
-    <div class="photo-wrap">${photo}<span${photo ? ' hidden' : ''}>사진 준비 중</span></div>
+    <div class="photo-wrap">${photoHtml}</div>
     <div class="card-body">
-      <h2>${escapeHtml(name)}</h2>${koreanName}${addressHtml}
-      <div class="badges"><span class="badge">${escapeHtml(facility.licenseType || 'RCFE')}</span>${licenseHtml}</div>
-      ${intro}<div class="actions">${phoneHtml}${verifyHtml}</div>
+      <h2>${escapeHtml(name)}</h2>${koreanName}${addressHtml}${highlightsHtml}
+      ${intro}${amenitiesHtml}${faqHtml}
+      <div class="license-section"><span class="badge">${escapeHtml(facility.licenseType || 'RCFE')}</span>${licenseHtml}${verifyHtml}</div>
+      <div class="actions">${phoneHtml}</div>
     </div>
   </article>`;
 }
@@ -117,11 +150,14 @@ async function loadLtcFacilities(){
     if(!response.ok) throw new Error(`HTTP ${response.status}`);
     const facilities = await response.json();
     grid.innerHTML = facilities.length ? facilities.map(facilityCard).join('') : '<div class="empty">등록된 시설이 없습니다.</div>';
-    grid.querySelectorAll('.photo-wrap img').forEach(img => {
+    grid.querySelectorAll('.photo-gallery img').forEach(img => {
       img.addEventListener('error', () => {
         img.hidden = true;
-        const fallback = img.nextElementSibling;
-        if(fallback) fallback.hidden = false;
+        const wrap = img.closest('.photo-wrap');
+        if(wrap && !wrap.querySelector('.photo-gallery img:not([hidden])')){
+          wrap.querySelector('.photo-gallery').hidden = true;
+          wrap.querySelector('.gallery-fallback').hidden = false;
+        }
       }, { once:true });
     });
     status.textContent = `시설 ${facilities.length}건`;

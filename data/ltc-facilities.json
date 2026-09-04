@@ -13,6 +13,18 @@
     "photo": "assets/img/ltc/PLACEHOLDER.jpg",
     "intro": "",
     "website": "",
-    "fullAddress": ""
+    "fullAddress": "",
+    "photos": [],
+    "highlights": [],
+    "amenities": {
+      "dining": [],
+      "languages": [],
+      "transportation": [],
+      "housekeeping": [],
+      "pets": [],
+      "staff": [],
+      "onSite": []
+    },
+    "faq": []
   }
 ]
