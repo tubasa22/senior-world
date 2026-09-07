@@ -22,6 +22,15 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
   소개글·사진을 직접 수집해서 채워 넣기 (AI가 소개글을
   대신 작성하지 않는 원칙 유지 — 반드시 사람이 작성)
 
+## 🔲 데이터 수집 (신규)
+
+- [ ] `data/apartments.json`, `data/la-apartments-2026-08.json`의
+  email 필드 보유 건수 확인 — 관리자 시설 정보 업데이트
+  이메일 기능의 실효성 판단 근거
+  (현재 `data/apartments.json`은 없고 LA 데이터 9건의 email은 모두 null)
+- [ ] 시설 방문 시 `FACILITY-INTAKE-GUIDE.md` 체크리스트대로
+  정보·사진 수집 (사람 미노출 촬영 원칙 준수)
+
 ## 🔲 법적/거버넌스
 
 - [ ] `LICENSE` 파일 내용 검토 (저작권자 표기가 실제 소유 구조와
