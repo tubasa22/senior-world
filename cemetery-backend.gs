@@ -1,3 +1,25 @@
+const FIREBASE_API_KEY = 'AIzaSyDmMQTIqpwB3NfsomVwEThhkSFUYuHxQ4Y';
+function verifyIdToken(idToken) {
+  if (!idToken) return { ok: false };
+  try {
+    const response = UrlFetchApp.fetch(
+      'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + FIREBASE_API_KEY,
+      {
+        method: 'post',
+        contentType: 'application/json',
+        payload: JSON.stringify({ idToken: idToken }),
+        muteHttpExceptions: true
+      }
+    );
+    const result = JSON.parse(response.getContentText());
+    if (!result.users || !result.users[0]) return { ok: false };
+    const user = result.users[0];
+    if (!user.email || !user.localId) return { ok: false };
+    return { ok: true, uid: user.localId, email: user.email };
+  } catch (_) {
+    return { ok: false };
+  }
+}
 const CEMETERY_POSTS_SHEET = 'cemetery_posts';
 const CEMETERY_VERIFICATION_SHEET = 'cemetery_verification';
 const CEMETERY_POST_COLUMNS = ['id','type','nickname','cemeteryName','area','plotInfo','price','contactMethod','contactValue','postedAt','status'];
@@ -52,6 +74,10 @@ function doPost(event){
 }
 
 function submitCemeteryListing_(body){
+  if(CEMETERY_TYPES.includes(body.type)){
+    const verified = verifyIdToken(body.idToken);
+    if(!verified.ok) return cemeteryJson_({ok:false,error:'로그인이 필요합니다.'});
+  }
   const type = CEMETERY_TYPES.includes(body.type) ? body.type : '';
   const nickname = cemeteryText_(body.nickname,40) || '익명';
   const cemeteryName = cemeteryText_(body.cemeteryName,120);

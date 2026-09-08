@@ -8,7 +8,29 @@
  * 서비스 계정 키는 저장소나 클라이언트 코드에 절대 넣지 않습니다.
  */
 const FIREBASE_PROJECT_ID = 'senior-compass-768f6';
-const FIREBASE_ISSUER = 'https://securetoken.google.com/' + FIREBASE_PROJECT_ID;
+const FIREBASE_API_KEY = 'AIzaSyDmMQTIqpwB3NfsomVwEThhkSFUYuHxQ4Y';
+function verifyIdToken(idToken) {
+  if (!idToken) return { ok: false };
+  try {
+    const response = UrlFetchApp.fetch(
+      'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + FIREBASE_API_KEY,
+      {
+        method: 'post',
+        contentType: 'application/json',
+        payload: JSON.stringify({ idToken: idToken }),
+        muteHttpExceptions: true
+      }
+    );
+    const result = JSON.parse(response.getContentText());
+    if (!result.users || !result.users[0]) return { ok: false };
+    const user = result.users[0];
+    if (!user.email || !user.localId) return { ok: false };
+    return { ok: true, uid: user.localId, email: user.email };
+  } catch (_) {
+    return { ok: false };
+  }
+}
+
 const ADMIN_EMAILS = ['tubasa22@gmail.com'];
 const SERVICE_ACCOUNT_KEY = PropertiesService.getScriptProperties()
   .getProperty('FIREBASE_SERVICE_ACCOUNT_KEY');
@@ -30,14 +52,8 @@ function doPost(e) {
 }
 
 function verifyAdmin(idToken) {
-  if (!idToken) return null;
-  const response = UrlFetchApp.fetch(
-    'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(idToken),
-    { muteHttpExceptions: true }
-  );
-  if (response.getResponseCode() !== 200) return null;
-  const token = JSON.parse(response.getContentText());
-  if (token.aud !== FIREBASE_PROJECT_ID || token.iss !== FIREBASE_ISSUER) return null;
+  const token = verifyIdToken(idToken);
+  if (!token.ok) return null;
   if (!ADMIN_EMAILS.includes(String(token.email || '').toLowerCase())) return null;
   return token;
 }
