@@ -26,6 +26,12 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
 - [ ] Apps Script 프로젝트에 OAuth2 라이브러리 추가 (라이브러리 ID: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`)
 - [ ] Firebase 서비스 계정 JSON 키 발급 후 Apps Script "스크립트 속성"에 `FIREBASE_SERVICE_ACCOUNT_KEY`로 등록
 - [ ] `newsletter-backend.gs`를 웹 앱으로 배포하고 `/exec` URL을 `admin.html`의 `NEWSLETTER_API`에 입력
+- [ ] ⚠️ Apps Script 재배포 필수: `ihss-backend.gs`,
+  `cemetery-backend.gs`, `newsletter-backend.gs`의 로그인 검증 코드는
+  저장소에는 반영됐으나, Apps Script 편집기에 붙여넣고 웹 앱으로
+  재배포해야 실제 서버에 적용됨. 기존 배포가 있다면 재배포 전까지는
+  이전 코드로 동작하므로 IHSS·묘지 게시판을 실서비스로 켜기 전
+  반드시 최신 코드로 배포하고 인증 없는 등록 요청의 거부를 확인할 것.
 
 ## 🔲 다음 세션 우선순위 (기술·법적 종합검토 기준)
 
@@ -33,7 +39,10 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
 - [x] admin.html 변수명 충돌 재검증 — 문제 없음 확인, 2026-09-08
 - [x] 묘지 파일 업로드 서버측 검증 재검증 — 이미 구현됨 확인, 2026-09-08
 - [x] privacy.html 전면 갱신 — 실제 코드 필드 대조 및 diff 검증 완료, 2026-09-08
-- [ ] 8개 백엔드(.gs) 파일의 idToken 검증 방식 통일 여부 전수 확인 (identitytoolkit 방식으로)
+- [x] 백엔드 idToken 검증 방식 통일 — IHSS·묘지·뉴스레터 identitytoolkit
+  전환 및 IHSS·묘지 서버측 로그인 검증 추가 완료 (커밋 `ad17e9c`,
+  2026-09-08 커밋 해시 직접 검증으로 확인). 이번 완료 범위는 해당 3개
+  파일이며, 8개 백엔드 전체에 로그인 검증을 추가했다는 의미는 아님.
 - [ ] apartments.json 계열 email 필드 보유 건수 확인
 - [ ] 이해충돌 정책 문서 작성 (501(c)(3) 신청 전제조건)
 
