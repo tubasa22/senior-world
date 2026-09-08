@@ -9,6 +9,8 @@
  */
 const FIREBASE_PROJECT_ID = 'senior-compass-768f6';
 const FIREBASE_API_KEY = 'AIzaSyDmMQTIqpwB3NfsomVwEThhkSFUYuHxQ4Y';
+// ⚠️ 이 함수는 shared/verify-id-token.gs의 정본과 동일해야 한다.
+// 수정 시 정본도 함께 수정하고 scripts/check-id-token-sync.mjs로 검증할 것.
 function verifyIdToken(idToken) {
   if (!idToken) return { ok: false };
   try {

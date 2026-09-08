@@ -29,21 +29,37 @@ function doPost(e) {
   }
 }
 
-function verifyAdmin(idToken) {
-  if (!idToken) return null;
+// ⚠️ verifyIdToken은 shared/verify-id-token.gs의 정본과 동일해야 한다.
+// 수정 시 정본도 함께 수정하고 scripts/check-id-token-sync.mjs로 검증할 것.
+function verifyIdToken(idToken) {
+  if (!idToken) return { ok: false };
   try {
     const response = UrlFetchApp.fetch(
       'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + FIREBASE_API_KEY,
-      { method: 'post', contentType: 'application/json', payload: JSON.stringify({ idToken: idToken }), muteHttpExceptions: true }
+      {
+        method: 'post',
+        contentType: 'application/json',
+        payload: JSON.stringify({ idToken: idToken }),
+        muteHttpExceptions: true
+      }
     );
     const result = JSON.parse(response.getContentText());
-    const user = result.users && result.users[0];
-    if (!user || !user.email || !user.localId) return null;
-    if (!ADMIN_EMAILS.includes(String(user.email).toLowerCase())) return null;
-    return { uid: user.localId, email: user.email };
+    if (!result.users || !result.users[0]) return { ok: false };
+    const user = result.users[0];
+    if (!user.email || !user.localId) return { ok: false };
+    return { ok: true, uid: user.localId, email: user.email };
   } catch (_) {
-    return null;
+    return { ok: false };
   }
+}
+
+// 이 백엔드는 관리자 전용이므로, 공용 verifyIdToken 결과에
+// ADMIN_EMAILS 화이트리스트 검사를 추가로 적용한다.
+function verifyAdmin(idToken) {
+  const token = verifyIdToken(idToken);
+  if (!token.ok) return null;
+  if (!ADMIN_EMAILS.includes(String(token.email || '').toLowerCase())) return null;
+  return token;
 }
 
 function getRecipients() {

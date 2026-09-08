@@ -32,6 +32,8 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
   재배포해야 실제 서버에 적용됨. 기존 배포가 있다면 재배포 전까지는
   이전 코드로 동작하므로 IHSS·묘지 게시판을 실서비스로 켜기 전
   반드시 최신 코드로 배포하고 인증 없는 등록 요청의 거부를 확인할 것.
+  `facility-outreach-backend.gs`도 verifyAdmin 내부 구조를 리팩터링
+  했으므로(동작은 동일) 다음 재배포 시 함께 최신 코드로 교체할 것.
 
 ## 🔲 다음 세션 우선순위 (기술·법적 종합검토 기준)
 
@@ -43,6 +45,15 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
   전환 및 IHSS·묘지 서버측 로그인 검증 추가 완료 (커밋 `ad17e9c`,
   2026-09-08 커밋 해시 직접 검증으로 확인). 이번 완료 범위는 해당 3개
   파일이며, 8개 백엔드 전체에 로그인 검증을 추가했다는 의미는 아님.
+- [x] idToken 검증 로직 통합·재사용 — `shared/verify-id-token.gs`를
+  정본으로 신설하고, `cemetery-backend.gs`·`community-backend.gs`·
+  `ihss-backend.gs`·`member-backend.gs`·`newsletter-backend.gs`·
+  `facility-outreach-backend.gs` 6개 파일이 정본과 동일한지
+  자동 검증하는 `scripts/check-id-token-sync.mjs` 작성, 실행 결과
+  6개 전부 일치 확인, 2026-09-08. Apps Script가 프로젝트 간 코드
+  공유를 지원하지 않아 "복사-후-자동검증" 방식을 택함 (진짜 라이브러리
+  방식은 프로젝트마다 라이브러리 추가·버전 갱신이라는 별도 수동
+  배포 부담이 생겨 현재 1인 운영 구조에는 부적합하다고 판단).
 - [ ] apartments.json 계열 email 필드 보유 건수 확인
 - [x] 이해충돌 정책 문서 초안 작성 — `CONFLICT-OF-INTEREST-POLICY.md`
   신설 (IRS Form 1023 부록 A 구조 기반, 운영자 겸업 회피 절차 포함),
