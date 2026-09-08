@@ -7,9 +7,22 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
 
 완료한 항목은 `[ ]`를 `[x]`로 바꾸고, 완료 날짜를 옆에 적는다.
 
+## ✅ 해결 완료 — Firestore `users` 공개 읽기 취약점 (2026-09-08)
+
+- [x] Firebase Console → Firestore Database → 규칙 탭에서 기존 테스트 모드
+  기본 규칙(2026-10-02까지 전체 공개 read/write 허용)을 발견했다. 저장소의
+  `firestore.rules` 내용으로 교체한 뒤 **Publish**했다.
+- [x] Publish 직후 인증 없는 Firestore REST GET 요청을 재실행해
+  `403 PERMISSION_DENIED` 응답을 확인했다. 조치 전에는 같은 요청이 HTTP
+  200으로 실제 회원 문서를 반환했다.
+- [x] 확인된 노출 범위는 회원 2건의 이름, 이메일, 뉴스레터 동의 여부,
+  가입일이다. 비밀번호 등 인증 정보는 Firestore가 아닌 Firebase Auth
+  저장소에 있어 이 노출 범위에 포함되지 않았다.
+- [ ] 회원 고지 필요 여부와 관련 기록 보관은 사람이 판단한다.
+
 ## 🔲 관리자 대시보드 활성화
 
-- [ ] `firestore.rules` 내용을 Firebase Console(Firestore Database → 규칙 탭)에 재배포
+- [x] `firestore.rules` 내용을 Firebase Console(Firestore Database → 규칙 탭)에 재배포 (2026-09-08, 인증 없는 REST GET의 403 확인)
 - [ ] Apps Script 프로젝트에 OAuth2 라이브러리 추가 (라이브러리 ID: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`)
 - [ ] Firebase 서비스 계정 JSON 키 발급 후 Apps Script "스크립트 속성"에 `FIREBASE_SERVICE_ACCOUNT_KEY`로 등록
 - [ ] `newsletter-backend.gs`를 웹 앱으로 배포하고 `/exec` URL을 `admin.html`의 `NEWSLETTER_API`에 입력

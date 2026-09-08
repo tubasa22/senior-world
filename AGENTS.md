@@ -53,6 +53,10 @@ git log가 항상 우선한다.
   반드시 지킨다. 대량 조회가 필요하면 US Census Batch Geocoder
   같은 배치 API를 우선 검토한다 (scripts/geocode-batch.mjs 참고).
 - .bak, .tmp 등 백업/임시 파일은 .gitignore에 등록하고 커밋하지 않는다.
+- 보안 규칙(firestore.rules 등) 관련 작업은 코드가 저장소에 있다는 것과
+  실제로 Console에 배포됐다는 것이 다르다는 점을 항상 구분해서 기록한다.
+  가능하면 curl 등으로 실제 적용 여부를 직접 검증하고, '배포 필요'라고만
+  적어두고 실제 확인 없이 넘기지 않는다.
 
 ## 4. 작업 절차
 

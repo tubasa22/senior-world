@@ -319,6 +319,24 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
 파일 존재/내용을 확인할 때는 로컬 git 저장소를 직접 grep하는 것이
 가장 정확하다 (네트워크 캐시를 거치지 않으므로).
 
+### ✅ 해결 완료 — Firestore 보안 규칙 미배포 취약점 (2026-09-08)
+
+- **발견 및 원인**: Firebase Console의 Firestore Database → 규칙 탭에서
+  기존 테스트 모드 기본 규칙(2026-10-02까지 전체 공개 read/write 허용)이
+  남아 있음을 확인했다. `firestore.rules` 파일은 여러 차례 코드로
+  작성·커밋됐지만 실제 Console에 Publish된 적이 없었다. **코드 존재와
+  실제 배포는 다르다**는 점이 이번 사건의 핵심 교훈이다.
+- **조치**: 2026-09-08에 Console 규칙을 저장소의 `firestore.rules` 내용으로
+  교체하고 Publish했다.
+- **재검증**: 인증 없는 GET 요청을
+  `https://firestore.googleapis.com/v1/projects/senior-compass-768f6/databases/(default)/documents/users`
+  에 보내 `HTTP_STATUS:403`, `PERMISSION_DENIED` 응답을 확인했다. 조치 전
+  같은 요청은 HTTP 200으로 실제 데이터를 반환했다.
+- **확인된 노출 범위**: 회원 2건의 이름, 이메일, 뉴스레터 동의 여부,
+  가입일. 비밀번호 등 인증 정보는 Firestore가 아닌 Firebase Auth 자체
+  저장소에 있어 이 노출 범위에 포함되지 않았다. 회원 고지 필요 여부는
+  사람이 판단한다.
+
 ### ✅ 실제 코드로 검증 완료 (2026-09 세션 기준)
 
 - **기본 페이지 구조**: index.html(랜딩), map.html(지도, OC 143건+LA 9건),
@@ -429,10 +447,9 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
 - KIWA 2026년 8월 저소득 아파트 목록(LA 9건) 데이터를 사이트에
   정식 게시하기 전에 KIWA에 재게시 허락을 받아야 함 — 아직
   연락 안 한 것으로 보임.
-- Firestore 보안 규칙(firestore.rules)이 저장소에 파일로는
-  있지만, 실제 Firebase Console에 수동 배포됐는지 미확인.
-  관리자 회원 현황 읽기 권한도 추가됐으므로, 규칙을 갱신한 뒤
-  Firebase Console에서 반드시 수동 재배포해야 함.
+- Firestore 보안 규칙은 2026-09-08 Firebase Console에 Publish했고,
+  인증 없는 REST GET 요청의 `403 PERMISSION_DENIED`로 적용을 확인했다.
+  이후 규칙을 변경할 때도 Console 재배포와 실제 요청 검증을 함께 해야 한다.
 - 회원가입 시 실제로 signup.html에서 tubasa22@gmail.com 계정
   생성을 시도했으나, 가입 완료 여부 자체는 아직 재확인 필요.
 - **묘지 매장권 개인 간 양도 게시판 (코드 구현 완료, 배포 전 설정 필요)**:
@@ -473,7 +490,7 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
 
 | 순서 | 할 일 | 상태 |
 | -- | --- | --- |
-| 1 | `firestore.rules` 내용을 Firebase Console(console.firebase.google.com → Firestore Database → 규칙 탭)에 재배포 | 🔲 안내 진행 중, 완료 여부 미확인 |
+| 1 | `firestore.rules` 내용을 Firebase Console(console.firebase.google.com → Firestore Database → 규칙 탭)에 재배포 | ✅ 2026-09-08 Publish 완료, 인증 없는 REST GET 403 확인 |
 | 2 | Apps Script 프로젝트에 OAuth2 라이브러리 추가 (라이브러리 ID: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`) | 🔲 대기 |
 | 3 | Firebase 서비스 계정 JSON 키를 Apps Script "스크립트 속성"에 `FIREBASE_SERVICE_ACCOUNT_KEY`라는 이름으로 등록 | 🔲 대기 |
 | 4 | `newsletter-backend.gs`를 웹 앱으로 배포하고, 나온 `.../exec` URL을 `admin.html`의 `NEWSLETTER_API` 상수에 입력 | 🔲 대기 |
