@@ -558,6 +558,67 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
 - `admin.html`의 라디오버튼 라벨 구조 수정, 제출 중 상태 표시
   추가도 함께 지시됨 — 반영 여부 미확인.
 
+### 2026-09-08 세션 기록 — 이해충돌 정책 초안 + idToken 로직 정본화
+
+이 세션은 위 관리자 대시보드 활성화 작업 이후, HUMAN-TASKS.md
+"다음 세션 우선순위" 목록의 5번(이해충돌 정책)과 6번(idToken 로직
+통합)을 다뤘다. Claude(리뷰·설계)가 지시 프롬프트를 작성하고
+Codex(구현)가 저장소에 적용·커밋·push하는 기존 분업 방식을 그대로
+따랐다.
+
+**1) 이해충돌 정책 초안 (`CONFLICT-OF-INTEREST-POLICY.md` 신설)**
+
+- IRS Form 1023 부록 A(Sample Conflict of Interest Policy) 구조를
+  기반으로, 운영자가 시니어 보험·사전장례보험 라이선스를 겸업하는
+  이 프로젝트의 특수 상황에 맞춘 조항(제3-1조)을 추가했다.
+- 이사회가 없는 1인 운영 단계에서 회피(recusal) 절차를 어떻게
+  대체할지(제6조: 외부 검토자 서면 공유 또는 자체 점검 기록)를
+  명문화했다.
+- **초안 상태이며 정식 채택 전이다.** 비영리 전문 변호사/CPA 검토,
+  이사회 구성 후 정식 채택 결의, 제6조 외부 검토자 실제 지정 3가지가
+  남아 있다 (HUMAN-TASKS.md에 반영됨).
+
+**2) idToken 검증 로직 정본화 (`shared/verify-id-token.gs` 신설)**
+
+- 사전 조사 결과 `verifyIdToken` 함수가 `cemetery-backend.gs`,
+  `community-backend.gs`, `ihss-backend.gs`, `member-backend.gs`,
+  `newsletter-backend.gs` 5개 파일에 거의 동일하게 중복돼 있었고,
+  `facility-outreach-backend.gs`는 같은 로직을 `verifyAdmin` 안에서
+  별도로 재구현하고 있었다(변수명·구조만 다르고 기능은 동일).
+- Apps Script는 별도 배포 프로젝트 간 코드 import를 지원하지 않으므로
+  (진짜 라이브러리 방식은 프로젝트마다 라이브러리 추가·버전 갱신이라는
+  수동 배포 부담이 추가로 생겨 1인 운영 구조에 부적합하다고 판단),
+  **"정본 파일 + 자동 동기화 검증 스크립트"** 방식을 택했다:
+  - `shared/verify-id-token.gs`: 배포되지 않는 정본. 수정 절차를
+    파일 상단 주석에 명시.
+  - `scripts/check-id-token-sync.mjs`: 6개 백엔드 파일의
+    `verifyIdToken` 함수 본문을 중괄호 짝 맞춰 추출한 뒤 공백만
+    제거하고 정본과 비교. 실행 결과 `node scripts/check-id-token-sync.mjs`
+    → "✅ 6개 파일 모두 정본과 일치" 확인.
+  - `community-backend.gs`는 변수명(`r` → `response`)만 정본과
+    맞췄고, `facility-outreach-backend.gs`는 `verifyAdmin`이
+    `verifyIdToken`을 호출한 뒤 `ADMIN_EMAILS` 화이트리스트만
+    추가로 검사하도록 리팩터링했다 — 동작은 이전과 동일.
+  - `AGENTS.md`에 "로그인 검증 로직 수정 시 정본도 함께 고치고
+    스크립트로 검증할 것"이라는 규칙을 추가했다.
+- **재배포 필요**: `facility-outreach-backend.gs`는 코드 구조가
+  바뀌었으므로(동작은 동일) 다음 Apps Script 재배포 시 최신 코드로
+  교체해야 한다. 나머지 5개 파일은 이번 정본화에서 주석만 추가되거나
+  (cemetery, ihss, member, newsletter) 변수명만 바뀐(community) 것이라
+  동작 변화가 없어 이번 정본화 자체의 재배포 시급성은 낮다.
+  단, 앞선 `ad17e9c`의 로그인 검증 변경에 대한 재배포 의무는 그대로 남는다.
+
+**다음 세션 시작 시 확인할 것**
+
+- `git log --oneline`과 원격 해시 조회로 이 두 작업의 커밋이 origin/main에
+  실제 push됐는지 확인 (Codex가 작업했으므로 push 성공 여부를 먼저
+  확인할 것 — 이전 세션에서 Claude 자신의 샌드박스에는 GitHub
+  인증 정보가 없어 push가 불가능했던 사례가 있었다).
+- `node scripts/check-id-token-sync.mjs` 재실행해 통과 확인.
+- 요청된 다음 작업은 "최근 메뉴/게이트 변경사항 전체 재검증"이다.
+  HUMAN-TASKS.md에는 현재 해당 이름의 7번 항목이 없으므로 다음 세션에서
+  작업 범위를 확인할 것.
+
 ## 13. 비영리화(501(c)(3)) 및 정부 자금 로드맵
 
 ⚠️ 이 장은 법률 자문이 아니라 참고용 로드맵이다. 실제 서류 작성·
