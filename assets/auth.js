@@ -48,7 +48,7 @@ export const authReady = new Promise(resolve => {
 export function safeReturnUrl(value) {
   if (!value) return 'index.html';
   try {
-    const target = new URL(value, window.location.origin);
+    const target = new URL(value, window.location.href);
     const basePath = window.location.pathname.replace(/\/[^/]*$/, '/');
     if (target.origin === window.location.origin && target.pathname.startsWith(basePath)) {
       const relativePath = target.pathname.slice(basePath.length) || 'index.html';
