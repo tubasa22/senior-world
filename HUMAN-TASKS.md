@@ -27,6 +27,16 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
 - [ ] Firebase 서비스 계정 JSON 키 발급 후 Apps Script "스크립트 속성"에 `FIREBASE_SERVICE_ACCOUNT_KEY`로 등록
 - [ ] `newsletter-backend.gs`를 웹 앱으로 배포하고 `/exec` URL을 `admin.html`의 `NEWSLETTER_API`에 입력
 
+## 🔲 다음 세션 우선순위 (기술·법적 종합검토 기준)
+
+- [x] Firestore 보안 규칙 Console 배포 및 검증 — 2026-09-08 완료
+- [x] admin.html 변수명 충돌 재검증 — 문제 없음 확인, 2026-09-08
+- [x] 묘지 파일 업로드 서버측 검증 재검증 — 이미 구현됨 확인, 2026-09-08
+- [x] privacy.html 전면 갱신 — 실제 코드 필드 대조 및 diff 검증 완료, 2026-09-08
+- [ ] 8개 백엔드(.gs) 파일의 idToken 검증 방식 통일 여부 전수 확인 (identitytoolkit 방식으로)
+- [ ] apartments.json 계열 email 필드 보유 건수 확인
+- [ ] 이해충돌 정책 문서 작성 (501(c)(3) 신청 전제조건)
+
 ## 🔲 데이터 관련
 
 - [ ] KIWA(kiwa.org)에 연락해서 2026년 8월 저소득 아파트 목록(LA 9건)을
