@@ -568,8 +568,10 @@ _최종 정리: 이 문서의 폴더 규칙(2장) · 데이터 스키마(3장) �
 
 - [ ] 이사회 구성 (본인 포함 최소 3인, 홀수 권장)
 - [ ] 정관세칙(Bylaws) 초안 작성 (주에 제출 안 함, 내부 문서)
-- [ ] **이해충돌 정책(Conflict of Interest Policy) 작성** —
-  아래 "이해충돌 유의사항" 참고, 반드시 포함
+- [x] **이해충돌 정책(Conflict of Interest Policy) 초안 작성** —
+  `CONFLICT-OF-INTEREST-POLICY.md` 참고. 아래 "이해충돌 유의사항"의
+  회피(recusal) 절차를 문서화했으며, 변호사 검토와 이사회 정식
+  채택은 아직 남아 있음
 - [ ] Articles of Incorporation 제출 (CA 국무장관, $30,
   "Public Benefit Corporation" 유형)
 - [ ] Statement of Information (SI-100) 제출 (설립 후 90일 이내,
