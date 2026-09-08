@@ -63,3 +63,29 @@
 - `status`: `검토중`, `노출`, `숨김`. 클라이언트에는 `노출` 상태의 글만 제공한다.
 
 IHSS 게시판은 개인 간 정보 교환 공간이며, 게시글은 관리자의 검토 후 공개한다. 게시자 신원·경력·배경은 사이트가 검증하지 않는다.
+
+## 묘지 매장권 양도 Google Sheets 스키마
+
+### `cemetery_posts`
+
+- `id`: 게시글을 구분하는 고유 번호
+- `type`: `양도합니다` 또는 `구합니다`
+- `nickname`: 게시자가 선택한 표시 이름. 비어 있으면 `익명`
+- `cemeteryName`: 게시자가 입력한 묘지 이름
+- `area`: 도시 단위 지역
+- `plotInfo`, `price`: 선택 입력인 구획 정보와 희망 가격
+- `contactMethod`, `contactValue`: 게시자가 직접 공개하는 연락 방법과 연락처
+- `postedAt`: 등록 시각
+- `status`: `검토중`, `노출`, `숨김`. 공개 API에는 `노출` 상태의 공개 필드만 제공한다.
+
+### `cemetery_verification` (관리자 전용)
+
+- `id`: `cemetery_posts`의 동일 게시글 번호
+- `driveFileUrl`: 관리자 검토용 증빙 서류가 저장된 비공개 Drive 파일 링크
+- `uploadedAt`: 업로드 시각
+
+증빙 서류는 공개 게시판이나 공개 API에 절대 포함하지 않는다. 관리자는
+`cemetery_verification`의 파일을 검토한 뒤, `cemetery_posts`의 동일 `id`를
+`노출` 상태로 직접 변경한다. Drive 폴더는 관리자만 접근할 수 있는 비공개
+폴더여야 하며, 폴더 ID는 Apps Script Script Properties의
+`CEMETERY_CERT_FOLDER_ID`에만 저장한다.

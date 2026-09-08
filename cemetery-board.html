@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>묘지 매장권 양도 게시판 | 시니어 나침반</title>
+  <meta name="description" content="묘지 매장권 양도 관련 개인 간 정보교환 게시판입니다.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="stylesheet" href="assets/site-nav.css">
+  <style>
+    :root{--paper:#F7F9FB;--ink:#22303A;--soft:#5C7080;--blue:#2D6FA3;--deep:#1B4A70;--sunset:#E8873D;--line:#DCE4E8;--danger:#C0392B}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 'Noto Sans KR',system-ui,sans-serif}.page-context{padding:40px 24px;background:#EAF0F5}.page-context>div,main{width:min(920px,100%);margin:auto}.eyebrow{margin:0 0 8px;color:var(--blue);font-size:14px;font-weight:800;letter-spacing:.06em}h1,h2{font-family:'Noto Serif KR',serif;line-height:1.4}h1{margin:0;font-size:clamp(32px,5vw,46px);color:var(--deep)}.sub{margin:10px 0 0;color:var(--soft);font-size:18px}main{padding:36px 24px 72px}.warning{padding:22px;border:1px solid #F2C7B8;border-left:6px solid var(--danger);border-radius:12px;background:#FBEAE7;color:#63291F;font-weight:700}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}.tab,.write,button{padding:10px 14px;border-radius:9px;font:700 15px 'Noto Sans KR',sans-serif;cursor:pointer}.tab{border:1px solid var(--blue);background:#fff;color:var(--blue)}.tab.active,.write{border:1px solid var(--blue);background:var(--blue);color:#fff}.posts{display:grid;gap:14px}.post{padding:22px;border:1px solid var(--line);border-radius:12px;background:#fff}.post h2{margin:0 0 8px;font-size:22px}.meta{margin:0;color:var(--soft);font-size:14px}.price{margin:12px 0 0;color:var(--deep);font-weight:700}@media(max-width:650px){main{padding:28px 18px 56px}.page-context{padding:30px 18px}.warning{padding:18px}}
+  </style>
+</head>
+<body>
+<header class="site-header"><a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="시니어 나침반"></a><nav class="site-nav" aria-label="주요 메뉴"><a href="index.html">홈</a><div class="nav-dropdown"><button class="nav-dropdown-btn" aria-expanded="false" aria-haspopup="true">시니어 아파트 ▾</button><div class="nav-dropdown-menu"><a href="map.html">아파트/지도</a><a href="guide.html">신청 안내</a><a href="rhf-application-guide.html">RHF 신청 안내</a></div></div><div class="nav-dropdown"><button class="nav-dropdown-btn" aria-expanded="false" aria-haspopup="true">양로시설 ▾</button><div class="nav-dropdown-menu"><a href="ltc-facilities.html">시설 소개</a><a href="ltc-guide.html">종류 검색</a></div></div><a href="ihss-guide.html">IHSS 케어기버</a><div class="nav-dropdown"><button class="nav-dropdown-btn" aria-expanded="false" aria-haspopup="true">장례/묘지 ▾</button><div class="nav-dropdown-menu"><a href="funeral-guide.html">장례 정보</a><a href="memorial-parks.html">메모리얼파크 안내</a><a href="cemetery-guide.html">매장권 양도 안내</a><a href="cemetery-board.html">매장권 양도 게시판</a></div></div><a href="benefits-guide.html">생활지원</a><a href="community.html">커뮤니티</a><a href="contact.html">문의하기</a><span id="authStatusSlot" data-auth-ui></span></nav></header>
+
+<section class="page-context"><div><p class="eyebrow">개인 간 정보교환</p><h1>묘지 매장권 양도 게시판</h1><p class="sub">등록 글은 관리자 검토 후에만 공개됩니다.</p></div></section>
+
+<main>
+  <div class="warning">⚠️ 이 게시판은 개인 간 정보 교환 공간입니다. 사이트는 매장권 소유 여부, 거래 대금, 양도 절차의 적법성을 확인·보증하지 않습니다. 실제 양도는 반드시 해당 묘지 운영사의 절차를 거쳐야 할 수 있습니다. 대금 지급 전 상대방의 신원과 서류를 직접 확인하시기 바랍니다.</div>
+  <div class="tabs"><button class="tab active" type="button" data-type="양도합니다">양도합니다</button><button class="tab" type="button" data-type="구합니다">구합니다</button><button class="write" id="open" type="button">글 올리기</button></div>
+  <p id="status" class="meta" aria-live="polite"></p>
+  <section id="posts" class="posts" aria-live="polite"></section>
+</main>
+
+<script>
+  const CEMETERY_API = ''; // TODO: cemetery-backend.gs 배포 후 .../exec URL을 입력하세요.
+  let currentType = '양도합니다';
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  const render = posts => {
+    const filtered = posts.filter(post => post.type === currentType);
+    $('posts').innerHTML = filtered.length ? filtered.map(post => `<article class="post"><h2>${esc(post.cemeteryName)}</h2><p class="meta">${esc(post.nickname || '익명')} · ${esc(post.type)} · ${esc(post.area)}</p>${post.plotInfo ? `<p>구획 정보: ${esc(post.plotInfo)}</p>` : ''}${post.price ? `<p class="price">희망 가격: ${esc(post.price)}</p>` : ''}<p class="meta">${esc(post.contactMethod)}: ${esc(post.contactValue)}</p></article>`).join('') : '<article class="post">아직 등록된 글이 없습니다.</article>';
+  };
+  async function load(){
+    if(!CEMETERY_API){$('status').textContent='게시판은 준비 중입니다.';render([]);return;}
+    try{const response=await fetch(CEMETERY_API);const result=await response.json();render(Array.isArray(result)?result:(result.posts||[]));}
+    catch(_){$('status').textContent='글을 불러오지 못했습니다.';render([]);}
+  }
+  document.querySelectorAll('.tab').forEach(button=>button.addEventListener('click',()=>{currentType=button.dataset.type;document.querySelectorAll('.tab').forEach(item=>item.classList.toggle('active',item===button));load();}));
+  $('open').addEventListener('click',()=>{location.href='community.html?compose=cemetery&type='+encodeURIComponent(currentType)+'&return='+encodeURIComponent(location.href);});
+  load();
+</script>
+<script type="module" src="assets/auth.js"></script><script src="assets/site-nav.js"></script>
+</body>
+</html>
