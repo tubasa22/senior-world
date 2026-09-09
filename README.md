@@ -619,6 +619,33 @@ Codex(구현)가 저장소에 적용·커밋·push하는 기존 분업 방식을
   HUMAN-TASKS.md에는 현재 해당 이름의 7번 항목이 없으므로 다음 세션에서
   작업 범위를 확인할 것.
 
+**3) 누적 미확인 지시사항 4건 재검증 (코드 수정 없음)**
+
+이전 세션들에서 확인 필요 상태로 남아 있던 4가지의 구현을 로컬 코드로
+직접 확인했다. 아래는 코드 확인 결과이며 실제 브라우저 클릭·발송 검증과는
+구분한다:
+
+- 모달 취소 버튼 CSS 특이도: `admin.html`의
+  `.hidden{display:none!important}`가 `.modal-backdrop{display:grid}`보다
+  우선 적용된다. `#cancelSend`/`#cancelOutreach` 클릭 핸들러가
+  `classList.add('hidden')`을 호출함을 확인했다. 이 두 버튼은
+  뉴스레터/시설 아웃리치 확인 모달용이며 IHSS/묘지 모달 검증은 아니다.
+- `ltc-facilities.html` 편의시설/FAQ/갤러리 필드 확장:
+  `amenityCategories` 기반 배지 렌더링, `faq` 배열의 `<details>` 렌더링,
+  `photo-gallery`/`gallery-fallback` 처리가 모두 구현돼 있다.
+- 시설 아웃리치 이메일(영/한 템플릿): `admin.html`의 전용 탭,
+  영/한 템플릿 textarea, 수신자 선택 테이블, 발송 확인 모달,
+  `FACILITY_OUTREACH_API` 호출 코드가 연결돼 있다. 현재 API URL은
+  빈 문자열이므로 배포·연결 및 실제 발송 검증은 아직 필요하다.
+- `tubasa22@gmail.com` 로그인 시 관리자 네비 자동 노출:
+  `assets/auth.js`의 `isAdminUser()`가 `CLIENT_ADMIN_EMAILS`와
+  로그인 이메일을 대조해 `[data-auth-ui]` 영역에 "🔧 관리자" 링크를
+  삽입한다. 표준 헤더의 `#authStatusSlot`이 이 영역이며, auth.js와
+  해당 영역을 사용하는 페이지에 적용된다. 모든 HTML 페이지에
+  동일 영역이 있다고 단정하거나 실제 로그인 테스트 완료로 해석하지 않는다.
+
+이 4가지는 구현 여부를 코드로 확인한 것이며 새로운 코드 변경은 없었다.
+
 ## 13. 비영리화(501(c)(3)) 및 정부 자금 로드맵
 
 ⚠️ 이 장은 법률 자문이 아니라 참고용 로드맵이다. 실제 서류 작성·

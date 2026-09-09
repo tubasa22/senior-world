@@ -64,6 +64,21 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
 - [ ] 이사회 구성 후 정식 채택 결의
 - [ ] 제6조 "외부 검토자" 실제 후보자 지정
 
+- [x] 누적 미확인 지시사항 4건 재검증 — 아래 구현을 로컬 코드로
+  직접 확인, 코드 수정 불필요, 2026-09-08:
+  - 모달 취소 버튼 CSS: `admin.html`의
+    `.hidden{display:none!important}`가 `.modal-backdrop{display:grid}`보다
+    우선 적용됨. 이는 뉴스레터/시설 아웃리치 확인 모달 검사이며,
+    IHSS/묘지 모달 동작을 검증한 것은 아님.
+  - `ltc-facilities.html` 편의시설/FAQ/갤러리: amenityCategories,
+    faq `<details>`, photo-gallery/gallery-fallback 렌더링 모두 구현됨.
+  - 시설 아웃리치 이메일(영/한 템플릿): admin.html 탭·템플릿·
+    수신자 선택·확인 모달·FACILITY_OUTREACH_API 호출 코드 연결 확인.
+    API URL은 아직 비어 있으며 실제 발송 검증은 남아 있음.
+  - tubasa22@gmail.com 관리자 네비 자동 노출: `assets/auth.js`의
+    `isAdminUser()`가 관리자 이메일을 대조하고 `[data-auth-ui]` 영역에
+    "🔧 관리자" 링크를 주입함. 해당 영역과 auth.js를 사용하는 페이지에 적용됨.
+
 ## 🔲 데이터 관련
 
 - [ ] KIWA(kiwa.org)에 연락해서 2026년 8월 저소득 아파트 목록(LA 9건)을
