@@ -20,17 +20,24 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
   저장소에 있어 이 노출 범위에 포함되지 않았다.
 - [ ] 회원 고지 필요 여부와 관련 기록 보관은 사람이 판단한다.
 
-## 🔲 커뮤니티 게시판 사진 기능 (신규, 사람이 해야 하는 설정 1단계 있음)
+## 🔲 커뮤니티 게시판 사진 기능 (2026-09-08 배포·검증 완료)
 
-- [ ] 구글 드라이브에 사진 저장용 폴더를 하나 만들고, `community-backend.gs`가
-  배포된 Apps Script 프로젝트의 "프로젝트 설정 → 스크립트 속성"에
-  `COMMUNITY_PHOTO_FOLDER_ID`라는 이름으로 그 폴더의 ID를 등록한다
-  (폴더 자체를 공개로 바꿀 필요는 없음 — 업로드되는 파일마다 개별적으로
-  "링크가 있는 모든 사용자 보기" 권한이 자동으로 부여됨).
-- [ ] 코드 반영 후 첫 실행 시 Drive 접근 권한(새 스코프) 승인 팝업이 뜰 수
-  있음 — 승인해야 사진 업로드가 동작한다.
-- [ ] 재배포 후 admin.html에서 사진 1장 + 유튜브 링크 포함해서 글쓰기
-  테스트, community.html에서 정상 표시되는지 확인.
+아래 실환경 조치·표시 검증은 사용자가 완료했다고 보고한 내용이다.
+
+- [x] `COMMUNITY_PHOTO_FOLDER_ID` 스크립트 속성 등록 완료.
+- [x] Drive 쓰기 권한(`https://www.googleapis.com/auth/drive`) 재인증 완료.
+  폴더 읽기 진단은 성공했지만 `createFile` 쓰기 권한 오류가 발생했다.
+  myaccount.google.com/connections → Access to Drive에서 해당 Apps Script
+  액세스를 삭제한 뒤, 편집기에서 `createFile`을 실제 호출하는 함수를
+  실행해 다시 승인하여 해결했다.
+- [x] 이미지 표시 URL을 `https://drive.google.com/uc?export=view&id=`에서
+  `https://drive.google.com/thumbnail?id=…&sz=w1000`으로 교체하여
+  `<img>` 이미지 표시 문제를 해결했다. 저장소 `community-backend.gs`에도
+  동기화했다. 재배포 시 옛 코드로 덮어쓰지 않도록 저장소 코드를 사용할 것.
+- [x] admin.html에서 사진 1장 + 유튜브 링크 게시, community.html에서
+  정상 표시 확인.
+- [ ] 잘못 테스트 게시된 "사진 테스트" 글(깨진 이미지)을 `community_posts`
+  시트에서 삭제하거나 status를 숨김으로 변경.
 
 ## 🔲 관리자 대시보드 활성화
 
@@ -46,6 +53,11 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
   반드시 최신 코드로 배포하고 인증 없는 등록 요청의 거부를 확인할 것.
   `facility-outreach-backend.gs`도 verifyAdmin 내부 구조를 리팩터링
   했으므로(동작은 동일) 다음 재배포 시 함께 최신 코드로 교체할 것.
+- [x] `community-backend.gs` 배포 불일치 해결 — 사용자 확인,
+  2026-09-08. "새 버전" 대신 "새 배포"를 만들어 URL이 바뀐 것과,
+  구글시트에 안 묶인 별개 프로젝트에 코드를 붙여넣은 문제가 겹쳤다.
+  `community_posts` 데이터가 있는 원래 구글시트의 Apps Script 프로젝트에서
+  코드를 교체하고 기존 배포를 새 버전으로 재배포해 해결했다.
 
 ## 🔲 다음 세션 우선순위 (기술·법적 종합검토 기준)
 

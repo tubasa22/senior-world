@@ -646,6 +646,57 @@ Codex(구현)가 저장소에 적용·커밋·push하는 기존 분업 방식을
 
 이 4가지는 구현 여부를 코드로 확인한 것이며 새로운 코드 변경은 없었다.
 
+### 2026-09-08 세션 기록 — community-backend.gs 배포 불일치 버그 + 사진 업로드 기능
+
+아래 실환경 디버깅 경위와 해결 결과는 사용자가 확인해 전달한 기록이다.
+저장소에서는 이미지 URL 변경과 인증 정본 동기화 검증을 수행했다.
+
+**1) 실사용 중 발견된 배포 불일치 버그**
+
+관리자가 admin.html에서 로그인된 상태(🔧 관리자 링크 표시)로 새 소식을
+게시했는데 서버가 "로그인이 필요합니다."를 반환했다. 저장소의 메시지에는
+마침표가 없어 배포 코드 불일치를 의심했고, 추적 결과 두 원인을 확인했다:
+
+- "배포 관리 → 기존 배포 수정 → 새 버전" 대신 "새 배포"를 눌러 URL이
+  변경됐다. 사이트가 참조하는 기존 URL은 이전 코드를 계속 실행했다.
+- 구글시트에 안 묶인 별개 Apps Script 프로젝트에 코드를 붙여넣어
+  `SpreadsheetApp.getActiveSpreadsheet()`가 null을 반환하는 오류도 발생했다.
+
+`community_posts` 데이터가 실제로 담긴 구글시트의 확장 프로그램 →
+Apps Script로 들어가 원래 프로젝트에 저장소 코드를 반영하고, 기존 배포
+(`AKfycbxpFfp...`)를 새 버전으로 재배포해 해결했다. 배포된 옛 코드는
+`oauth2.googleapis.com/tokeninfo` 방식이었으며 최신 Identity Toolkit
+검증 코드로 교체됐다.
+
+**2) 커뮤니티 소식 게시판에 사진(최대 3장)·유튜브 링크 업로드 기능 추가**
+
+`communityPhotos_`, `communityPhotoFolder_`, `communityYoutubeUrl_`이
+사진 Base64 데이터를 받아 `COMMUNITY_PHOTO_FOLDER_ID`로 지정한 Drive
+폴더에 저장하고 파일별 "링크가 있는 모든 사용자 보기" 권한을 부여한다.
+사진 URL과 유튜브 링크는 `photoUrls`, `youtubeUrl` 열에 저장되고,
+community.html에서 사진 그리드와 반응형 iframe으로 표시된다.
+
+배포 과정에서 발생한 추가 이슈와 조치:
+
+- **Drive 쓰기 권한 오류**: 폴더 읽기 진단은 성공했지만 웹 앱에서
+  "Exception: DriveApp.Folder.createFile을 호출할 수 있는 권한이 없습니다"
+  오류가 발생했다. 사용자는 연결된 앱의 기존 Drive 액세스를 삭제한 뒤
+  편집기에서 `createFile` 호출 함수를 실행하여
+  `https://www.googleapis.com/auth/drive` 권한을 재승인했고 정상 동작을 확인했다.
+- **이미지 표시 오류**: `https://drive.google.com/uc?export=view&id=`
+  방식에서 이미지가 깨져 `https://drive.google.com/thumbnail?id=…&sz=w1000`
+  방식으로 교체했다. 사용자는 이를 핫링킹 제한 문제로 판단했으며,
+  사진 1장과 유튜브 링크 게시 후 정상 표시를 확인했다.
+  편집기에만 적용했던 URL 수정을 저장소에도 반영해 향후 재배포 시 유지한다.
+
+**다음 세션 시작 시 확인할 것**
+
+- `community_posts` 시트에 디버깅 중 생성된 "사진 테스트" 글이 남아 있으면
+  삭제하거나 숨김 처리할 것. 기존 시트에 저장된 옛 이미지 URL은 이번
+  코드 변경만으로 자동 변환되지 않는다.
+- HUMAN-TASKS.md 우선순위에 따라 `ihss-backend.gs`, `cemetery-backend.gs`
+  순으로 배포 진행 예정.
+
 ## 13. 비영리화(501(c)(3)) 및 정부 자금 로드맵
 
 ⚠️ 이 장은 법률 자문이 아니라 참고용 로드맵이다. 실제 서류 작성·

@@ -111,7 +111,7 @@ function communityPhotos_(list){
     const blob=Utilities.newBlob(bytes,mimeType,'community-'+Date.now()+'-'+i+'-'+safeName);
     const file=folder.folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK,DriveApp.Permission.VIEW);
-    urls.push('https://drive.google.com/uc?export=view&id='+file.getId());
+    urls.push('https://drive.google.com/thumbnail?id='+file.getId()+'&sz=w1000');
   }
   return {ok:true,urls:urls};
 }
