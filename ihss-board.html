@@ -19,7 +19,7 @@
 <section id="posts" class="posts">
 </section>
 </main>
-<script>const API='';let current='구합니다';const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));function render(list){const x=list.filter(p=>p.type===current);$('posts').innerHTML=x.length?x.map(p=>`<article class="post">
+<script>const API='https://script.google.com/macros/s/AKfycbw9o6nSGRPcjjrgolTvqPVMPZbhbthoejde4l2B09na44-LSAavz-04c4RvxFQsF0GP0A/exec';let current='구합니다';const $=id=>document.getElementById(id),esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));function render(list){const x=list.filter(p=>p.type===current);$('posts').innerHTML=x.length?x.map(p=>`<article class="post">
 <b>${esc(p.nickname||'익명')} · ${esc(p.type)}</b>
 <p class="meta">${esc(p.area)} · ${esc(p.contactMethod)}: ${esc(p.contactValue)}</p>
 <p style="white-space:pre-wrap">${esc(p.content)}</p>
