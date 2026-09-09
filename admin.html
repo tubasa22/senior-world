@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="assets/site-nav.css">
   <style>
     :root{--paper:#F7F9FB;--ink:#22303A;--soft:#5C7080;--teal:#2D6FA3;--deep:#1B4A70;--ochre:#E8873D;--line:#DCE4E8;--danger:#C0392B}
-    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 system-ui,sans-serif}.wrap{width:min(900px,100%);margin:auto;padding:32px 24px}header{background:var(--deep)}header a{color:#fff;font-weight:700;text-decoration:none}.card{padding:24px;border:1px solid var(--line);border-radius:12px;background:#fff}.hidden{display:none!important}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 16px}.tab{margin:0;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-weight:700;cursor:pointer}.tab[aria-selected="true"]{border-color:var(--teal);background:var(--teal);color:#fff}label{display:block;margin-top:14px;font-weight:700}input,textarea{display:block;width:100%;margin-top:5px;padding:10px;border:1px solid var(--line);border-radius:7px;font:inherit}textarea{min-height:160px}button.primary{margin-top:18px;padding:12px 18px;border:0;border-radius:8px;background:var(--ochre);color:#fff;font-weight:700;cursor:pointer}button.primary:disabled{cursor:wait;opacity:.7}.message{min-height:24px;color:var(--danger)}.message.ok{color:#26724A}.summary{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}.stat{min-width:170px;padding:16px;border-radius:10px;background:#EAF0F5}.stat strong{display:block;font-size:26px;color:var(--deep)}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--soft);font-size:14px}.selection-table input{width:auto;margin:0}.template-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.template-grid textarea{min-height:360px}.preview{margin:18px 0 0;padding:13px 15px;border-radius:9px;background:#EAF0F5;color:var(--deep);font-weight:800}.modal-backdrop{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:rgba(34,48,58,.55)}.modal{width:min(440px,100%);padding:24px;border-radius:12px;background:#fff}.modal-actions{display:flex;justify-content:flex-end;gap:10px}.modal-actions button{margin:0}.muted{color:var(--soft);font-size:14px}a{color:var(--teal)}@media(max-width:720px){.template-grid{grid-template-columns:1fr}}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.7 system-ui,sans-serif}.wrap{width:min(900px,100%);margin:auto;padding:32px 24px}header{background:var(--deep)}header a{color:#fff;font-weight:700;text-decoration:none}.card{padding:24px;border:1px solid var(--line);border-radius:12px;background:#fff}.hidden{display:none!important}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 16px}.tab{margin:0;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-weight:700;cursor:pointer}.tab[aria-selected="true"]{border-color:var(--teal);background:var(--teal);color:#fff}label{display:block;margin-top:14px;font-weight:700}input,textarea{display:block;width:100%;margin-top:5px;padding:10px;border:1px solid var(--line);border-radius:7px;font:inherit}textarea{min-height:160px}button.primary{margin-top:18px;padding:12px 18px;border:0;border-radius:8px;background:var(--ochre);color:#fff;font-weight:700;cursor:pointer}button.primary:disabled{cursor:wait;opacity:.7}button.secondary{margin-top:18px;margin-left:8px;padding:12px 18px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-weight:700;cursor:pointer}.message{min-height:24px;color:var(--danger)}.message.ok{color:#26724A}.summary{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}.stat{min-width:170px;padding:16px;border-radius:10px;background:#EAF0F5}.stat strong{display:block;font-size:26px;color:var(--deep)}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--soft);font-size:14px}.selection-table input{width:auto;margin:0}.template-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.template-grid textarea{min-height:360px}.preview{margin:18px 0 0;padding:13px 15px;border-radius:9px;background:#EAF0F5;color:var(--deep);font-weight:800}.modal-backdrop{position:fixed;inset:0;display:grid;place-items:center;padding:20px;background:rgba(34,48,58,.55)}.modal{width:min(440px,100%);padding:24px;border-radius:12px;background:#fff}.modal-actions{display:flex;justify-content:flex-end;gap:10px}.modal-actions button{margin:0}.muted{color:var(--soft);font-size:14px}a{color:var(--teal)}@media(max-width:720px){.template-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -19,6 +19,7 @@
     <section id="adminPanel" class="hidden">
       <div class="tabs" role="tablist" aria-label="관리자 기능">
         <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="writePanel" data-tab="writePanel">글쓰기</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="managePanel" data-tab="managePanel">게시글 관리</button>
         <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="membersPanel" data-tab="membersPanel">회원 현황</button>
         <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="newsletterPanel" data-tab="newsletterPanel">뉴스레터 발송</button>
         <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="outreachPanel" data-tab="outreachPanel">시설 정보 업데이트 요청</button>
@@ -35,9 +36,16 @@
           <label>사진 (선택, 최대 3장, 1장당 4MB 이하)<input id="postPhotos" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple></label>
           <label>유튜브 링크 (선택)<input id="postYoutube" type="url" maxlength="300" placeholder="https://www.youtube.com/watch?v=..."></label>
           <button id="postSubmitButton" class="primary" type="submit">게시하기</button>
+          <button id="postCancelEdit" type="button" class="secondary hidden">취소</button>
           <p id="postMessage" class="message" aria-live="polite"></p>
           <a id="communityLink" class="hidden" href="community.html">커뮤니티로 이동</a>
         </form>
+      </section>
+
+      <section id="managePanel" class="card hidden" role="tabpanel">
+        <h2>게시글 관리</h2>
+        <p id="manageMessage" class="message" aria-live="polite"></p>
+        <table><thead><tr><th>유형</th><th>제목</th><th>날짜</th><th>관리</th></tr></thead><tbody id="manageRows"></tbody></table>
       </section>
 
       <section id="membersPanel" class="card hidden" role="tabpanel">
@@ -128,11 +136,91 @@ Senior Compass (시니어 나침반)</textarea></label>
     async function loadOutreachRecipients() { if (!FACILITY_OUTREACH_API) { showMessage('#outreachMessage', '시설 연락 백엔드 배포 후 수신자 목록을 불러올 수 있습니다.'); renderOutreachRecipients(); return; } try { const result = await apiRequest(FACILITY_OUTREACH_API, { action: 'getRecipients', idToken: await getIdToken() }); outreachRecipients = Array.isArray(result.recipients) ? result.recipients : []; renderOutreachRecipients(); } catch (error) { showMessage('#outreachMessage', error.message); } }
 
     await authReady;
-    if (!currentUser) { $('#loginNotice').classList.remove('hidden'); } else { $('#adminPanel').classList.remove('hidden'); loadMemberStats(); loadOutreachRecipients(); }
+    if (!currentUser) { $('#loginNotice').classList.remove('hidden'); } else { $('#adminPanel').classList.remove('hidden'); loadMemberStats(); loadOutreachRecipients(); loadManagePosts(); }
     document.querySelectorAll('[role=tab]').forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
     document.querySelectorAll('[name=postType]').forEach(radio => radio.addEventListener('change', () => $('#sourceFields').classList.toggle('hidden', $('[name=postType]:checked').value !== '뉴스')));
+    let editingPostId = '';
+    function resetPostForm() { editingPostId = ''; $('#postForm').reset(); $('#sourceFields').classList.add('hidden'); const btn = $('#postSubmitButton'); btn.disabled = false; btn.textContent = '게시하기'; $('#postCancelEdit').classList.add('hidden'); }
+    function startEditPost(post) {
+      editingPostId = String(post.id);
+      const typeValue = post.postType === '뉴스' ? '뉴스' : '공지';
+      const radio = document.querySelector(`[name=postType][value="${typeValue}"]`);
+      if (radio) radio.checked = true;
+      $('#sourceFields').classList.toggle('hidden', typeValue !== '뉴스');
+      $('#postTitle').value = post.title || '';
+      $('#postBody').value = post.body || '';
+      $('#sourceName').value = post.sourceName || '';
+      $('#sourceUrl').value = post.sourceUrl || '';
+      $('#postYoutube').value = post.youtubeUrl || '';
+      $('#postPhotos').value = '';
+      $('#postSubmitButton').textContent = '수정 저장';
+      $('#postCancelEdit').classList.remove('hidden');
+      switchTab('writePanel');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     function readPhotoFile(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve({ name: file.name, mimeType: file.type, data: String(reader.result).split(',')[1] || '' }); reader.onerror = () => reject(new Error('사진 파일을 읽지 못했습니다.')); reader.readAsDataURL(file); }); }
-    $('#postForm').addEventListener('submit', async event => { event.preventDefault(); if (!COMMUNITY_API) return showMessage('#postMessage', '게시 기능이 아직 준비 중입니다.'); const files = [...$('#postPhotos').files].slice(0, 3); if (files.some(file => file.size > 4 * 1024 * 1024)) return showMessage('#postMessage', '사진은 1장당 4MB 이하만 업로드할 수 있습니다.'); const button = $('#postSubmitButton'); const originalText = button.textContent; button.disabled = true; button.textContent = '게시 중...'; showMessage('#postMessage', ''); try { const photos = await Promise.all(files.map(readPhotoFile)); await apiRequest(COMMUNITY_API, { action: 'createPost', idToken: await getIdToken(), postType: $('[name=postType]:checked').value, title: $('#postTitle').value, body: $('#postBody').value, sourceName: $('#sourceName').value, sourceUrl: $('#sourceUrl').value, photos: photos, youtubeUrl: $('#postYoutube').value }); showMessage('#postMessage', '게시되었습니다.', true); event.target.reset(); $('#sourceFields').classList.add('hidden'); $('#communityLink').classList.remove('hidden'); } catch (error) { showMessage('#postMessage', error.message); } finally { button.disabled = false; button.textContent = originalText; } });
+    $('#postCancelEdit').addEventListener('click', resetPostForm);
+    $('#postForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      if (!COMMUNITY_API) return showMessage('#postMessage', '게시 기능이 아직 준비 중입니다.');
+      const files = [...$('#postPhotos').files].slice(0, 3);
+      if (files.some(file => file.size > 4 * 1024 * 1024)) return showMessage('#postMessage', '사진은 1장당 4MB 이하만 업로드할 수 있습니다.');
+      const wasEditing = editingPostId;
+      const button = $('#postSubmitButton');
+      button.disabled = true;
+      button.textContent = wasEditing ? '수정 중...' : '게시 중...';
+      showMessage('#postMessage', '');
+      try {
+        const photos = files.length ? await Promise.all(files.map(readPhotoFile)) : [];
+        const payload = { action: wasEditing ? 'updatePost' : 'createPost', idToken: await getIdToken(), postType: $('[name=postType]:checked').value, title: $('#postTitle').value, body: $('#postBody').value, sourceName: $('#sourceName').value, sourceUrl: $('#sourceUrl').value, youtubeUrl: $('#postYoutube').value };
+        if (wasEditing) { payload.id = wasEditing; payload.replacePhotos = files.length > 0; if (files.length) payload.photos = photos; }
+        else { payload.photos = photos; }
+        await apiRequest(COMMUNITY_API, payload);
+        showMessage('#postMessage', wasEditing ? '수정되었습니다.' : '게시되었습니다.', true);
+        resetPostForm();
+        $('#communityLink').classList.remove('hidden');
+        loadManagePosts();
+      } catch (error) {
+        showMessage('#postMessage', error.message);
+        button.disabled = false;
+        button.textContent = wasEditing ? '수정 저장' : '게시하기';
+      }
+    });
+    async function loadManagePosts() {
+      if (!COMMUNITY_API) { showMessage('#manageMessage', '게시판 기능이 아직 준비 중입니다.'); $('#manageRows').innerHTML = ''; return; }
+      try {
+        const response = await fetch(COMMUNITY_API);
+        const result = await response.json();
+        renderManagePosts(Array.isArray(result) ? result : (result.posts || []));
+      } catch (error) {
+        showMessage('#manageMessage', '게시글 목록을 불러오지 못했습니다.');
+      }
+    }
+    function renderManagePosts(posts) {
+      const rows = $('#manageRows');
+      rows.replaceChildren();
+      if (!posts.length) { const row = document.createElement('tr'); row.innerHTML = '<td colspan="4">등록된 게시글이 없습니다.</td>'; rows.appendChild(row); return; }
+      posts.slice().sort((a, b) => new Date(b.postedAt) - new Date(a.postedAt)).forEach(post => {
+        const row = document.createElement('tr');
+        const dateValue = new Date(post.postedAt);
+        [post.postType === '뉴스' ? '뉴스' : '공지', post.title, Number.isNaN(dateValue.getTime()) ? '-' : dateValue.toLocaleDateString('ko-KR')].forEach(text => { const cell = document.createElement('td'); cell.textContent = text; row.appendChild(cell); });
+        const actionCell = document.createElement('td');
+        const editBtn = document.createElement('button'); editBtn.type = 'button'; editBtn.textContent = '수정'; editBtn.addEventListener('click', () => startEditPost(post));
+        const delBtn = document.createElement('button'); delBtn.type = 'button'; delBtn.textContent = '삭제'; delBtn.style.marginLeft = '6px'; delBtn.addEventListener('click', () => deletePostConfirm(post));
+        actionCell.append(editBtn, delBtn);
+        row.appendChild(actionCell);
+        rows.appendChild(row);
+      });
+    }
+    async function deletePostConfirm(post) {
+      if (!confirm(`"${post.title}" 게시글을 삭제하시겠습니까?`)) return;
+      try {
+        await apiRequest(COMMUNITY_API, { action: 'deletePost', idToken: await getIdToken(), id: post.id });
+        loadManagePosts();
+      } catch (error) {
+        showMessage('#manageMessage', error.message);
+      }
+    }
     $('#newsletterForm').addEventListener('submit', event => { event.preventDefault(); if (!NEWSLETTER_API) return showMessage('#newsletterMessage', '뉴스레터 발송 기능은 서버 설정 후 사용할 수 있습니다.'); $('#confirmText').textContent = `정말 ${memberStats.newsletterCount}명에게 발송하시겠습니까?`; $('#confirmModal').classList.remove('hidden'); });
     $('#cancelSend').addEventListener('click', () => $('#confirmModal').classList.add('hidden'));
     $('#confirmSend').addEventListener('click', async () => { $('#confirmModal').classList.add('hidden'); try { const result = await apiRequest(NEWSLETTER_API, { action: 'sendNewsletter', idToken: await getIdToken(), subject: $('#newsletterSubject').value, body: $('#newsletterBody').value }); showMessage('#newsletterMessage', `발송 완료: 성공 ${result.sent}건, 실패 ${result.failed}건`, true); $('#newsletterForm').reset(); } catch (error) { showMessage('#newsletterMessage', error.message); } });

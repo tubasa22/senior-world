@@ -49,12 +49,19 @@ function ensureSheet(name,cols){const ss=SpreadsheetApp.getActiveSpreadsheet();l
 function doGet(){const sh=SpreadsheetApp.getActiveSpreadsheet().getSheetByName(POSTS_SHEET),out=[];if(sh&&sh.getLastRow()>1)sh.getRange(2,1,sh.getLastRow()-1,POST_COLS.length).getValues().forEach(r=>{const p={};POST_COLS.forEach((k,i)=>p[k]=r[i]);if(String(p.status).trim()==='노출')out.push({id:p.id,postType:p.postType==='뉴스'?'뉴스':'공지',title:p.title,body:p.body,sourceName:p.sourceName,sourceUrl:p.sourceUrl,postedAt:p.postedAt,likeCount:Number(p.likeCount)||0,photoUrls:String(p.photoUrls||'').split(',').map(url=>url.trim()).filter(Boolean),youtubeUrl:String(p.youtubeUrl||'')});});out.sort((a,b)=>new Date(b.postedAt)-new Date(a.postedAt));return json(out);}
 
 /** 좋아요만 처리한다. 공개 글쓰기·수정·삭제 API는 제공하지 않는다. */
-function doPost(e){try{const req=JSON.parse((e.postData&&e.postData.contents)||'{}');if(req.action==='like')return toggleLike(req);if(req.action==='createPost')return createPost(req);return json({ok:false,error:'허용되지 않은 요청입니다'});}catch(_){return json({ok:false,error:'요청 처리에 실패했습니다'});}}
+function doPost(e){try{const req=JSON.parse((e.postData&&e.postData.contents)||'{}');if(req.action==='like')return toggleLike(req);if(req.action==='createPost')return createPost(req);if(req.action==='updatePost')return updatePost(req);if(req.action==='deletePost')return deletePost(req);return json({ok:false,error:'허용되지 않은 요청입니다'});}catch(_){return json({ok:false,error:'요청 처리에 실패했습니다'});}}
 function toggleLike(req){const token=verifyIdToken(req.idToken);if(!token.ok)return json({ok:false,error:'로그인이 필요합니다'});const postId=String(req.postId||'').trim();if(!postId)return json({ok:false,error:'게시글을 찾을 수 없습니다'});const lock=LockService.getScriptLock();lock.waitLock(10000);try{const posts=ensurePostsSheet(),likes=ensureSheet(LIKES_SHEET,LIKE_COLS),postRow=findPostRow(posts,postId);if(!postRow)return json({ok:false,error:'게시글을 찾을 수 없습니다'});let old=0;if(likes.getLastRow()>1)likes.getRange(2,1,likes.getLastRow()-1,LIKE_COLS.length).getValues().some((r,i)=>{if(String(r[0])===postId&&String(r[1])===String(token.uid)){old=i+2;return true;}return false;});const liked=!old;if(liked)likes.appendRow([postId,token.uid,new Date()]);else likes.deleteRow(old);const likeCount=countLikes(likes,postId);posts.getRange(postRow,9).setValue(likeCount);return json({ok:true,liked,likeCount});}finally{lock.releaseLock();}}
+// 로그인 + 관리자 권한을 한 번에 확인하는 공용 헬퍼.
+function communityAdminToken_(idToken){
+  const token=verifyIdToken(idToken);
+  if(!token.ok)return {ok:false,error:'로그인이 필요합니다'};
+  if(!ADMIN_EMAILS.includes(String(token.email||'').toLowerCase()))return {ok:false,error:'관리자 권한이 없습니다'};
+  return {ok:true,token:token};
+}
+
 function createPost(req){
-  const token=verifyIdToken(req.idToken);
-  if(!token.ok)return json({ok:false,error:'로그인이 필요합니다'});
-  if(!ADMIN_EMAILS.includes(String(token.email||'').toLowerCase()))return json({ok:false,error:'관리자 권한이 없습니다'});
+  const admin=communityAdminToken_(req.idToken);
+  if(!admin.ok)return json({ok:false,error:admin.error});
   const postType=req.postType==='뉴스'?'뉴스':req.postType==='공지'?'공지':'';
   const title=String(req.title||'').trim().slice(0,200),
         body=String(req.body||'').trim().slice(0,5000),
@@ -72,6 +79,63 @@ function createPost(req){
     const posts=ensurePostsSheet(),id=posts.getLastRow();
     posts.appendRow([id,postType,title,body,sourceName,sourceUrl,new Date(),'노출',0,photos.urls.join(','),youtubeUrl]);
     return json({ok:true,id:id});
+  }finally{
+    lock.releaseLock();
+  }
+}
+
+// 기존 게시글의 유형·제목·본문·출처·유튜브 링크를 수정한다.
+// req.replacePhotos가 true일 때만 사진을 통째로 교체하고, 아니면 기존 사진을 그대로 둔다.
+function updatePost(req){
+  const admin=communityAdminToken_(req.idToken);
+  if(!admin.ok)return json({ok:false,error:admin.error});
+  const postId=String(req.id||'').trim();
+  if(!postId)return json({ok:false,error:'게시글을 찾을 수 없습니다'});
+  const postType=req.postType==='뉴스'?'뉴스':req.postType==='공지'?'공지':'';
+  const title=String(req.title||'').trim().slice(0,200),
+        body=String(req.body||'').trim().slice(0,5000),
+        sourceName=String(req.sourceName||'').trim().slice(0,100),
+        sourceUrl=String(req.sourceUrl||'').trim().slice(0,1000);
+  if(!postType||!title||!body)return json({ok:false,error:'유형, 제목, 본문을 입력해주세요'});
+  if(postType==='뉴스'&&!sourceUrl)return json({ok:false,error:'뉴스 게시글은 출처 링크가 필요합니다'});
+  if(req.youtubeUrl&&!communityYoutubeUrl_(req.youtubeUrl))return json({ok:false,error:'유효한 유튜브 링크가 아닙니다'});
+  const youtubeUrl=communityYoutubeUrl_(req.youtubeUrl);
+  const lock=LockService.getScriptLock();
+  lock.waitLock(10000);
+  try{
+    const posts=ensurePostsSheet();
+    const row=findPostRow(posts,postId);
+    if(!row)return json({ok:false,error:'게시글을 찾을 수 없습니다'});
+    let replacementUrls=null;
+    if(req.replacePhotos){
+      const photos=communityPhotos_(req.photos);
+      if(!photos.ok)return json({ok:false,error:photos.error});
+      replacementUrls=photos.urls.join(',');
+    }
+    posts.getRange(row,2,1,5).setValues([[postType,title,body,sourceName,sourceUrl]]);
+    if(replacementUrls!==null)posts.getRange(row,10).setValue(replacementUrls);
+    posts.getRange(row,11).setValue(youtubeUrl);
+    return json({ok:true});
+  }finally{
+    lock.releaseLock();
+  }
+}
+
+// 실제로 행을 지우지 않고 status를 '삭제'로 바꾼다(감사 추적용, doGet은 '노출'만 반환하므로 화면에서는 사라짐).
+// 드라이브에 올라간 사진 파일 자체는 자동으로 지우지 않는다.
+function deletePost(req){
+  const admin=communityAdminToken_(req.idToken);
+  if(!admin.ok)return json({ok:false,error:admin.error});
+  const postId=String(req.id||'').trim();
+  if(!postId)return json({ok:false,error:'게시글을 찾을 수 없습니다'});
+  const lock=LockService.getScriptLock();
+  lock.waitLock(10000);
+  try{
+    const posts=ensurePostsSheet();
+    const row=findPostRow(posts,postId);
+    if(!row)return json({ok:false,error:'게시글을 찾을 수 없습니다'});
+    posts.getRange(row,8).setValue('삭제');
+    return json({ok:true});
   }finally{
     lock.releaseLock();
   }
