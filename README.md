@@ -697,6 +697,58 @@ community.html에서 사진 그리드와 반응형 iframe으로 표시된다.
 - HUMAN-TASKS.md 우선순위에 따라 `ihss-backend.gs`, `cemetery-backend.gs`
   순으로 배포 진행 예정.
 
+### 2026-09-08 세션 기록 — 커뮤니티 게시글 수정·삭제, IHSS 배포·승인, ihss-board.html 연결 누락
+
+이 세션은 앞선 사진 업로드 기능 이후, 이어서 진행됐다.
+
+**1) 커뮤니티 게시판 게시글 수정·삭제(관리자 전용) 기능**
+
+기존에는 관리자가 잘못 게시한 글을 고치거나 지우려면 구글시트를
+직접 열어야 했다. `community-backend.gs`에 `updatePost`(수정),
+`deletePost`(소프트 삭제 — 행을 지우지 않고 status를 '삭제'로 바꿈)
+액션을 추가하고, admin.html에 "게시글 관리" 탭을 신설했다. "수정"을
+누르면 기존 글쓰기 폼에 값이 채워지고 버튼이 "수정 저장"으로
+바뀌는 방식으로 구현해 폼을 중복 작성하지 않았다. 배포·반영 후
+사용자가 처음엔 탭이 새로 생긴 걸 모르고 "기능이 안 보인다"고
+판단했으나, 실제로는 정상 동작하는 것으로 확인됐다.
+
+**2) `ihss-backend.gs` 최초 배포 + 관리자 승인/거부 기능**
+
+코드는 이미 완성되어 있었으나 실제 배포가 안 되어 있던 상태였다.
+새 구글시트를 만들어 배포하고 `community.html`의 `IHSS_API`에
+연결했다. 이어서 `ihss-backend.gs`에 `listAll`(관리자 전용 전체
+목록 조회), `approve`(status를 '노출'로), `reject`(status를
+'거부'로) 액션을 추가하고 admin.html에 "IHSS 승인 관리" 탭을
+신설했다.
+
+배포 과정에서 두 가지 문제가 있었다:
+
+- 재배포 시 코드를 통째로 교체하지 않고 기존 코드에 새 함수만
+  부분적으로 끼워넣다가 문법이 어긋나, `doPost`의 바깥쪽 `catch`가
+  걸려 "등록에 실패했습니다."(원래 다른 용도의 문구)라는 엉뚱한
+  에러가 떴다. 전체 삭제 후 통째로 재붙여넣기로 해결했다.
+- 승인까지는 됐는데 실제 게시판에 글이 안 보이는 문제가 있었다.
+  원인은 승인된 글을 실제로 보여주는 화면이 `community.html`이
+  아니라 **`ihss-board.html`**이었는데, 이 파일 안의 `const API='';`가
+  비어 있었던 것이었다. `community.html`의 `IHSS_API`만 연결하고
+  실제 목록 표시 화면(`ihss-board.html`)의 별도 API 상수는 놓쳤던
+  것 — **같은 기능이라도 실제로 어느 화면이 최종적으로 그 값을
+  쓰는지 파일 단위로 직접 확인해야 한다**는 교훈. `ihss-board.html`에
+  배포 URL을 연결해(커밋 `b3bcdf1`) 해결했다.
+
+**다음 세션 시작 시 확인할 것**
+
+- `ihss-board.html`의 URL 연결이 GitHub Pages에 실제 반영됐는지,
+  승인된 IHSS 글이 화면에 최종적으로 보이는지 브라우저에서
+  직접 확인할 것.
+- 삭제된 커뮤니티 게시글이 실제로 community.html 목록에서
+  사라지는지 최종 확인.
+- HUMAN-TASKS.md 우선순위에 따라 `cemetery-backend.gs` 재배포와
+  `member-backend.gs`, `facility-outreach-backend.gs`,
+  `newsletter-backend.gs` 배포가 다음 작업 대상이다.
+- `backend.gs`와 `review-backend.gs`의 기능 중복 정리는 여전히
+  미착수 상태다.
+
 ## 13. 비영리화(501(c)(3)) 및 정부 자금 로드맵
 
 ⚠️ 이 장은 법률 자문이 아니라 참고용 로드맵이다. 실제 서류 작성·

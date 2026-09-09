@@ -20,16 +20,16 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
   저장소에 있어 이 노출 범위에 포함되지 않았다.
 - [ ] 회원 고지 필요 여부와 관련 기록 보관은 사람이 판단한다.
 
-## 🔲 커뮤니티 게시판 게시글 수정·삭제 기능 (2026-09-08 추가, 재배포 필요)
+## 🔲 커뮤니티 게시판 게시글 수정·삭제 기능 (2026-09-08 배포·검증 완료)
 
-- [ ] `community-backend.gs`에 `updatePost`, `deletePost` 액션 추가함
+- [x] `community-backend.gs`에 `updatePost`, `deletePost` 액션 추가함
   (관리자 전용, 삭제는 행을 지우지 않고 status를 '삭제'로 바꾸는 소프트
   삭제 방식). admin.html에 "게시글 관리" 탭을 신설해 목록에서 수정·삭제
-  가능. **저장소 코드만 반영된 상태이며, script.google.com에서 실제
-  Apps Script 코드를 교체하고 새 버전으로 재배포해야 동작함.**
-- [ ] 재배포 후 admin.html "게시글 관리" 탭에서 기존 글 수정(제목/본문/
-  사진 교체/유튜브 링크 변경)과 삭제가 정상 동작하는지 확인.
-- [ ] 삭제된 게시글이 실제로 community.html 목록에서 사라지는지 확인.
+  가능. 재배포 완료, 사용자가 admin.html에서 실제 동작(탭 존재·기능함)
+  확인함 — 처음엔 탭이 별도로 추가된 걸 모르고 "기능이 없다"고
+  판단했던 것으로 확인됨.
+- [ ] 삭제된 게시글이 실제로 community.html 목록에서 사라지는지
+  최종 확인은 아직 안 함.
 - [ ] (참고) 삭제해도 구글 드라이브에 올라간 사진 파일 자체는 자동으로
   지워지지 않음 — 필요하면 수동으로 드라이브 폴더에서 정리할 것.
 
@@ -54,12 +54,23 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
 
 ## 🔲 관리자 대시보드 활성화
 
-- [x] `ihss-backend.gs` 배포 완료 (사용자 보고, 2026-09-08). 배포 URL을
-  community.html의 IHSS_API에 연결함. 로그인 후 글 등록 → 구글시트에
-  '검토중'으로 저장되는지 실사용 테스트는 아직 필요.
-  목록은 community.html?compose=... 작성 화면이 아닌 ihss-board.html에서
-  확인한다. 현재 ihss-board.html의 API는 비어 있으므로 목록용 URL도
-  연결한 뒤 status를 '노출'로 바꿨을 때 표시되는지 확인해야 한다.
+- [x] `ihss-backend.gs` 배포 완료 (2026-09-08). 배포 URL을
+  community.html의 IHSS_API에 연결함.
+- [x] IHSS 게시판 관리자 승인/거부 기능 추가·재배포 완료 (2026-09-08).
+  admin.html "IHSS 승인 관리" 탭에서 listAll/approve/reject 정상
+  동작 확인함. 최초 재배포 시 코드를 전체 교체하지 않고 기존 코드에
+  부분적으로 끼워넣다가 문법 오류로 엉뚱한 에러 문구가 뜬 적이
+  있었음 — Apps Script 코드 교체 시 반드시 전체 삭제 후 통째로
+  붙여넣을 것(부분 병합 금지).
+- [x] `ihss-board.html`의 `const API=` 값이 비어있어 승인된 글이
+  실제 게시판(ihss-board.html)에 안 보이던 문제 발견·수정 완료
+  (2026-09-08, 커밋 `b3bcdf1`). 원인은 `community.html`의 IHSS_API만
+  연결하고, 실제 목록 표시 화면인 `ihss-board.html`의 별도 API 상수는
+  놓쳤던 것 — **같은 기능이라도 어느 화면이 최종적으로 그 값을
+  쓰는지 파일 단위로 직접 확인해야 한다**는 교훈.
+- [ ] `ihss-board.html` 수정이 GitHub Pages에 실제 반영됐는지,
+  승인된 글이 화면에 최종적으로 보이는지 브라우저에서 직접 확인
+  아직 안 함.
 
 - [x] `firestore.rules` 내용을 Firebase Console(Firestore Database → 규칙 탭)에 재배포 (2026-09-08, 인증 없는 REST GET의 403 확인)
 - [ ] Apps Script 프로젝트에 OAuth2 라이브러리 추가 (라이브러리 ID: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`)
@@ -69,15 +80,10 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
   `newsletter-backend.gs`의 로그인 검증 코드는
   저장소에는 반영됐으나, Apps Script 편집기에 붙여넣고 웹 앱으로
   재배포해야 실제 서버에 적용됨. 기존 배포가 있다면 재배포 전까지는
-  이전 코드로 동작하므로 IHSS·묘지 게시판을 실서비스로 켜기 전
+  이전 코드로 동작하므로 묘지 게시판을 실서비스로 켜기 전
   반드시 최신 코드로 배포하고 인증 없는 등록 요청의 거부를 확인할 것.
   `facility-outreach-backend.gs`도 verifyAdmin 내부 구조를 리팩터링
   했으므로(동작은 동일) 다음 재배포 시 함께 최신 코드로 교체할 것.
-- [x] `ihss-backend.gs` 배포 완료 (2026-09-08). 배포 URL을 community.html의 IHSS_API에 연결함.
-- [ ] IHSS 승인/거부 기능 추가함(admin.html "IHSS 승인 관리" 탭,
-  ihss-backend.gs의 listAll/approve/reject 액션). 저장소 코드만 반영된
-  상태이며 Apps Script에서 최신 코드로 재배포해야 동작함.
-- [ ] 재배포 후 IHSS 글 등록 → 관리자 승인 → 게시판 노출까지 확인
 - [x] `community-backend.gs` 배포 불일치 해결 — 사용자 확인,
   2026-09-08. "새 버전" 대신 "새 배포"를 만들어 URL이 바뀐 것과,
   구글시트에 안 묶인 별개 프로젝트에 코드를 붙여넣은 문제가 겹쳤다.
