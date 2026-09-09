@@ -65,14 +65,19 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
 - [ ] Apps Script 프로젝트에 OAuth2 라이브러리 추가 (라이브러리 ID: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`)
 - [ ] Firebase 서비스 계정 JSON 키 발급 후 Apps Script "스크립트 속성"에 `FIREBASE_SERVICE_ACCOUNT_KEY`로 등록
 - [ ] `newsletter-backend.gs`를 웹 앱으로 배포하고 `/exec` URL을 `admin.html`의 `NEWSLETTER_API`에 입력
-- [ ] ⚠️ Apps Script 재배포 필수: `ihss-backend.gs`,
-  `cemetery-backend.gs`, `newsletter-backend.gs`의 로그인 검증 코드는
+- [ ] ⚠️ Apps Script 재배포 필수: `cemetery-backend.gs`,
+  `newsletter-backend.gs`의 로그인 검증 코드는
   저장소에는 반영됐으나, Apps Script 편집기에 붙여넣고 웹 앱으로
   재배포해야 실제 서버에 적용됨. 기존 배포가 있다면 재배포 전까지는
   이전 코드로 동작하므로 IHSS·묘지 게시판을 실서비스로 켜기 전
   반드시 최신 코드로 배포하고 인증 없는 등록 요청의 거부를 확인할 것.
   `facility-outreach-backend.gs`도 verifyAdmin 내부 구조를 리팩터링
   했으므로(동작은 동일) 다음 재배포 시 함께 최신 코드로 교체할 것.
+- [x] `ihss-backend.gs` 배포 완료 (2026-09-08). 배포 URL을 community.html의 IHSS_API에 연결함.
+- [ ] IHSS 승인/거부 기능 추가함(admin.html "IHSS 승인 관리" 탭,
+  ihss-backend.gs의 listAll/approve/reject 액션). 저장소 코드만 반영된
+  상태이며 Apps Script에서 최신 코드로 재배포해야 동작함.
+- [ ] 재배포 후 IHSS 글 등록 → 관리자 승인 → 게시판 노출까지 확인
 - [x] `community-backend.gs` 배포 불일치 해결 — 사용자 확인,
   2026-09-08. "새 버전" 대신 "새 배포"를 만들어 URL이 바뀐 것과,
   구글시트에 안 묶인 별개 프로젝트에 코드를 붙여넣은 문제가 겹쳤다.
