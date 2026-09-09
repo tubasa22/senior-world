@@ -54,6 +54,13 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
 
 ## 🔲 관리자 대시보드 활성화
 
+- [x] `ihss-backend.gs` 배포 완료 (사용자 보고, 2026-09-08). 배포 URL을
+  community.html의 IHSS_API에 연결함. 로그인 후 글 등록 → 구글시트에
+  '검토중'으로 저장되는지 실사용 테스트는 아직 필요.
+  목록은 community.html?compose=... 작성 화면이 아닌 ihss-board.html에서
+  확인한다. 현재 ihss-board.html의 API는 비어 있으므로 목록용 URL도
+  연결한 뒤 status를 '노출'로 바꿨을 때 표시되는지 확인해야 한다.
+
 - [x] `firestore.rules` 내용을 Firebase Console(Firestore Database → 규칙 탭)에 재배포 (2026-09-08, 인증 없는 REST GET의 403 확인)
 - [ ] Apps Script 프로젝트에 OAuth2 라이브러리 추가 (라이브러리 ID: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`)
 - [ ] Firebase 서비스 계정 JSON 키 발급 후 Apps Script "스크립트 속성"에 `FIREBASE_SERVICE_ACCOUNT_KEY`로 등록
