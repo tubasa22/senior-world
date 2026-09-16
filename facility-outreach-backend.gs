@@ -89,7 +89,7 @@ function sendOutreach(request) {
   const recipients = Array.isArray(request.recipients) ? request.recipients : [];
   if (!recipients.length) return json({ ok: false, error: '발송 대상이 없습니다' });
   if (recipients.length > MAX_RECIPIENTS) return json({ ok: false, error: '한 번에 발송할 수 있는 시설 수를 초과했습니다' });
-  if (GmailApp.getRemainingDailyQuota() < recipients.length) return json({ ok: false, error: '오늘의 이메일 발송 한도가 부족합니다' });
+  if (MailApp.getRemainingDailyQuota() < recipients.length) return json({ ok: false, error: '오늘의 이메일 발송 한도가 부족합니다' });
 
   const sent = { en: 0, ko: 0 };
   let failed = 0;
