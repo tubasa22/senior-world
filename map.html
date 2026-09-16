@@ -405,12 +405,20 @@
   .list-pane::-webkit-scrollbar{ width:8px; }
   .list-pane::-webkit-scrollbar-thumb{ background:var(--line); border-radius:4px; }
 
+  .mobile-view-toggle{ display:none; }
   @media (max-width:760px){
     .main{ flex-direction:column; }
     .main{ height:auto; min-height:0; }
-    .list-pane{ width:100%; max-width:100%; max-height:55vh; height:auto; order:2; }
-    .map-pane{ height:420px; min-height:420px; order:1; }
+    .list-pane{ width:100%; max-width:100%; max-height:none; height:auto; order:2; }
+    .map-pane{ flex:none; height:calc(100dvh - 220px); min-height:420px; order:1; }
     .map-footer-inner{ flex-direction:column; }
+    .mobile-view-toggle{ display:flex; position:sticky; top:0; z-index:20; }
+    .mobile-view-toggle button{ flex:1; padding:14px; border:0; border-bottom:3px solid transparent; background:var(--paper-dim); color:var(--ink-soft); font:700 15px inherit; cursor:pointer; }
+    .mobile-view-toggle button.active{ background:var(--card-bg); color:var(--teal-deep); border-bottom-color:var(--ochre); }
+    body:not(.mobile-map-active) .map-pane{ display:none; }
+    body.mobile-map-active .list-pane{ display:none; }
+    .leaflet-control-zoom a{ width:44px !important; height:44px !important; line-height:44px !important; font-size:20px !important; }
+    .leaflet-control-zoom{ margin:14px !important; }
   }
   @media print{
     html,body,.app{ height:auto; overflow:visible; background:#fff; }
@@ -458,6 +466,11 @@
     <span id="geoText">위치 정밀도를 높이는 중...</span>
     <div class="geo-bar-track"><div class="geo-bar-fill" id="geoBarFill"></div></div>
     <button class="btn-export" id="exportBtn" title="지금까지 확보한 정확한 좌표를 파일에 넣어 저장합니다. 팀원에게 보내면 바로 정확한 지도가 뜹니다.">📍 좌표 저장본 내려받기</button>
+  </div>
+
+  <div class="mobile-view-toggle" id="mobileViewToggle">
+    <button type="button" data-view="list" class="active">📋 목록으로 보기</button>
+    <button type="button" data-view="map">🗺️ 지도로 보기</button>
   </div>
 
   <div class="main">
@@ -762,6 +775,11 @@ function selectApartment(id){
   if(!apt) return;
   highlightCard(id);
   if(!mapReady) return;   // 지도 없으면 카드 선택까지만
+  if (window.matchMedia('(max-width:760px)').matches && !document.body.classList.contains('mobile-map-active')) {
+    document.body.classList.add('mobile-map-active');
+    document.querySelectorAll('#mobileViewToggle button').forEach(b => b.classList.toggle('active', b.dataset.view === 'map'));
+    setTimeout(() => map.invalidateSize(), 60);
+  }
   const geo = geoCache[apt.fullAddress];
   if(geo){
     map.flyTo([geo.lat, geo.lon], 15, {duration:0.6});
@@ -1044,6 +1062,14 @@ function resultsHtml(){
 }
 async function requireMember(){ return requireMemberOrRedirect(window.location.href); }
 document.getElementById('printResultsBtn').addEventListener('click',async()=>{ if(await requireMember()) window.print(); });
+document.getElementById('mobileViewToggle').addEventListener('click', function(e){
+  const btn = e.target.closest('button[data-view]');
+  if (!btn) return;
+  const isMapView = btn.dataset.view === 'map';
+  document.body.classList.toggle('mobile-map-active', isMapView);
+  this.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === btn));
+  if (isMapView && map) setTimeout(() => map.invalidateSize(), 60);
+});
 document.getElementById('emailResultsBtn').addEventListener('click',async()=>{
   if(!await requireMember()) return;
   if(!MEMBER_API){ alert('이메일 발송 기능이 아직 준비 중입니다'); return; }
