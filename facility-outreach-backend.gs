@@ -127,7 +127,7 @@ function outreachHtmlEmail_(plainText) {
     '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F5F0;padding:24px 0;"><tr><td align="center">' +
     '<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;max-width:560px;">' +
     '<tr><td style="background:#1B4A70;padding:24px 32px;text-align:center;">' +
-    '<img src="' + logoUrl + '" alt="시니어 나침반" height="36" style="display:block;margin:0 auto;">' +
+    '<img src="' + logoUrl + '" alt="시니어 나침반" height="60" style="display:block;margin:0 auto;">' +
     '</td></tr>' +
     '<tr><td style="padding:32px;color:#22303A;font-size:15px;line-height:1.7;">' + escaped + '</td></tr>' +
     '<tr><td style="padding:0 32px 32px;text-align:center;">' +
