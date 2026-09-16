@@ -103,13 +103,40 @@ function sendOutreach(request) {
       return;
     }
     try {
-      GmailApp.sendEmail(email, SUBJECTS[expectedLanguage], bodies[expectedLanguage]);
+      GmailApp.sendEmail(email, SUBJECTS[expectedLanguage], bodies[expectedLanguage], {
+        htmlBody: outreachHtmlEmail_(bodies[expectedLanguage])
+      });
       sent[expectedLanguage] += 1;
     } catch (_) {
       failed += 1;
     }
   });
   return json({ ok: true, sent: sent, failed: failed });
+}
+
+// 관리자가 입력한 평문 템플릿을 시니어 나침반 브랜드 스타일의 HTML 이메일로 감싼다.
+function outreachHtmlEmail_(plainText) {
+  const escaped = String(plainText || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\r?\n/g, '<br>');
+  const siteUrl = 'https://tubasa22.github.io/senior-world/';
+  const logoUrl = siteUrl + 'assets/img/logo.svg';
+  return '<!doctype html><html><body style="margin:0;padding:0;background:#F5F5F0;font-family:\'Apple SD Gothic Neo\',\'Noto Sans KR\',\'Malgun Gothic\',\'Segoe UI\',Arial,sans-serif;">' +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F5F0;padding:24px 0;"><tr><td align="center">' +
+    '<table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;max-width:560px;">' +
+    '<tr><td style="background:#1B4A70;padding:24px 32px;text-align:center;">' +
+    '<img src="' + logoUrl + '" alt="시니어 나침반" height="36" style="display:block;margin:0 auto;">' +
+    '</td></tr>' +
+    '<tr><td style="padding:32px;color:#22303A;font-size:15px;line-height:1.7;">' + escaped + '</td></tr>' +
+    '<tr><td style="padding:0 32px 32px;text-align:center;">' +
+    '<a href="' + siteUrl + '" style="display:inline-block;background:#E8873D;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 28px;border-radius:8px;">사이트 바로가기 · Visit Our Site</a>' +
+    '</td></tr>' +
+    '<tr><td style="background:#FBE4CE;padding:16px 32px;text-align:center;color:#5C7080;font-size:12px;">' +
+    '시니어 나침반 · Senior Compass<br>tubasa22.github.io/senior-world' +
+    '</td></tr>' +
+    '</table></td></tr></table></body></html>';
 }
 
 function languageForSource(source) {
