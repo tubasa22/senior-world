@@ -31,7 +31,7 @@ function sendWelcome_(body){
   if (!token.ok) return json({ ok: false, error: '인증 실패' });
   const name = String(body.name || '').trim().slice(0,80);
   const greeting = name ? ('안녕하세요, ' + name + '님.') : '안녕하세요.';
-  const text = greeting + '\n\n시니어 나침반 가입을 환영합니다!\n\n본 사이트는 오렌지카운티와 LA 카운티 시니어분들께 필요한 생활 정보를 공유하고 제공해드리는 사이트입니다.\n\n주거, 요양시설, IHSS 케어기버, 장례·매장권, 생활지원 등 다양한 정보를 편하게 찾아보세요.';
+  const text = greeting + '\n\n시니어 나침반 가입을 환영합니다!\n\n본 사이트는 오렌지카운티와 LA 카운티 시니어분들께 필요한 생활 정보를 공유하고 제공해드리는 사이트입니다.\n\n주거, 요양시설, IHSS 케어기버, 장례·매장권, 생활지원 등 다양한 정보를 편하게 찾아보세요.\n\n당신의 아이디는 "' + token.email + '" 입니다.';
   try{
     GmailApp.sendEmail(token.email, '시니어 나침반 가입을 환영합니다', text, { htmlBody: memberWelcomeHtml_(text) });
   }catch(_){
