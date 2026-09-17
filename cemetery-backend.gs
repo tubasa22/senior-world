@@ -30,6 +30,7 @@ const CEMETERY_TYPES = ['양도합니다','구합니다'];
 const CEMETERY_CONTACT_METHODS = ['전화','이메일'];
 const CEMETERY_MAX_FILE_BYTES = 5 * 1024 * 1024;
 const CEMETERY_ALLOWED_MIME_TYPES = ['image/jpeg','image/png','image/webp','image/gif','application/pdf'];
+const ADMIN_EMAILS = ['tubasa22@gmail.com'];
 
 function setupCemeterySheets(){
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
@@ -67,12 +68,68 @@ function doGet(){
 function doPost(event){
   try{
     const body = JSON.parse((event.postData && event.postData.contents) || '{}');
+    if(body.action === 'listAll') return cemeteryListAll_(body);
+    if(body.action === 'approve') return cemeterySetStatus_(body,'노출');
+    if(body.action === 'reject') return cemeterySetStatus_(body,'거부');
+    if(body.action === 'delete') return cemeterySetStatus_(body,'삭제');
     if(body.action !== 'submitListing') return cemeteryJson_({ok:false,error:'지원하지 않는 요청입니다.'});
     if(body.website) return cemeteryJson_({ok:true});
     return submitCemeteryListing_(body);
   }catch(_){
     return cemeteryJson_({ok:false,error:'등록에 실패했습니다.'});
   }
+}
+
+// 로그인 + 관리자 권한을 한 번에 확인하는 공용 헬퍼.
+function cemeteryAdminToken_(idToken){
+  const token = verifyIdToken(idToken);
+  if(!token.ok) return {ok:false,error:'로그인이 필요합니다.'};
+  if(!ADMIN_EMAILS.includes(String(token.email||'').toLowerCase())) return {ok:false,error:'관리자 권한이 없습니다.'};
+  return {ok:true,token:token};
+}
+
+// 관리자 전용: 상태 무관하게 전체 글 목록 + 증빙서류 링크를 반환한다.
+function cemeteryListAll_(body){
+  const admin = cemeteryAdminToken_(body.idToken);
+  if(!admin.ok) return cemeteryJson_({ok:false,error:admin.error});
+  const postsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CEMETERY_POSTS_SHEET);
+  const verificationSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CEMETERY_VERIFICATION_SHEET);
+  const verificationMap = {};
+  if(verificationSheet && verificationSheet.getLastRow() > 1){
+    verificationSheet.getRange(2,1,verificationSheet.getLastRow()-1,CEMETERY_VERIFICATION_COLUMNS.length).getValues().forEach(row=>{
+      verificationMap[row[0]] = row[1];
+    });
+  }
+  const posts = [];
+  if(postsSheet && postsSheet.getLastRow() > 1){
+    postsSheet.getRange(2,1,postsSheet.getLastRow()-1,CEMETERY_POST_COLUMNS.length).getValues().forEach(row=>{
+      const post = {};
+      CEMETERY_POST_COLUMNS.forEach((column,index)=>post[column]=row[index]);
+      post.certificateUrl = verificationMap[post.id] || '';
+      posts.push(post);
+    });
+  }
+  posts.sort((a,b)=>new Date(b.postedAt)-new Date(a.postedAt));
+  return cemeteryJson_({ok:true,posts:posts});
+}
+
+// 관리자 전용: 승인('노출'), 거부('거부'), 삭제('삭제')로 상태를 바꾼다.
+// 실제로 행을 지우지 않는 소프트 삭제 방식이라 증빙서류도 그대로 남는다.
+function cemeterySetStatus_(body,status){
+  const admin = cemeteryAdminToken_(body.idToken);
+  if(!admin.ok) return cemeteryJson_({ok:false,error:admin.error});
+  const id = String(body.id||'').trim();
+  const postsSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(CEMETERY_POSTS_SHEET);
+  if(!id || !postsSheet || postsSheet.getLastRow() < 2) return cemeteryJson_({ok:false,error:'게시글을 찾을 수 없습니다.'});
+  const ids = postsSheet.getRange(2,1,postsSheet.getLastRow()-1,1).getValues();
+  const statusColumn = CEMETERY_POST_COLUMNS.indexOf('status') + 1;
+  for(let i=0;i<ids.length;i++){
+    if(String(ids[i][0]) === id){
+      postsSheet.getRange(i+2, statusColumn).setValue(status);
+      return cemeteryJson_({ok:true});
+    }
+  }
+  return cemeteryJson_({ok:false,error:'게시글을 찾을 수 없습니다.'});
 }
 
 function submitCemeteryListing_(body){

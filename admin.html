@@ -21,6 +21,7 @@
         <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="writePanel" data-tab="writePanel">글쓰기</button>
         <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="managePanel" data-tab="managePanel">게시글 관리</button>
         <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="ihssPanel" data-tab="ihssPanel">IHSS 승인 관리</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="cemeteryPanel" data-tab="cemeteryPanel">매장권 승인 관리</button>
         <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="membersPanel" data-tab="membersPanel">회원 현황</button>
         <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="newsletterPanel" data-tab="newsletterPanel">뉴스레터 발송</button>
         <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="outreachPanel" data-tab="outreachPanel">시설 정보 업데이트 요청</button>
@@ -54,6 +55,13 @@
         <p class="muted">방문자가 등록한 글은 '검토중' 상태로 쌓입니다. 내용을 확인한 뒤 승인하면 게시판에 노출되고, 거부하면 노출되지 않습니다.</p>
         <p id="ihssMessage" class="message" aria-live="polite"></p>
         <table><thead><tr><th>상태</th><th>유형</th><th>지역</th><th>내용</th><th>등록일</th><th>관리</th></tr></thead><tbody id="ihssRows"></tbody></table>
+      </section>
+
+      <section id="cemeteryPanel" class="card hidden" role="tabpanel">
+        <h2>매장권 승인 관리</h2>
+        <p class="muted">방문자가 등록한 글은 '검토중' 상태로 쌓입니다. 증빙서류를 먼저 확인한 뒤 승인하면 게시판에 노출됩니다.</p>
+        <p id="cemeteryMessage" class="message" aria-live="polite"></p>
+        <table><thead><tr><th>상태</th><th>유형</th><th>묘지명</th><th>지역</th><th>등록일</th><th>증빙서류</th><th>관리</th></tr></thead><tbody id="cemeteryRows"></tbody></table>
       </section>
 
       <section id="membersPanel" class="card hidden" role="tabpanel">
@@ -125,6 +133,7 @@ Senior Compass</textarea></label>
     import { authReady, currentUser, getIdToken } from './assets/auth.js';
     const COMMUNITY_API = 'https://script.google.com/macros/s/AKfycbxpFfpCazh15auxmUgqh18bxArDoTqNifHMehkQ8jKqGCOHeoG5uxFdxlk2-e1baZ2K/exec';
     const IHSS_API = 'https://script.google.com/macros/s/AKfycbwhy3tkn73lC_xRWSeFjFWJmJS8eDlATrLJ2UMocktJ6acFVxkrJUH2ohL6ojHJ6Z0Z1Q/exec';
+    const CEMETERY_API = 'https://script.google.com/macros/s/AKfycbzj2N_J0kvs1ecW44PYPPBHS6pI3J2MD6jOvQzp2T92Q-G5wBsWhVDtZXv1Pp0yXIfj/exec';
     const NEWSLETTER_API = ''; // TODO: newsletter-backend.gs를 웹 앱으로 배포한 뒤 /exec URL을 입력하세요.
     const FACILITY_OUTREACH_API = 'https://script.google.com/macros/s/AKfycbzsqxisaiUBU0-ftntirdbxVNEYh93nqc39u7VrtT0G-f7i83rkr5fIS8G36QktG79D/exec';
     let memberStats = { totalCount: 0, newsletterCount: 0, recentMembers: [] };
@@ -144,9 +153,12 @@ Senior Compass</textarea></label>
     async function loadIhssPosts() { try { const result = await apiRequest(IHSS_API, { action:'listAll', idToken:await getIdToken() }); renderIhssPosts(result.posts || []); } catch (error) { showMessage('#ihssMessage', error.message); } }
     function renderIhssPosts(posts) { const rows=$('#ihssRows'); rows.replaceChildren(); if(!posts.length){rows.innerHTML='<tr><td colspan="6">등록된 글이 없습니다.</td></tr>';return;} posts.forEach(post=>{const row=document.createElement('tr'); [post.status,post.type,post.area,post.content,post.postedAt?new Date(post.postedAt).toLocaleDateString('ko-KR'):'-'].forEach(v=>{const c=document.createElement('td');c.textContent=v||'';row.appendChild(c);}); const c=document.createElement('td'); ['approve','reject'].forEach(action=>{const b=document.createElement('button');b.type='button';b.textContent=action==='approve'?'승인':'거부';b.disabled=(action==='approve'&&post.status==='노출')||(action==='reject'&&post.status==='거부');b.addEventListener('click',()=>setIhssStatus(post,action));c.appendChild(b);});row.appendChild(c);rows.appendChild(row);}); }
     async function setIhssStatus(post,action){try{await apiRequest(IHSS_API,{action,idToken:await getIdToken(),id:post.id});await loadIhssPosts();}catch(error){showMessage('#ihssMessage',error.message);}}
+    async function loadCemeteryPosts() { try { const result = await apiRequest(CEMETERY_API, { action:'listAll', idToken:await getIdToken() }); renderCemeteryPosts(result.posts || []); } catch (error) { showMessage('#cemeteryMessage', error.message); } }
+    function renderCemeteryPosts(posts) { const rows=$('#cemeteryRows'); rows.replaceChildren(); if(!posts.length){rows.innerHTML='<tr><td colspan="7">등록된 글이 없습니다.</td></tr>';return;} posts.forEach(post=>{const row=document.createElement('tr'); [post.status,post.type,post.cemeteryName,post.area,post.postedAt?new Date(post.postedAt).toLocaleDateString('ko-KR'):'-'].forEach(v=>{const c=document.createElement('td');c.textContent=v||'';row.appendChild(c);}); const certCell=document.createElement('td'); if(post.certificateUrl){const link=document.createElement('a');link.href=post.certificateUrl;link.target='_blank';link.rel='noopener';link.textContent='확인하기';certCell.appendChild(link);}else{certCell.textContent='없음';} row.appendChild(certCell); const actionCell=document.createElement('td'); [['approve','승인'],['reject','거부'],['delete','삭제']].forEach(([action,label])=>{const b=document.createElement('button');b.type='button';b.textContent=label;b.style.marginLeft='4px';b.disabled=(action==='approve'&&post.status==='노출')||(action==='reject'&&post.status==='거부')||(action==='delete'&&post.status==='삭제');b.addEventListener('click',()=>setCemeteryStatus(post,action));actionCell.appendChild(b);});row.appendChild(actionCell);rows.appendChild(row);}); }
+    async function setCemeteryStatus(post,action){ if(action==='delete'&&!confirm('이 게시글을 삭제하시겠습니까?'))return; try{await apiRequest(CEMETERY_API,{action,idToken:await getIdToken(),id:post.id});await loadCemeteryPosts();}catch(error){showMessage('#cemeteryMessage',error.message);}}
 
     await authReady;
-    if (!currentUser) { $('#loginNotice').classList.remove('hidden'); } else { $('#adminPanel').classList.remove('hidden'); loadMemberStats(); loadOutreachRecipients(); loadManagePosts(); loadIhssPosts(); }
+    if (!currentUser) { $('#loginNotice').classList.remove('hidden'); } else { $('#adminPanel').classList.remove('hidden'); loadMemberStats(); loadOutreachRecipients(); loadManagePosts(); loadIhssPosts(); loadCemeteryPosts(); }
     document.querySelectorAll('[role=tab]').forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
     document.querySelectorAll('[name=postType]').forEach(radio => radio.addEventListener('change', () => $('#sourceFields').classList.toggle('hidden', $('[name=postType]:checked').value !== '뉴스')));
     let editingPostId = '';
