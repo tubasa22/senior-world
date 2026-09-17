@@ -83,6 +83,14 @@ async function deleteAccount() {
   if (!window.confirm('정말 회원 탈퇴하시겠습니까? 저장된 정보가 삭제되며 되돌릴 수 없습니다.')) return;
   const uid = currentUser.uid;
   try {
+    if (MEMBER_API) {
+      try {
+        const idToken = await currentUser.getIdToken();
+        await fetch(MEMBER_API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'sendFarewell', idToken }) });
+      } catch (_) {
+        // 탈퇴 안내 메일 발송 실패는 탈퇴 처리 자체를 막지 않는다.
+      }
+    }
     await deleteDoc(doc(db, 'users', uid));
     await deleteUser(currentUser);
     window.location.href = 'index.html';

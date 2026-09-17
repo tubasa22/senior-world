@@ -9,6 +9,7 @@ function doPost(e) {
   try {
     const body = JSON.parse((e.postData && e.postData.contents) || '{}');
     if (body.action === 'sendWelcome') return sendWelcome_(body);
+    if (body.action === 'sendFarewell') return sendFarewell_(body);
 
     const idToken = String(body.idToken || '');
     const resultsHtml = String(body.resultsHtml || '');
@@ -36,6 +37,19 @@ function sendWelcome_(body){
     GmailApp.sendEmail(token.email, '시니어 나침반 가입을 환영합니다', text, { htmlBody: memberWelcomeHtml_(text) });
   }catch(_){
     // 환영 메일 발송 실패는 가입 자체를 막지 않으므로 조용히 무시한다.
+  }
+  return json({ ok: true });
+}
+
+// 회원 탈퇴 시 보내는 HTML 안내 메일.
+function sendFarewell_(body){
+  const token = verifyIdToken(body.idToken);
+  if (!token.ok) return json({ ok: false, error: '인증 실패' });
+  const text = '그동안 시니어 나침반을 이용해주셔서 감사합니다.\n\n회원 탈퇴가 정상적으로 처리되었으며, 계정 정보가 삭제되었습니다.\n\n필요하실 때 언제든 다시 가입하실 수 있습니다. 그동안 감사했습니다.';
+  try{
+    GmailApp.sendEmail(token.email, '시니어 나침반 회원 탈퇴 안내', text, { htmlBody: memberWelcomeHtml_(text) });
+  }catch(_){
+    // 탈퇴 안내 메일 발송 실패는 탈퇴 처리 자체를 막지 않으므로 조용히 무시한다.
   }
   return json({ ok: true });
 }
