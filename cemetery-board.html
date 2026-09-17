@@ -26,7 +26,7 @@
 </main>
 
 <script>
-  const CEMETERY_API = ''; // TODO: cemetery-backend.gs 배포 후 .../exec URL을 입력하세요.
+  const CEMETERY_API = 'https://script.google.com/macros/s/AKfycbzj2N_J0kvs1ecW44PYPPBHS6pI3J2MD6jOvQzp2T92Q-G5wBsWhVDtZXv1Pp0yXIfj/exec';
   let currentType = '양도합니다';
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
