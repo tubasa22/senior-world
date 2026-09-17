@@ -3,7 +3,7 @@ import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/fi
 import { getFirestore } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
 // Apps Script를 웹 앱으로 배포한 뒤 .../exec URL을 여기에 붙여넣으세요.
-export const MEMBER_API = '';
+export const MEMBER_API = 'https://script.google.com/macros/s/AKfycbxYNpUgVLk8GghxijxwlQS7L2WQzirFb1_jzE63WeabtqP-AKiH7FvnSt5SNYbHRIL8/exec';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDmMQTIqpwB3NfsomVwEThhkSFUYuHxQ4Y",
