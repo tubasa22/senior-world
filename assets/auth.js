@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
-import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
-import { getFirestore } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+import { getAuth, onAuthStateChanged, signOut, deleteUser } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import { getFirestore, doc, deleteDoc } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
 // Apps Script를 웹 앱으로 배포한 뒤 .../exec URL을 여기에 붙여넣으세요.
 export const MEMBER_API = 'https://script.google.com/macros/s/AKfycbxYNpUgVLk8GghxijxwlQS7L2WQzirFb1_jzE63WeabtqP-AKiH7FvnSt5SNYbHRIL8/exec';
@@ -78,6 +78,25 @@ function addText(parent, tag, value, className) {
   return element;
 }
 
+async function deleteAccount() {
+  if (!currentUser) return;
+  if (!window.confirm('정말 회원 탈퇴하시겠습니까? 저장된 정보가 삭제되며 되돌릴 수 없습니다.')) return;
+  const uid = currentUser.uid;
+  try {
+    await deleteDoc(doc(db, 'users', uid));
+    await deleteUser(currentUser);
+    window.location.href = 'index.html';
+  } catch (error) {
+    if (error.code === 'auth/requires-recent-login') {
+      alert('보안을 위해 다시 로그인한 후 탈퇴를 진행해주세요.');
+      await signOut(auth);
+      window.location.href = 'login.html?return=' + encodeURIComponent(safeReturnUrl(window.location.href));
+    } else {
+      alert('회원 탈퇴에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    }
+  }
+}
+
 export function updateAuthUI() {
   document.querySelectorAll('[data-auth-ui]').forEach(root => {
     root.replaceChildren();
@@ -111,6 +130,12 @@ export function updateAuthUI() {
       menu.hidden = true;
     });
     menu.appendChild(logout);
+    const deleteAccountBtn = document.createElement('button');
+    deleteAccountBtn.type = 'button';
+    deleteAccountBtn.textContent = '회원 탈퇴';
+    deleteAccountBtn.style.background = '#C0392B';
+    deleteAccountBtn.addEventListener('click', deleteAccount);
+    menu.appendChild(deleteAccountBtn);
     toggle.addEventListener('click', () => { menu.hidden = !menu.hidden; });
     if (isAdminUser()) {
       const adminLink = document.createElement('a');
