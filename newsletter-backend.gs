@@ -82,7 +82,7 @@ function sendNewsletter(request) {
   const members = getNewsletterMembers();
   const recipients = members.recipients;
   if (recipients.length > MAX_RECIPIENTS) return json({ ok: false, error: '발송 대상이 너무 많습니다. 관리자에게 문의하세요' });
-  if (GmailApp.getRemainingDailyQuota() < recipients.length) return json({ ok: false, error: '오늘의 이메일 발송 한도가 부족합니다. 내일 다시 시도해주세요' });
+  if (MailApp.getRemainingDailyQuota() < recipients.length) return json({ ok: false, error: '오늘의 이메일 발송 한도가 부족합니다. 내일 다시 시도해주세요' });
 
   const footer = '\n\n---\n이 메일은 시니어 나침반 뉴스레터 구독자에게 발송되었습니다.\n수신을 원치 않으시면 다음 링크에서 해지하실 수 있습니다:\n' + UNSUBSCRIBE_URL;
   let sent = 0;
