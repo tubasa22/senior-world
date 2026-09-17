@@ -134,6 +134,86 @@ Codex나 Claude가 새 세션을 시작할 때 이 파일을 먼저 확인하고
     `isAdminUser()`가 관리자 이메일을 대조하고 `[data-auth-ui]` 영역에
     "🔧 관리자" 링크를 주입함. 해당 영역과 auth.js를 사용하는 페이지에 적용됨.
 
+## 🔲 2026-09-08 세션 마무리 — 계정·배포 현황 및 내일 할 일
+
+### 계정 구조 (헷갈리지 않게 정리)
+
+- **tubasa22@gmail.com**: GitHub, Firebase 프로젝트, 로그인/관리자
+  권한(ADMIN_EMAILS), `community-backend.gs`·`cemetery-backend.gs`
+  배포 계정.
+- **info.seniorcompass@gmail.com**: 오늘 새로 만든 "발신 전용 공식
+  계정". `ihss-backend.gs`·`facility-outreach-backend.gs`·
+  `member-backend.gs` 배포 계정이자, 사이트 공개 연락처
+  (contact.html, guide.html)로 사용 중.
+- **bridgeone.jaden@gmail.com**: 더 이상 이 사이트 배포에 쓰지 않음
+  (예전에 실수로 시설 아웃리치를 여기 배포했었는데
+  info.seniorcompass로 이전 완료).
+
+### 8개 백엔드(.gs) 배포 현황
+
+| 파일 | 배포 계정 | 상태 |
+|---|---|---|
+| `backend.gs` | tubasa22(추정) | 배포됨(후기/문의) |
+| `community-backend.gs` | tubasa22 | 배포됨, 사진+수정/삭제 포함 |
+| `ihss-backend.gs` | info.seniorcompass | 배포됨, 승인/거부 포함 |
+| `cemetery-backend.gs` | tubasa22 | 배포됨, 승인/거부/삭제 포함 |
+| `facility-outreach-backend.gs` | info.seniorcompass | 배포됨, HTML 이메일 포함 |
+| `member-backend.gs` | info.seniorcompass | 배포됨, 검색결과+환영+탈퇴 메일 포함 |
+| `newsletter-backend.gs` | 미배포 | OAuth2+서비스 계정 키 필요 |
+| `review-backend.gs` | 미배포 | backend.gs와 기능 중복, 정리 필요 |
+
+### 내일 최우선 확인할 것 (오늘 끝에 진행 중이던 것)
+
+- [ ] `signup.html`의 "이메일 인증·환영 메일이 페이지 이동으로
+  취소되던 버그" 수정 반영 후, **새 테스트 계정으로 회원가입**해서
+  인증 메일과 환영 메일이 실제로 오는지 확인.
+- [ ] 회원 탈퇴 시 안내 메일(`sendFarewell_`)이 여전히 안 오면,
+  탈퇴 버튼을 누를 때 브라우저 개발자 도구 Network 탭에서
+  `exec`/`echo` 요청의 실제 응답 내용을 확인할 것 (원인 미확정 상태).
+- [ ] `cemetery-backend.gs`·`ihss-backend.gs`의 admin.html "승인
+  관리" 탭이 실제로 끝까지(승인 → 공개 게시판 노출) 잘 되는지
+  최종 확인 (오늘은 일부만 테스트함).
+
+### 남은 미배포·미해결 항목
+
+- [ ] `newsletter-backend.gs` 배포 — OAuth2 라이브러리
+  (ID: `1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF`)
+  추가 + Firebase 서비스 계정 JSON 키 발급 후 스크립트 속성
+  `FIREBASE_SERVICE_ACCOUNT_KEY` 등록 필요. 이게 되어야 admin.html의
+  "회원 현황"과 "뉴스레터 발송"이 작동함(현재 둘 다 막혀있음).
+- [ ] `backend.gs` vs `review-backend.gs` 기능 중복 정리 — 어느 걸
+  남길지 아직 결정 안 됨.
+- [ ] `ltc-facilities.html` 실제 시설 데이터 0건 — "준비 중" 안내만
+  표시 중, 사람이 직접 시설 확인 후 하나씩 등록해야 함.
+- [ ] 이해충돌 정책 문서 — 변호사 검토, 이사회 채택, 외부 검토자
+  지정 아직 안 됨(501(c)(3) 관련).
+- [ ] 매장권 브로커/세일즈퍼슨 라이선스 취득 절차는 Jaden 개인
+  자격 취득 건으로, 코드 작업과는 별개로 계속 진행 중.
+
+### 오늘(2026-09-08) 세션에서 새로 만든 것 요약
+
+- 이해충돌 정책 초안, idToken 검증 로직 정본화 + 자동 검증 스크립트
+- 커뮤니티 게시판: 사진(최대 3장)·유튜브 업로드, 게시글 수정/삭제
+  관리 화면
+- IHSS 게시판: 신규 배포 + 승인/거부 관리 화면 + ihss-board.html
+  연결 버그 수정
+- 매장권 게시판: 신규 배포 + 승인/거부/삭제 관리 화면
+- 시설 아웃리치: 신규 배포(계정 두 번 이전) + HTML 이메일(로고·
+  버튼·폰트) + GmailApp/MailApp 버그 수정
+- 회원 기능: `member-backend.gs` 신규 배포, 검색결과 이메일 +
+  가입 환영 메일(아이디 안내 포함) + 탈퇴 안내 메일 + 자체 회원
+  탈퇴 기능 신설
+- `newsletter-backend.gs`의 동일한 GmailApp/MailApp 버그 수정
+  (아직 미배포)
+- 공식 발신 계정 info.seniorcompass@gmail.com 신설, 사이트 공개
+  연락처 통일
+- 메인 페이지 스토리 문구, 장례 정보 페이지(Pre-Need/At-Need 동등
+  배치 + 메모리얼파크/장례사 차이 설명), 모바일 지도 UX(목록/지도
+  탭 전환) 개편
+- 개인정보처리방침 갱신(관리자 삭제 권한 반영) + 이용약관
+  (terms.html) 신설
+- `.gitignore` 신설, 불필요 로컬 파일 정리
+
 ## 🔲 데이터 관련
 
 - [ ] KIWA(kiwa.org)에 연락해서 2026년 8월 저소득 아파트 목록(LA 9건)을
